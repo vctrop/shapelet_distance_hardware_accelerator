@@ -11,7 +11,7 @@
 #include <math.h>
 #include <errno.h>
 
-// Floating-point size printing
+// Floating-point size displaying
 void fp_sizes(void);
 
 // Shapelet normalization
@@ -22,5 +22,8 @@ float *normalize_shapelet(float *shapelet, uint16_t size);
 
 // Floating-point euclidean distance
 double fp_euclidean_distance(float *pivot_shapelet, float *target_shapelet, uint16_t size);
+
+// Distance from a shapelet to a time series
+double shapelet_ts_distance(float *pivot_shapelet, uint16_t shapelet_len, float *time_series, uint16_t ts_len);
 
 #endif
