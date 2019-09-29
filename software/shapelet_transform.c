@@ -108,10 +108,15 @@ double shapelet_ts_distance(double *pivot_shapelet, uint16_t shapelet_len, doubl
 }
 
 
-// Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
+// [HARDWARE-friendly, reducing memory transfer] Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
 double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_len, uint16_t shapelet_len){
-    uint16_t i, j, num_shapelets;
+    uint16_t i, num_shapelets;
     double *pivot_shapelet, *shapelets_target_distances, distance;
+    
+    if (shapelet_len > ts_len){
+        perror("Shapelet length greater than time series length");
+        exit(-1);
+    }
     
     num_shapelets = (ts_len - shapelet_len + 1);
     shapelets_target_distances = (double*) malloc(num_shapelets * sizeof(double));           // Array of all "shapelet_len"-sized distances to a given time series
@@ -126,3 +131,101 @@ double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_l
     
     return shapelets_target_distances;
 }
+
+// F-Statistic based on distance measures and associated classes
+double f_statistic(double *measured_distances, uint8_t *ts_classes){
+    
+}
+
+
+// SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
+// Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
+// (FREE ALL k RETURNED POINTERS AFTER USAGE)
+double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k){
+    uint16_t i, l, j1, j2,  current_len, shapelets_index;
+    uint32_t total_num_shapelets;
+    double **k_shapelets, **ts_shapelets, **shapelet_candidates, shapelet_quality;
+    double *shapelet_distances;
+    
+    if (min > max){
+        perror("Min greater than max");
+        exit(-1);
+    }
+
+    k_shapelets = (double**) malloc(k*sizeof(double*));
+    
+    // total number of shapelets in each T[i] (TODO: implement analytically)
+    total_num_shapelets = 0;
+    for (l = min; l <= max; l++)
+        total_num_shapelets += ts_len - l + 1;
+    
+    // For each time-series T[i] in T
+    for (i = 0; i < num_of_ts; i++){
+        ts_shapelets = (double**) malloc(total_num_shapelets * sizeof(double*));
+        shapelets_index = 0;
+        // For each length between min and max
+        for (l = min; l <= max; l++, shapelets_index++){
+            shapelet_candidates = generate_shapelet_candidates(T[i], ts_len, l);
+            
+            // For each shapelet of the given length
+            for (j1 = 0; j1 < ts_len - l + 1; j1++){
+                shapelet_distances = (double*) malloc(num_of_ts * sizeof(double));
+                // For each time series in T
+                for (j2 = 0; j2 < num_of_ts; j2++)
+                    shapelet_distances[j2] = shapelet_ts_distance(shapelet_candidates[j1], l, T[j2], ts_len);
+                
+                // F-Statistic as shapelet quality measure
+                shapelet_quality = f_statistic(shapelet_distances, ts_classes);
+                
+                // Allocate space for shapelets and distance measures
+                ts_shapelets[shapelets_index] = (double*) malloc((l+1) * sizeof(double));
+                 
+                // Store every shapelet of T[i] with its quality measure 
+                for (j2 = 0; j2 < l; j2++){
+                    ts_shapelets[shapelets_index][j2] = shapelet_candidates[j1][j2];
+                }
+                ts_shapelets[shapelets_index][l] = shapelet_quality;
+                
+                free(shapelet_candidates[j1]);
+                free(shapelet_distances);
+            }         
+            free(shapelet_candidates);            
+        }
+        // All shapelets from Ti should be stored together with its quality measures in ts_shapelets
+        
+        // Sort shapelets by quality
+        
+        // Remove self similar shapelets
+        
+        // Merge ts_shapelets with k_shapelets and keep only best k shapelets
+        
+        free(ts_shapelets);
+    }
+    
+    return k_shapelets;
+}
+
+
+// CACHED SELECTION SUPPORT FUNCTIONS
+// Generate set of all normalized candidate shapelets of a specific length (FREE ALL "num_shapelets" RETURNED POINTERS AFTER USAGE)
+double **generate_shapelet_candidates(double *time_series, uint16_t ts_len, uint16_t shapelet_len){
+    uint16_t i, num_shapelets;
+    double **shapelets;
+
+    if (shapelet_len > ts_len){
+        perror("Shapelet length larger than time-series length");
+        exit(-1);
+    }
+    
+    num_shapelets = ts_len - shapelet_len + 1;
+    shapelets = (double**) malloc(num_shapelets * sizeof(double*));
+    for (i = 0; i < num_shapelets; i++)
+        shapelets[i] = assemble_shapelet(time_series, i, shapelet_len);
+    
+    return shapelets;     
+}
+
+// Remove self similar shapelets (shapelets with overlapping indices)
+// double *remove_self_similars(){}
+
+
