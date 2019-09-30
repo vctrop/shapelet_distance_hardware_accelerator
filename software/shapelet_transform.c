@@ -132,27 +132,83 @@ double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_l
     return shapelets_target_distances;
 }
 
+
 // F-Statistic based on distance measures and associated classes
-double f_statistic(double *measured_distances, uint16_t num_of_ts, uint8_t *ts_classes){
+double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes){
     double f_stat;
-    const uint8_t num_classes = 2;
-    double total_average, class_averages_sum, *class_averages, *class_counts;
-    double partial_individual_sum, total_individual_sum;
+    double total_dists_sum, total_dists_average, *class_dist_sums, *class_dist_averages;
+    double final_averages_sum, final_individual_sum;
     double **distances_by_class;
-    uint8_t i, j;
+    uint16_t *members_per_class, *class_wise_counter;
+    uint16_t i, j;
+    uint8_t class;
     
-    // Split distances by class and calculate averages
-    for(i = 0; i < ; i++){
+    // Allocate memory for sums and averages
+    class_dist_sums = (double*) malloc(num_classes * sizeof(double));
+    class_dist_averages = (double*) malloc(num_classes * sizeof(double));
+    
+    // Allocate the number of members per class and class-wise counter
+    members_per_class = (uint16_t*) malloc(num_classes * sizeof(uint16_t));
+    class_wise_counter = (uint16_t*) malloc(num_classes * sizeof(uint16_t));
+    
+    // Initialize class-dependent values
+    for(i = 0; i < num_classes; i++){
+        members_per_class[i] = 0;
+        class_wise_counter[i] = 0;
+        class_dist_sums[i] = 0.0;
+    }
         
-        // Calc class averages
-        
-        // Calc total averages
-        
+    // Count number of members from each class
+    for (i = 0; i < num_of_ts; i++){
+        class = ts_classes[i];
+        members_per_class[class]++;
     }
     
-    // Calculate individual sums
+    // Allocate the splitted distances by class
+    distances_by_class = (double**) malloc(num_classes * sizeof(double*));
+    for (i = 0; i < num_classes; i++)
+        distances_by_class[i] = (double*) malloc(members_per_class[i] * sizeof(double));
     
-    f_stat = (class_averages_sum/(num_classes - 1))/(total_individual_sum/(num_of_ts - num_classes);
+    total_dists_sum = 0.0;
+    // Split distances by class and calculate sums
+    for(i = 0; i < num_of_ts; i++){
+        class = ts_classes[i];
+        distances_by_class[class][class_wise_counter[class]] = measured_distances[i];
+        class_wise_counter[class]++;
+        
+        // Total and class-wise sums
+        class_dist_sums[class] += measured_distances[i];
+        total_dists_sum += measured_distances[i];
+    }
+    
+    // Calculate total and class-wise averages
+    total_dists_average = total_dists_sum/num_of_ts;
+    for(i = 0; i < num_classes; i++)
+        class_dist_averages[i] = class_dist_sums[i]/members_per_class[i];
+    
+    // Calculate final averages sum
+    final_averages_sum = 0.0;
+    for(i = 0; i < num_classes; i++)
+        final_averages_sum += pow((class_dist_averages[i] - total_dists_average),2);
+    
+    // Calculate final individual sum
+    final_individual_sum = 0.0;
+    for(i = 0; i < num_classes; i++){
+        for(j = 0; j < members_per_class[i]; j++)
+            final_individual_sum += pow((distances_by_class[i][j] - class_dist_averages[i]),2);
+    }
+    
+    // Free allocated memory
+    free(class_dist_averages);
+    free(class_dist_sums);
+    free(members_per_class);
+    free(class_wise_counter);
+    for (i = 0; i < num_classes; i++)
+        free(distances_by_class[i]);
+    free(distances_by_class);
+    
+    // Calculate F-Statistic
+    f_stat = (final_averages_sum/(num_classes - 1))/(final_individual_sum/(num_of_ts - num_classes));
     
     return f_stat;
 }
@@ -163,7 +219,7 @@ double f_statistic(double *measured_distances, uint16_t num_of_ts, uint8_t *ts_c
 // (FREE ALL k RETURNED POINTERS AFTER USAGE)
 double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k){
     uint16_t i, l, j1, j2,  current_len, shapelets_index;
-    uint32_t ,num_shapelets, total_num_shapelets;
+    uint32_t num_shapelets, total_num_shapelets;
     double **k_shapelets, **ts_shapelets, shapelet_quality;
     //double **shapelet_candidates;
     double *shapelet_candidate;
@@ -187,7 +243,7 @@ double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num
         shapelets_index = 0;
         // For each length between min and max
         for (l = min; l <= max; l++, shapelets_index++){ 
-            //shapelet_candidates = generate_shapelet_candidates(T[i], ts_len, l);                              // The original algoritm generates an array with all normalized shapelet candidates
+            //shapelet_candidates = generate_shapelet_candidates(T[i], ts_len, l);                              // [DEPRECATED] The original algoritm generates an array with all normalized shapelet candidates
             num_shapelets = ts_len - l + 1;                                                                     // Number of shapelets of lenght l in T[i]
             
             // For each shapelet of the given length
@@ -201,23 +257,24 @@ double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num
                 }
                 
                 // F-Statistic as shapelet quality measure
-                shapelet_quality = f_statistic(shapelet_distances, ts_classes);
+                shapelet_quality = f_statistic(shapelet_distances, ts_classes, num_of_ts, 2);
                 
-                // Allocate space for shapelets and distance measures
-                ts_shapelets[shapelets_index] = (double*) malloc((l+1) * sizeof(double));
+                // Allocate space for shapelets, lengths and distance measures
+                ts_shapelets[shapelets_index] = (double*) malloc((l+2) * sizeof(double));
                 
-                // Store every shapelet of T[i] with its quality measure 
-                for (j2 = 0; j2 < l; j2++){
-                    //ts_shapelets[shapelets_index][j2] = shapelet_candidates[j1][j2];
+                // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
+                ts_shapelets[shapelets_index][0] = shapelet_quality;
+                ts_shapelets[shapelets_index][1] = l;
+                for (j2 = 2; j2 < l+2; j2++){
+                    //ts_shapelets[shapelets_index][j2] = shapelet_candidates[j1][j2];                          // [DEPRECATED] The original algoritm generates an array with all normalized shapelet candidates
                     ts_shapelets[shapelets_index][j2] = shapelet_candidate[j2];
                 }
-                ts_shapelets[shapelets_index][l] = shapelet_quality;
                 
-                //free(shapelet_candidates[j1]);
+                //free(shapelet_candidates[j1]);                                                                // [DEPRECATED] The original algoritm generates an array with all normalized shapelet candidates
                 free(shapelet_candidate);
                 free(shapelet_distances);
             }         
-            //free(shapelet_candidates);            
+            //free(shapelet_candidates);                                                                        // [DEPRECATED] The original algoritm generates an array with all normalized shapelet candidates
         }  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
         
         // Sort shapelets by quality
@@ -226,7 +283,7 @@ double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num
         
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets
         
-        // FREE ALL total_num_shapelets TS SHAPELETS
+        // TODO: FREE ALL total_num_shapelets TS SHAPELETS
         free(ts_shapelets);
     }
     
@@ -252,6 +309,22 @@ double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num
     
     // return shapelets;     
 // }
+
+// Compare shapelets quality measures for sorting with qsort()
+int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
+    if (((double*) shapelet_1)[0] > ((double  *) shapelet_2)[0])
+        return 1;
+    else if (((double*) shapelet_1)[0] < ((double*)shapelet_2)[0])
+        return -1;
+    else
+        return 0;
+}
+
+
+// Apply quick sort in a set of shapelets, ordering by quality measure
+double **qsort_shapelets(double **shapelet_set, uint16_t set_size){
+    // Sorting with qsort() requires arrays inside the the shapelet set to have the same length (not true)
+}
 
 // Remove self similar shapelets (shapelets with overlapping indices)
 // double *remove_self_similars(){}

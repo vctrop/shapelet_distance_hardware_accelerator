@@ -33,7 +33,7 @@ double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_l
 
 // Shapelet quality measures
 // F-Statistic based on distance measures and associated classes
-double f_statistic(double *measured_distances, uint8_t *ts_classes);
+double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
 
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
@@ -44,8 +44,14 @@ double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num
 // [NOT USED NOR TESTED] Generate set of all normalized candidate shapelets of a specific length (FREE ALL "num_shapelets" RETURNED POINTERS AFTER USAGE)
 // double **generate_shapelet_candidates(double *time_series, uint16_t ts_len, uint16_t shapelet_len);
 
+// Compare shapelets quality measures for sorting with qsort()
+int compare_shapelets(const void *shapelet_1, const void *shapelet_2);
+    
+// Apply quick sort in a set of shapelets, ordering by quality measure
+double **qsort_shapelets(double **shapelet_set, uint16_t set_size);
+
 // Remove self similar shapelets (shapelets with overlapping indices << VERIFICAR NOVAMENTE) from a set of shapelets
-// double *remove_self_similars(){
+// double *remove_self_similars();
    
 // Merge all ts_shapelets to the k-shapelets archive, sort and keep only best k shapelets 
 
