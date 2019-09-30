@@ -41,12 +41,13 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes);
 double **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k);
 
 // CACHED SELECTION SUPPORT FUNCTIONS
-// Generate set of all normalized candidate shapelets of a specific length (FREE ALL "num_shapelets" RETURNED POINTERS AFTER USAGE)
-double **generate_shapelet_candidates(double *time_series, uint16_t ts_len, uint16_t shapelet_len);
+// [NOT USED NOR TESTED] Generate set of all normalized candidate shapelets of a specific length (FREE ALL "num_shapelets" RETURNED POINTERS AFTER USAGE)
+// double **generate_shapelet_candidates(double *time_series, uint16_t ts_len, uint16_t shapelet_len);
 
-// Remove self similar shapelets (shapelets with overlapping indices)
+// Remove self similar shapelets (shapelets with overlapping indices << VERIFICAR NOVAMENTE) from a set of shapelets
 // double *remove_self_similars(){
    
+// Merge all ts_shapelets to the k-shapelets archive, sort and keep only best k shapelets 
 
 
 
