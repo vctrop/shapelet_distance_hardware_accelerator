@@ -4,7 +4,7 @@ OBJS= shapelet_transform.o test_shapelets.o
 
 all: test_shapelets
 test_shapelets: $(OBJS)
-	$(CC) -o $@ -c $@.c $(CFLAGS)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 .PHONY: clean
 clean:
