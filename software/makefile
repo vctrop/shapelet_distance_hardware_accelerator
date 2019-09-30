@@ -1,4 +1,11 @@
-all: test_shapelets
+CC= gcc
+CFLAGS= -lm
+OBJS= shapelet_transform.o test_shapelets.o
 
-test_shapelets: test_shapelets.c shapelet_transform.c
-	gcc -o test_shapelets test_shapelets.c shapelet_transform.c
+all: test_shapelets
+test_shapelets: $(OBJS)
+	$(CC) -o $@ -c $@.c $(CFLAGS)
+
+.PHONY: clean
+clean:
+	$(RM) *.o test_shapelets
