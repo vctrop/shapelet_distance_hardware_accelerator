@@ -235,6 +235,26 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     return f_stat;
 }
 
+// Apply quick sort in a set of shapelets, ordering by quality measure
+void qsort_shapelets(Shapelet **shapelet_set, uint16_t size){
+    // Compare shapelets quality measures for sorting with qsort() inside the scope
+    int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
+        const double shapelet_1_quality = (*(const Shapelet **)shapelet_1)->quality;
+        const double shapelet_2_quality = (*(const Shapelet **)shapelet_2)->quality;
+        
+        printf("Q1: %g, Q2: %g\n", shapelet_1_quality, shapelet_2_quality);
+        if (shapelet_1_quality < shapelet_2_quality)
+            return 1;
+        else{
+            if (shapelet_1_quality > shapelet_2_quality)
+                return -1;
+            else
+                return 0;
+        }
+    }
+    
+    qsort(shapelet_set, (size_t) size, sizeof(Shapelet *), compare_shapelets);
+}
 
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
@@ -284,61 +304,58 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
         }  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
         
         // Sort shapelets by quality
+        qsort_shapelets(ts_shapelets, total_num_shapelets);
         
         // Remove self similar shapelets
         
-        // Merge ts_shapelets with k_shapelets and keep only best k shapelets
         
-        // TODO: FREE ALL total_num_shapelets TS SHAPELETS
-        free(ts_shapelets);
+        // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
+        Shapelet** merge_and_destroy(Shapelet** k_shapelets, Shapelet** ts_shapelets, uint64_t ts_size);
+        
     }
     
     return k_shapelets;
 }
 
 
-// CACHED SELECTION SUPPORT FUNCTIONS
-// [NOT USED NOR TESTED] Generate set of all normalized candidate shapelets of a specific length (FREE ALL "num_shapelets" RETURNED POINTERS AFTER USAGE)
-// double **generate_shapelet_candidates(double *time_series, uint16_t ts_len, uint16_t shapelet_len){
-    // uint16_t i, num_shapelets;
-    // double **shapelets;
-
-    // if (shapelet_len > ts_len){
-        // perror("Shapelet length larger than time-series length");
-        // exit(-1);
-    // }
-    
-    // num_shapelets = ts_len - shapelet_len + 1;
-    // shapelets = (double**) malloc(num_shapelets * sizeof(double*));
-    // for (i = 0; i < num_shapelets; i++)
-        // shapelets[i] = assemble_shapelet(time_series, i, shapelet_len);
-    
-    // return shapelets;     
-// }
-
-// Compare shapelets quality measures for sorting with qsort()
-int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
-    const double shapelet_1_quality = (*(const Shapelet **)shapelet_1)->quality;
-    const double shapelet_2_quality = (*(const Shapelet **)shapelet_2)->quality;
-    
-    printf("Q1: %g, Q2: %g\n", shapelet_1_quality, shapelet_2_quality);
-    if (shapelet_1_quality < shapelet_2_quality)
-        return 1;
-    else{
-        if (shapelet_1_quality > shapelet_2_quality)
-            return -1;
-        else
-            return 0;
-    }
-}
-
-
-// Apply quick sort in a set of shapelets, ordering by quality measure
-void qsort_shapelets(Shapelet **shapelet_set, uint16_t size){
-    qsort(shapelet_set, (size_t) size, sizeof(Shapelet *), compare_shapelets);
-}
-
 // Remove self similar shapelets (shapelets with overlapping indices)
 // double *remove_self_similars(){}
 
 
+// Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all unused shapelets and freeing ts_shapelets
+Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_size){
+    uint64_t i;
+    Shapelet** all_shapelets;
+    
+    all_shapelets = (Shapelet **) malloc((k+ts_size) * sizeof(Shapelet*));
+    for (i = 0; i < ts_size + k; i++){
+        if (i < k)
+            all_shapelets[i] = k_shapelets[i];
+        else
+            all_shapelets[i] = ts_shapelets[i-k];
+    }
+    
+    qsort_shapelets(all_shapelets, ts_siz + k);
+    for(i = 0; i < ts_size + k; i++){
+        if(i < k)
+            k_shapelets[i] = all_shapelets[i];
+        else
+            destroy_shapelet(all_shapelets[i]
+        
+    free(ts_shapelets);
+    
+}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
