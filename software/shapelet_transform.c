@@ -310,7 +310,7 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
         
         
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
-        Shapelet** merge_and_destroy(Shapelet** k_shapelets, Shapelet** ts_shapelets, uint64_t ts_size);
+        k_shapelets = merge_and_destroy(k_shapelets, k, ts_shapelets, total_num_shapelets);
         
     }
     
@@ -327,7 +327,7 @@ Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_s
     uint64_t i;
     Shapelet** all_shapelets;
     
-    all_shapelets = (Shapelet **) malloc((k+ts_size) * sizeof(Shapelet*));
+    all_shapelets = (Shapelet **) malloc((k+ts_size) * sizeof(Shapelet *));
     for (i = 0; i < ts_size + k; i++){
         if (i < k)
             all_shapelets[i] = k_shapelets[i];
@@ -335,15 +335,16 @@ Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_s
             all_shapelets[i] = ts_shapelets[i-k];
     }
     
-    qsort_shapelets(all_shapelets, ts_siz + k);
+    qsort_shapelets(all_shapelets, ts_size + k);
     for(i = 0; i < ts_size + k; i++){
         if(i < k)
             k_shapelets[i] = all_shapelets[i];
         else
-            destroy_shapelet(all_shapelets[i]
-        
+            destroy_shapelet(all_shapelets[i]);
+    }
     free(ts_shapelets);
     
+    return k_shapelets;
 }
     
     

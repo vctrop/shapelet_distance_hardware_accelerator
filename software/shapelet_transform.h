@@ -64,6 +64,6 @@ void qsort_shapelets(Shapelet **shapelet_set, uint16_t size);
 // double *remove_self_similars(){}
    
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all unused shapelets and freeing ts_shapelets
-Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_size)
+Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_size);
 
 #endif
