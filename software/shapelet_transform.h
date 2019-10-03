@@ -14,17 +14,18 @@
 //Shapelet structure
 typedef struct 
 {
-    uint16_t length;    //Number of points contained in the shapelet
-    double quality;     //Quality measure value
-    double * values;    //Subsequence values
+    uint16_t length;            //Number of points contained in the shapelet
+    uint16_t start_position;    //Index position on timeseries window
+    double quality;             //Quality measure value
+    double * Ti;                //Timeseries window pointer
 } Shapelet;
 
 // Floating-point size displaying
 void fp_sizes(void);
 
 // Returns pointer to new shapelet of a given size in a given time-series position (DESTROY THE RETURNED SHAPELET AFTER USAGE)
-Shapelet *assemble_shapelet(double *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
-void destroy_shapelet(Shapelet *shapelet);
+double *shapelet_values(Shapelet shapelet);
+//void destroy_shapelet(Shapelet *shapelet);
 
 // Shapelet normalization (DESTROY RETURNED SHAPELET AFTER USAGE)
 Shapelet *normalize_shapelet(Shapelet *shapelet);
@@ -64,6 +65,6 @@ void qsort_shapelets(Shapelet **shapelet_set, uint16_t size);
 // double *remove_self_similars(){}
    
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all unused shapelets and freeing ts_shapelets
-Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_size);
+Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_num_shapelets);
 
 #endif
