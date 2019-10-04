@@ -27,28 +27,27 @@ inline double get_value(Shapelet *s, uint16_t j)
 }
 
 
-// Shapelet normalization (DESTROY RETURNED SHAPELET AFTER USAGE)
-Shapelet *normalize_shapelet(Shapelet *shapelet){
+// Normalizes the values of a given vector
+void normalize_values(double *values, uint16_t length){
     double squares_sum, absolute_value;
-    Shapelet *normalized_shapelet;
-    uint16_t i;
-    
-    normalized_shapelet = (Shapelet *) malloc(sizeof(Shapelet*));
-    normalized_shapelet->values = (double *) malloc(shapelet->length * sizeof(double));
-    normalized_shapelet->length = shapelet->length;
     
     // Compute shapelet absolute value
     squares_sum = 0.0;
-    for (i = 0; i < shapelet->length; i++)
-        squares_sum += pow(shapelet->values[i], 2);
+    for (uint16_t i = 0; i < length; i++)
+        squares_sum += pow(values[i], 2);
     absolute_value = sqrt(squares_sum);
     //printf("Absolute value is %lf\n", absolute_value);
-    
+
+    //check for possible division by zero error
+    if(absolute_value == 0)
+    {
+        return;         //if a shaplet has absolute value of zero, it is already normalized
+    }
+
     // Compute normalized shapelet values
-    for (i = 0; i < shapelet->length; i++)
-        normalized_shapelet->values[i] = shapelet->values[i]/absolute_value;
-    
-    return normalized_shapelet;
+    for (uint16_t i = 0; i < length; i++)
+        values[i] = values[i] / absolute_value;
+
 }
 
 
@@ -59,16 +58,35 @@ Shapelet *normalize_shapelet(Shapelet *shapelet){
 // Floating-point euclidean distance
 double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet){
     double total_distance;
-    
-    //TODO: CALCULATE NORMALZIED VALUES
+    double *pivot_values, *target_values;
+
     if(pivot_shapelet->length != target_shapelet->length){
         perror("Error: different shapelet lengths ");
         exit(-1);
     }
+
+    //we hold the shapelet values in a temporary vector
+    //so that we can manipulate and change this data
+    //without modifing the time series
+    pivot_values = (double *) malloc(pivot_shapelet->length * sizeof(double));
+    target_values = (double *) malloc(target_shapelet->length * sizeof(double));
+
+    //load temporary value vector
+    for(int i=0; i < pivot_shapelet->length; i++)
+    {
+        pivot_values[i] = get_value(pivot_shapelet, i);
+        target_values[i] = get_value(target_shapelet, i);
+    }
     
+    normalize_values(pivot_values, pivot_shapelet->length);
+    normalize_values(target_values, target_shapelet->length);
+
     total_distance = 0.0;
     for (uint16_t i = 0; i < pivot_shapelet->length; i++)
-        total_distance += pow(get_value(pivot_shapelet, i) - get_value(target_shapelet, i), 2);
+        total_distance += pow(pivot_values[i] - target_values[i], 2);
+    
+    free(pivot_values);
+    free(target_values);
     
     return total_distance;
 }

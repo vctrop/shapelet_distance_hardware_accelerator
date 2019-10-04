@@ -28,7 +28,8 @@ double *shapelet_values(Shapelet shapelet);
 //void destroy_shapelet(Shapelet *shapelet);
 
 // Shapelet normalization (DESTROY RETURNED SHAPELET AFTER USAGE)
-Shapelet *normalize_shapelet(Shapelet *shapelet);
+//Shapelet *normalize_shapelet(Shapelet *shapelet);
+void normalize_values(double *values, uint16_t length);
 
 // Fixed-point euclidean distance
 // uint64_t fixp_euclidean_distance(uint32_t *pivot_shapelet, uint32_t *target_shapelet, uint16_t size);
