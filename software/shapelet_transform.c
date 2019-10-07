@@ -306,7 +306,7 @@ Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t nu
         qsort_shapelets(ts_shapelets, total_num_shapelets);
         
         // Remove self similar shapelets
-        
+        remove_self_similars(ts_shapelets, &total_num_shapelets);
         
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, total_num_shapelets);
@@ -318,10 +318,72 @@ Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t nu
 }
 
 
-// Remove self similar shapelets (shapelets with overlapping indices)
-// Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint64_t size){
-// }
+// Remove self similar shapelets (shapelets with overlapping indices) and update num_shapelets
+void remove_self_similars(Shapelet *ts_shapelets, uint64_t *num_shapelets){
+    int self_similar, num_removed_shapelets=0;
+    int ts_shapelets_size = *num_shapelets; //num_shapelets is updated later
+    Shapelet *new_list;     // list cointaining only non-self similar shapelets 
 
+    //first, we find the inidices that will be removed and make their Ti null
+    for(int i=1; i < ts_shapelets_size; i++)
+    {
+        self_similar = 0;
+        for(int j=0; j < i; j++) 
+        {
+            if(is_self_similar(ts_shapelets[i], ts_shapelets[j]))
+            {
+                self_similar = 1;
+                break;
+            }
+        }
+        if(self_similar)
+        {
+            num_removed_shapelets++;
+            ts_shapelets[i].Ti = NULL;
+        }
+    }
+
+    //create new ts_shapelets list
+    new_list = (Shapelet *) malloc((ts_shapelets_size - num_removed_shapelets) * sizeof(Shapelet));
+    for(int i=0, j=0; i < ts_shapelets_size; i++)
+    {
+        if(ts_shapelets[i].Ti != NULL)
+        {
+            new_list[j] = ts_shapelets[i];
+            j++;
+        }
+    }
+
+    // updates the shapelet size
+    *num_shapelets = ts_shapelets_size - num_removed_shapelets;
+    //frees old list and points it to new one
+    free(ts_shapelets);
+    ts_shapelets = new_list;
+
+    return;
+}
+
+
+//returns 1 if compared shapelets are self similar
+static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
+{
+    // Shapelets must be from the same time series to be self similar
+    if(s1.Ti != s2.Ti)
+    {
+        return 0;
+    }
+    // Shapelets are self similar if their indices overlap
+    if(s1.start_position >= s2.start_position && s1.start_position <= s2.start_position + s2.length ||
+       s2.start_position >= s1.start_position && s2.start_position <= s1.start_position + s1.length) 
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+    
+}
 
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets){

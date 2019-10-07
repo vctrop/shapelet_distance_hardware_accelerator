@@ -53,7 +53,7 @@ void qsort_shapelets(Shapelet *shapelet_set, uint16_t size);
 Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k);
 
 // Remove self similar shapelets (shapelets with overlapping indices)
-// double *remove_self_similars(){}
+void remove_self_similars(Shapelet *ts_shapelets, uint64_t *num_shapelets);
    
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets);
