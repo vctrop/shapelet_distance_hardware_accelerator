@@ -38,27 +38,27 @@ int main(int argc, char *argv[]){
     // printf("\n");
     // free(len_wise_distances);
     
-    shapelet_size = 2;
-    ts_size = 4;        
-    num_shapelets = ts_size - shapelet_size + 1;  // 3
-    shapelets_array = (Shapelet **) malloc(num_shapelets * sizeof(Shapelet *));
-    for(i = 0; i < num_shapelets; i++){
-        shapelets_array[i] = assemble_shapelet(time_series, i, shapelet_size);
-        shapelets_array[i] -> quality = i + 0.1;
-        printf("Shapelet length is %d, quality is %g \n", shapelets_array[i]->length, shapelets_array[i]->quality); 
-        for(j = 0; j < shapelets_array[i]->length; j++)
-            printf("%g ", shapelets_array[i]->values[j]);
-        printf("\n");
-    }
+    // shapelet_size = 2;
+    // ts_size = 4;        
+    // num_shapelets = ts_size - shapelet_size + 1;  // 3
+    // shapelets_array = (Shapelet **) malloc(num_shapelets * sizeof(Shapelet *));
+    // for(i = 0; i < num_shapelets; i++){
+        // shapelets_array[i] = assemble_shapelet(time_series, i, shapelet_size);
+        // shapelets_array[i] -> quality = i + 0.1;
+        // printf("Shapelet length is %d, quality is %g \n", shapelets_array[i]->length, shapelets_array[i]->quality); 
+        // for(j = 0; j < shapelets_array[i]->length; j++)
+            // printf("%g ", shapelets_array[i]->values[j]);
+        // printf("\n");
+    // }
     
-    printf("\nQuick sort of shapelets\n");
-    qsort_shapelets(shapelets_array, num_shapelets);
-    for(i = 0; i < num_shapelets; i++){
-        printf("Shapelet length is %d, quality is %g \n", shapelets_array[i]->length, shapelets_array[i]->quality); 
-        for(j = 0; j < shapelets_array[i]->length; j++)
-            printf("%g ", shapelets_array[i]->values[j]);
-        printf("\n");
-    }
+    // printf("\nQuick sort of shapelets\n");
+    // qsort_shapelets(shapelets_array, num_shapelets);
+    // for(i = 0; i < num_shapelets; i++){
+        // printf("Shapelet length is %d, quality is %g \n", shapelets_array[i]->length, shapelets_array[i]->quality); 
+        // for(j = 0; j < shapelets_array[i]->length; j++)
+            // printf("%g ", shapelets_array[i]->values[j]);
+        // printf("\n");
+    // }
     
     return 0;
 }

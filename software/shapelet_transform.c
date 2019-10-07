@@ -20,9 +20,8 @@ Shapelet init_shapelet(double *time_series, uint16_t shapelet_position, uint16_t
 }
 
 
-//returns the j-th value of a shapelet
-inline double get_value(Shapelet *s, uint16_t j)
-{
+// Returns the j-th value of a shapelet
+static inline double get_value(Shapelet *s, uint16_t j){
     return s->Ti[s->start_position + j];
 }
 
@@ -38,16 +37,15 @@ void normalize_values(double *values, uint16_t length){
     absolute_value = sqrt(squares_sum);
     //printf("Absolute value is %lf\n", absolute_value);
 
-    //check for possible division by zero error
+    // check for possible division by zero error
     if(absolute_value == 0)
     {
-        return;         //if a shaplet has absolute value of zero, it is already normalized
+        return;
     }
 
     // Compute normalized shapelet values
     for (uint16_t i = 0; i < length; i++)
         values[i] = values[i] / absolute_value;
-
 }
 
 
@@ -65,19 +63,18 @@ double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet
         exit(-1);
     }
 
-    //we hold the shapelet values in a temporary vector
-    //so that we can manipulate and change this data
-    //without modifing the time series
+    // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
     pivot_values = (double *) malloc(pivot_shapelet->length * sizeof(double));
     target_values = (double *) malloc(target_shapelet->length * sizeof(double));
 
-    //load temporary value vector
+    // load temporary value vector
     for(int i=0; i < pivot_shapelet->length; i++)
     {
         pivot_values[i] = get_value(pivot_shapelet, i);
         target_values[i] = get_value(target_shapelet, i);
     }
     
+    // normalize shapelets values to make the transform scale-independent
     normalize_values(pivot_values, pivot_shapelet->length);
     normalize_values(target_values, target_shapelet->length);
 
@@ -118,7 +115,7 @@ double shapelet_ts_distance(Shapelet *pivot_shapelet, double *time_series, uint1
 // [HARDWARE-friendly, reducing memory transfer] Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
 double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_len, uint16_t shapelet_len){
     uint16_t i, num_shapelets;
-    Shapelet *pivot_shapelet; 
+    Shapelet pivot_shapelet; 
     double *shapelets_target_distances, distance;
     
     if (shapelet_len > ts_len){
@@ -130,11 +127,10 @@ double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_l
     shapelets_target_distances = (double*) malloc(num_shapelets * sizeof(double));           // Array of all "shapelet_len"-sized distances to a given time series
     
     for(i = 0; i < num_shapelets; i++){
-        pivot_shapelet = assemble_shapelet(pivot_ts, i, shapelet_len);
-        distance = shapelet_ts_distance(pivot_shapelet, target_ts, ts_len);
+        pivot_shapelet = init_shapelet(pivot_ts, i, shapelet_len);
+        distance = shapelet_ts_distance(&pivot_shapelet, target_ts, ts_len);
         shapelets_target_distances[i] = distance;
         //printf("Distance from shapelet %d of pivot TS to target TS: %.5lf \n", i, distance);
-        destroy_shapelet(pivot_shapelet);
     }
     
     return shapelets_target_distances;
@@ -222,11 +218,11 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
 }
 
 // Apply quick sort in a set of shapelets, ordering by quality measure
-void qsort_shapelets(Shapelet **shapelet_set, uint16_t size){
+void qsort_shapelets(Shapelet *shapelet_set, uint16_t size){
     // Compare shapelets quality measures for sorting with qsort() inside the scope
     int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
-        const double shapelet_1_quality = (*(const Shapelet **)shapelet_1)->quality;
-        const double shapelet_2_quality = (*(const Shapelet **)shapelet_2)->quality;
+        const double shapelet_1_quality = ((const Shapelet *)shapelet_1)->quality;
+        const double shapelet_2_quality = ((const Shapelet *)shapelet_2)->quality;
         
         printf("Q1: %g, Q2: %g\n", shapelet_1_quality, shapelet_2_quality);
         if (shapelet_1_quality < shapelet_2_quality)
@@ -245,11 +241,11 @@ void qsort_shapelets(Shapelet **shapelet_set, uint16_t size){
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
 // (DESTROY ALL k RETURNED SHAPELETS AFTER USAGE)
-Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k){
-    uint16_t i, l, j1, j2,  current_len, shapelets_index;
+Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k){
+    uint16_t i, l, j, position,  current_len, shapelets_index;
     uint32_t num_shapelets, total_num_shapelets;
-    Shapelet **k_shapelets, **ts_shapelets;
-    Shapelet *shapelet_candidate;
+    Shapelet *k_shapelets, *ts_shapelets;
+    Shapelet shapelet_candidate;
     double *shapelet_distances;
     double shapelet_quality;
     
@@ -257,7 +253,7 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
         perror("Min greater than max");
         exit(-1);
     }
-    k_shapelets = (Shapelet **) malloc(k*sizeof(Shapelet *));
+    k_shapelets = (Shapelet *) malloc(k*sizeof(Shapelet));
     // total number of shapelets in each T[i] (TODO: implement analytically)
     total_num_shapelets = 0;
     for (l = min; l <= max; l++)
@@ -265,22 +261,22 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
     
     // For each time-series T[i] in T
     for (i = 0; i < num_of_ts; i++){
-        ts_shapelets = (Shapelet **) malloc(total_num_shapelets * sizeof(Shapelet *));
+        ts_shapelets = (Shapelet *) malloc(total_num_shapelets * sizeof(Shapelet));
         shapelets_index = 0;
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = ts_len - l + 1;                                                                     // Number of shapelets of length l in T[i]
             // For each shapelet of the given length
-            for (j1 = 0; j1 < num_shapelets; j1++){
-                shapelet_candidate = assemble_shapelet(T[i], j1, l);                                            // Assemble each shapelet on the fly, instead of keeping them in a matrix
+            for (position = 0; position < num_shapelets; position++){
+                shapelet_candidate = init_shapelet(T[i], position, l);                                            // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = (double*) malloc(num_of_ts * sizeof(double));
+                
                 // Calculate distances from current shapelet candidate to each time series in T, 
-                for (j2 = 0; j2 < num_of_ts; j2++){
-                    shapelet_distances[j2] = shapelet_ts_distance(shapelet_candidate, T[j2], ts_len);    
-                }
+                for (j = 0; j < num_of_ts; j++)
+                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, T[j], ts_len);    
                 
                 // F-Statistic as shapelet quality measure
-                shapelet_candidate->quality = f_statistic(shapelet_distances, ts_classes, num_of_ts, 2);
+                shapelet_candidate.quality = f_statistic(shapelet_distances, ts_classes, num_of_ts, 2);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
 
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
@@ -296,7 +292,8 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
         
         
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
-        k_shapelets = merge_and_destroy(k_shapelets, k, ts_shapelets, total_num_shapelets);
+        merge_shapelets(k_shapelets, k, ts_shapelets, total_num_shapelets);
+        free(ts_shapelets);
         
     }
     
@@ -305,17 +302,16 @@ Shapelet **shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t n
 
 
 // Remove self similar shapelets (shapelets with overlapping indices)
-Shapelet **remove_self_similars(Shapelet **ts_shapelets, uint64_t size){
+// Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint64_t size){
+// }
 
-}
 
-
-// Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all unused shapelets and freeing ts_shapelets
-Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_shapelets, uint64_t ts_num_shapelets){
+// Merge ts_shapelets with k_shapelets and keep only best k shapelets
+void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets){
     uint64_t i;
-    Shapelet** all_shapelets;
+    Shapelet* all_shapelets;
     
-    all_shapelets = (Shapelet **) malloc((k+ts_num_shapelets) * sizeof(Shapelet *));
+    all_shapelets = (Shapelet *) malloc((k+ts_num_shapelets) * sizeof(Shapelet));
     for (i = 0; i < ts_num_shapelets + k; i++){
         if (i < k)
             all_shapelets[i] = k_shapelets[i];
@@ -324,15 +320,11 @@ Shapelet** merge_and_destroy(Shapelet** k_shapelets, uint16_t k, Shapelet** ts_s
     }
     
     qsort_shapelets(all_shapelets, ts_num_shapelets + k);
-    for(i = 0; i < ts_num_shapelets + k; i++){
-        if(i < k)
-            k_shapelets[i] = all_shapelets[i];
-        else
-            destroy_shapelet(all_shapelets[i]);
-    }
-    free(ts_shapelets);
+    for(i = 0; i < k; i++)
+        k_shapelets[i] = all_shapelets[i];
     
-    return k_shapelets;
+    free(all_shapelets);
+    
 }
     
     
