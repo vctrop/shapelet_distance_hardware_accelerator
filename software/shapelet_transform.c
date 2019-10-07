@@ -97,7 +97,7 @@ double shapelet_ts_distance(Shapelet *pivot_shapelet, double *time_series, uint1
     num_shapelets = ts_len - pivot_shapelet->length + 1;                          // number of shapelets of length "shapelet_len" in time_series
     // Loops over shapelets in the time-series
     for (i=0; i<num_shapelets; i++){
-        // Assemble shapelet i
+        // initialize shapelet i
         ts_shapelet = init_shapelet(time_series, i, pivot_shapelet->length);
         
         // Compute shapelet-shapelet distance
@@ -143,7 +143,7 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     double total_dists_sum, total_dists_average, *class_dist_sums, *class_dist_averages;
     double final_averages_sum, final_individual_sum;
     double **distances_by_class;
-    uint16_t *members_per_class, *class_wise_counter;
+    uint16_t *ts_per_class, *class_wise_counter;
     uint16_t i, j;
     uint8_t class;
     
@@ -152,26 +152,43 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     class_dist_averages = (double*) malloc(num_classes * sizeof(double));
     
     // Allocate the number of members per class and class-wise counter
-    members_per_class = (uint16_t*) malloc(num_classes * sizeof(uint16_t));
+    ts_per_class = (uint16_t*) malloc(num_classes * sizeof(uint16_t));
     class_wise_counter = (uint16_t*) malloc(num_classes * sizeof(uint16_t));
     
     // Initialize class-dependent values
+    /*
     for(i = 0; i < num_classes; i++){
-        members_per_class[i] = 0;
+        ts_per_class[i] = 0;
         class_wise_counter[i] = 0;
         class_dist_sums[i] = 0.0;
+    }
+    */
+    if(!memset(ts_per_class, 0, num_classes * sizeof(uint16_t)))
+    {
+        perror("Error, could not initiliaze ts_per_class: ");
+        exit(errno);
+    }
+    if(!memset(class_wise_counter, 0, num_classes * sizeof(uint16_t)))
+    {
+        perror("Error, could not initiliaze class_wise_counter: ");
+        exit(errno);
+    }
+    if(!memset(class_dist_sums, 0, num_classes * sizeof(double)))
+    {
+        perror("Error, could not initiliaze class_dist_sums: ");
+        exit(errno);
     }
         
     // Count number of members from each class
     for (i = 0; i < num_of_ts; i++){
         class = ts_classes[i];
-        members_per_class[class]++;
+        ts_per_class[class]++;
     }
     
     // Allocate the splitted distances by class
     distances_by_class = (double**) malloc(num_classes * sizeof(double*));
     for (i = 0; i < num_classes; i++)
-        distances_by_class[i] = (double*) malloc(members_per_class[i] * sizeof(double));
+        distances_by_class[i] = (double*) malloc(ts_per_class[i] * sizeof(double));
     
     total_dists_sum = 0.0;
     // Split distances by class and calculate sums
@@ -188,7 +205,7 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     // Calculate total and class-wise averages
     total_dists_average = total_dists_sum/num_of_ts;
     for(i = 0; i < num_classes; i++)
-        class_dist_averages[i] = class_dist_sums[i]/members_per_class[i];
+        class_dist_averages[i] = class_dist_sums[i]/ts_per_class[i];
     
     // Calculate final averages sum
     final_averages_sum = 0.0;
@@ -198,14 +215,14 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     // Calculate final individual sum
     final_individual_sum = 0.0;
     for(i = 0; i < num_classes; i++){
-        for(j = 0; j < members_per_class[i]; j++)
+        for(j = 0; j < ts_per_class[i]; j++)
             final_individual_sum += pow((distances_by_class[i][j] - class_dist_averages[i]),2);
     }
     
     // Free allocated memory
     free(class_dist_averages);
     free(class_dist_sums);
-    free(members_per_class);
+    free(ts_per_class);
     free(class_wise_counter);
     for (i = 0; i < num_classes; i++)
         free(distances_by_class[i]);
