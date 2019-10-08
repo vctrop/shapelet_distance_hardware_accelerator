@@ -318,8 +318,30 @@ Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t nu
 }
 
 
+//returns 1 if compared shapelets are self similar
+static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
+{
+    // Shapelets must be from the same time series to be self similar
+    if(s1.Ti != s2.Ti)
+    {
+        return 0;
+    }
+    // Shapelets are self similar if their indices overlap
+    if(s1.start_position >= s2.start_position && s1.start_position <= s2.start_position + s2.length ||
+       s2.start_position >= s1.start_position && s2.start_position <= s1.start_position + s1.length) 
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+    
+}
+
+
 // Remove self similar shapelets (shapelets with overlapping indices) and update num_shapelets
-void remove_self_similars(Shapelet *ts_shapelets, uint64_t *num_shapelets){
+void remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
     int self_similar, num_removed_shapelets=0;
     int ts_shapelets_size = *num_shapelets; //num_shapelets is updated later
     Shapelet *new_list;     // list cointaining only non-self similar shapelets 
@@ -363,27 +385,6 @@ void remove_self_similars(Shapelet *ts_shapelets, uint64_t *num_shapelets){
     return;
 }
 
-
-//returns 1 if compared shapelets are self similar
-static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
-{
-    // Shapelets must be from the same time series to be self similar
-    if(s1.Ti != s2.Ti)
-    {
-        return 0;
-    }
-    // Shapelets are self similar if their indices overlap
-    if(s1.start_position >= s2.start_position && s1.start_position <= s2.start_position + s2.length ||
-       s2.start_position >= s1.start_position && s2.start_position <= s1.start_position + s1.length) 
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-    
-}
 
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets){
