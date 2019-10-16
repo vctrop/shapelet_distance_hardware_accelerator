@@ -319,7 +319,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         qsort_shapelets(ts_shapelets, total_num_shapelets);
         
         // Remove self similar shapelets
-        remove_self_similars(ts_shapelets, &total_num_shapelets);
+        ts_shapelets = remove_self_similars(ts_shapelets, &total_num_shapelets);
         
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, total_num_shapelets);
@@ -339,20 +339,17 @@ static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
     {
         return 0;
     }
-    printf("s1 start: %d end: %d\n s2 start: %d end: %d\n", s1.start_position, s1.start_position + s1.length, s2.start_position, s2.start_position + s2.length);
     // Shapelets are self similar if their indices overlap
-    if(s1.start_position >= s2.start_position && s1.start_position <= s2.start_position + s2.length ||
-       s2.start_position >= s1.start_position && s2.start_position <= s1.start_position + s1.length) 
+    // THIS FOLLOWS THE ORIGINAL PYTHON CODE, however, start_position + length should be using < instead of <= operator
+    if( ( (s1.start_position >= s2.start_position) && (s1.start_position <= s2.start_position + s2.length) ) ||
+        ( (s2.start_position >= s1.start_position) && (s2.start_position <= s1.start_position + s1.length) ) ) 
     {
-        printf("SELF SIMILAR\n");
         return 1;
     }
     else
     {
-        printf("NOT SELF SIMILAR\n");
         return 0;
     }
-    
 }
 
 
@@ -380,7 +377,6 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
             ts_shapelets[i].Ti = NULL;
         }
     }
-    printf("removed shapelets: %d\n", num_removed_shapelets);
 
     //create new ts_shapelets list
     new_list = malloc((ts_shapelets_size - num_removed_shapelets) * sizeof(Shapelet));
@@ -404,21 +400,19 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
 
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets){
-    uint64_t i;
     Shapelet* all_shapelets;
     
     all_shapelets = malloc((k+ts_num_shapelets) * sizeof(Shapelet));
-    for (i = 0; i < ts_num_shapelets + k; i++){
-        if (i < k)
-            all_shapelets[i] = k_shapelets[i];
-        else
-            all_shapelets[i] = ts_shapelets[i-k];
-    }
+
+    //append k_shapelets and ts_shapelets into a single vector
+    memcpy(all_shapelets, k_shapelets, k * sizeof(Shapelet));
+    memcpy(&all_shapelets[k], ts_shapelets, ts_num_shapelets * sizeof(Shapelet));
     
+    //sort merged vector by quality
     qsort_shapelets(all_shapelets, ts_num_shapelets + k);
-    for(i = 0; i < k; i++)
-        k_shapelets[i] = all_shapelets[i];
-    
+
+    //select only the k best shapelets from sorted vector
+    memcpy(k_shapelets, all_shapelets, k * sizeof(Shapelet));
+
     free(all_shapelets);
-    
 }

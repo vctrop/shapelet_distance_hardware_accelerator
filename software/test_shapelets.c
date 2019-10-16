@@ -29,10 +29,10 @@ int main(int argc, char *argv[]){
     double distance, *len_wise_distances;
     double *normalized_subseq;
     unsigned int i, j, k=4, num_shapelets, shapelet_size, ts_size;
-    Shapelet *shapelets_array = malloc(k * sizeof(Shapelet));
-    
+    Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
+    Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
 
-    //shapelets_array = shapelet_cached_selection(time_series, ts_class, 2, 4, 1, 2, 3);
+    //shapelets_array_1 = shapelet_cached_selection(time_series, ts_class, 2, 4, 1, 2, 3);
     // Euclidean distance calculation between sequences 1 and 2
     // distance = fp_euclidean_distance(subsequence_1, subsequence_2, 3);
     // printf("Euclidean distance is %lf\n", distance);
@@ -58,18 +58,34 @@ int main(int argc, char *argv[]){
     shapelet_size = 2;
     ts_size = 9;        
     num_shapelets = ts_size - shapelet_size + 1;  // 3
-    shapelets_array =  malloc(num_shapelets * sizeof(Shapelet));
+    shapelets_array_1 =  malloc(num_shapelets * sizeof(Shapelet));
     for(i = 0; i < num_shapelets; i++){
-        shapelets_array[i] = init_shapelet(time_series[0], i, shapelet_size);
-        shapelets_array[i].quality = i + 0.1;
+        shapelets_array_1[i] = init_shapelet(time_series[0], i, shapelet_size);
+        shapelets_array_1[i].quality = i*i + 0.1;
+        shapelets_array_2[i] = init_shapelet(time_series[1], i, shapelet_size);
+        shapelets_array_2[i].quality = i*i - 0.1;
     }
-    print_shapelets(shapelets_array, num_shapelets);
+    print_shapelets(shapelets_array_1, num_shapelets);
+    int num_shapelets2 = num_shapelets;
 
     printf("\nQuick sort of shapelets\n");
-    qsort_shapelets(shapelets_array, num_shapelets);
-    print_shapelets(shapelets_array, num_shapelets);
-    shapelets_array = remove_self_similars(shapelets_array, &num_shapelets);
+    qsort_shapelets(shapelets_array_1, num_shapelets);
+    print_shapelets(shapelets_array_1, num_shapelets);
+    printf("\n remove self similar\n");
+    shapelets_array_1 = remove_self_similars(shapelets_array_1, &num_shapelets);
     printf("new shapelet number: %d\n", num_shapelets);
-    print_shapelets(shapelets_array, num_shapelets);
+    print_shapelets(shapelets_array_1, num_shapelets);
+
+    printf("\nQuick sort of shapelets\n");
+    qsort_shapelets(shapelets_array_2, num_shapelets2);
+    print_shapelets(shapelets_array_2, num_shapelets2);
+    printf("\n remove self similar\n");
+    shapelets_array_2 = remove_self_similars(shapelets_array_2, &num_shapelets2);
+    printf("new shapelet number: %d\n", num_shapelets2);
+    print_shapelets(shapelets_array_2, num_shapelets2);
+
+    printf("\nMerging shapelets!\n");
+    merge_shapelets(shapelets_array_1, num_shapelets, shapelets_array_2, num_shapelets2);
+    print_shapelets(shapelets_array_1, num_shapelets);
     return 0;
 }
