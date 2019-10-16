@@ -20,8 +20,21 @@ typedef struct
     double * Ti;                //Timeseries window pointer
 } Shapelet;
 
+
+//time series structure
+typedef struct{
+    uint8_t class_id;   //The time series class is represented by a number id
+    double * values;    
+    uint16_t lenght;    //numer of points in time series
+} Timeseries;
+
 // Floating-point size displaying
 void fp_sizes(void);
+
+
+// Returns a timeseries structure of a given class_id 
+Timeseries init_timeseries(double * values, uint8_t class_id, uint16_t lenght);
+
 
 // Returns a new shapelet of a given size in a given time-series position
 Shapelet init_shapelet(double *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
@@ -50,7 +63,7 @@ void qsort_shapelets(Shapelet *shapelet_set, uint16_t size);
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
 // (FREE RETURNED SHAPELET SET AFTER USAGE)
-Shapelet *shapelet_cached_selection(double **T, uint8_t *ts_classes, uint16_t num_of_ts, uint16_t ts_len, uint16_t min, uint16_t max, uint16_t k);
+Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t min, uint16_t max, uint16_t k);
 
 // Remove self similar shapelets (shapelets with overlapping indices)
 void remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
