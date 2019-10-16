@@ -23,12 +23,12 @@ void print_shapelets(Shapelet * S, size_t num_shapelets)
 int main(int argc, char *argv[]){
     double subsequence_1[] = {1.0, 2.0, 2.0};
     double subsequence_2[] = {0.9, 2.0, 4.0};
-    double time_series[][4] = {{2.0, 0.0, 3.0, 4.0}, {5.0, 0.5, 3.5, 5.0}};
+    double time_series[][9] = {{2.0, 0.0, 3.0, 4.0, 0.0, 6.7, 2.2, 1.4, 4.1}, {5.0, 0.5, 3.5, 5.0, 5.0, 0.5, 3.5, 5.0, 3.0}};
     double pivot_ts[] = {2.0, 0.0, 3.0};
     double target_ts[] = {2.0, 1.0, 3.0};
     double distance, *len_wise_distances;
     double *normalized_subseq;
-    unsigned int i, j, k=3, num_shapelets, shapelet_size, ts_size;
+    unsigned int i, j, k=4, num_shapelets, shapelet_size, ts_size;
     Shapelet *shapelets_array = malloc(k * sizeof(Shapelet));
     
 
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
     // free(len_wise_distances);
     
     shapelet_size = 2;
-    ts_size = 4;        
+    ts_size = 9;        
     num_shapelets = ts_size - shapelet_size + 1;  // 3
     shapelets_array =  malloc(num_shapelets * sizeof(Shapelet));
     for(i = 0; i < num_shapelets; i++){
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]){
     printf("\nQuick sort of shapelets\n");
     qsort_shapelets(shapelets_array, num_shapelets);
     print_shapelets(shapelets_array, num_shapelets);
-    remove_self_similars(shapelets_array, &num_shapelets);
+    shapelets_array = remove_self_similars(shapelets_array, &num_shapelets);
     printf("new shapelet number: %d\n", num_shapelets);
     print_shapelets(shapelets_array, num_shapelets);
     return 0;

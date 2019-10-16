@@ -339,22 +339,25 @@ static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
     {
         return 0;
     }
+    printf("s1 start: %d end: %d\n s2 start: %d end: %d\n", s1.start_position, s1.start_position + s1.length, s2.start_position, s2.start_position + s2.length);
     // Shapelets are self similar if their indices overlap
     if(s1.start_position >= s2.start_position && s1.start_position <= s2.start_position + s2.length ||
        s2.start_position >= s1.start_position && s2.start_position <= s1.start_position + s1.length) 
     {
+        printf("SELF SIMILAR\n");
         return 1;
     }
     else
     {
+        printf("NOT SELF SIMILAR\n");
         return 0;
     }
     
 }
 
 
-// Remove self similar shapelets (shapelets with overlapping indices) and update num_shapelets
-void remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
+// Remove self similar shapelets (shapelets with overlapping indices), return pointer to new array and update num_shapelets
+Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
     int self_similar, num_removed_shapelets=0;
     int ts_shapelets_size = *num_shapelets; //num_shapelets is updated later
     Shapelet *new_list;     // list cointaining only non-self similar shapelets 
@@ -394,9 +397,8 @@ void remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
     *num_shapelets = ts_shapelets_size - num_removed_shapelets;
     //frees old list and points it to new one
     free(ts_shapelets);
-    ts_shapelets = new_list;
 
-    return;
+    return new_list;
 }
 
 
