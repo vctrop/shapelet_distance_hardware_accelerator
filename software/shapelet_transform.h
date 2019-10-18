@@ -23,17 +23,17 @@ typedef struct
 
 //time series structure
 typedef struct{
-    uint8_t class_id;   //The time series class is represented by a number id
+    uint8_t class;   //The time series class is represented by a number
     double * values;    
-    uint16_t lenght;    //numer of points in time series
+    uint16_t length;    //numer of points in time series
 } Timeseries;
 
 // Floating-point size displaying
 void fp_sizes(void);
 
 
-// Returns a timeseries structure of a given class_id 
-Timeseries init_timeseries(double * values, uint8_t class_id, uint16_t lenght);
+// Returns a timeseries structure of a given class 
+Timeseries init_timeseries(double * values, uint8_t class, uint16_t length);
 
 
 // Returns a new shapelet of a given size in a given time-series position
@@ -49,10 +49,10 @@ void normalize_values(double *values, uint16_t length);
 double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet);
 
 // Distance from a shapelet to an entire time-series
-double shapelet_ts_distance(Shapelet *pivot_shapelet, double *time_series, uint16_t ts_len);
+double shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series);
 
 // [HARDWARE-friendly, reducing memory transfer] Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
-double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_len, uint16_t shapelet_len);
+double *length_wise_distances(double *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len);
 
 // F-Statistic based on distance measures and associated classes
 double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);

@@ -11,12 +11,12 @@ void fp_sizes(void){
 
 
 // Returns a timeseries structure of a given class_id 
-Timeseries init_timeseries(double * values, uint8_t class_id, uint16_t lenght)
+Timeseries init_timeseries(double * values, uint8_t class_id, uint16_t length)
 {
     Timeseries ts;
     ts.class_id = class_id;
     ts.values = values;
-    ts.lenght = lenght;
+    ts.length = length;
     return ts;
 }
 
@@ -29,12 +29,6 @@ Shapelet init_shapelet(double *time_series, uint16_t shapelet_position, uint16_t
     shapelet.start_position = shapelet_position;
     shapelet.Ti = time_series;
     return shapelet;
-}
-
-
-// Returns the j-th value of a shapelet
-static inline double get_value(Shapelet *s, uint16_t j){
-    return s->Ti[s->start_position + j];
 }
 
 
@@ -82,8 +76,8 @@ double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet
     // load temporary value vector
     for(int i=0; i < pivot_shapelet->length; i++)
     {
-        pivot_values[i] = get_value(pivot_shapelet, i);
-        target_values[i] = get_value(target_shapelet, i);
+        pivot_values[i] = pivot_shapelet->Ti[pivot_shapelet->start_position + i];
+        target_values[i] = target_shapelet->Ti[target_shapelet->start_position + i];
     }
     
     // normalize shapelets values to make the transform scale-independent
@@ -101,16 +95,16 @@ double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet
 }
 
 // Distance from a shapelet to an entire time-series
-double shapelet_ts_distance(Shapelet *pivot_shapelet, double *time_series, uint16_t ts_len){
+double shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series){
     double shapelet_distance, minimum_distance = INFINITY;
     Shapelet ts_shapelet;
     uint32_t i, num_shapelets;
     
-    num_shapelets = ts_len - pivot_shapelet->length + 1;                          // number of shapelets of length "shapelet_len" in time_series
+    num_shapelets = time_series->length - pivot_shapelet->length + 1;     // number of shapelets of length "shapelet_len" in time_series
     // Loops over shapelets in the time-series
     for (i=0; i<num_shapelets; i++){
         // initialize shapelet i
-        ts_shapelet = init_shapelet(time_series, i, pivot_shapelet->length);
+        ts_shapelet = init_shapelet(time_series->values, i, pivot_shapelet->length);
         
         // Compute shapelet-shapelet distance
         shapelet_distance = fp_euclidean_distance(pivot_shapelet, &ts_shapelet);
@@ -125,24 +119,23 @@ double shapelet_ts_distance(Shapelet *pivot_shapelet, double *time_series, uint1
 
 
 // [HARDWARE-friendly, reducing memory transfer] Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
-double *length_wise_distances(double *pivot_ts, double *target_ts, uint16_t ts_len, uint16_t shapelet_len){
+double *length_wise_distances(double *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len){
     uint16_t i, num_shapelets;
     Shapelet pivot_shapelet; 
     double *shapelets_target_distances, distance;
     
-    if (shapelet_len > ts_len){
+    if (shapelet_len > target_ts->length){
         perror("Shapelet length greater than time series length");
         exit(-1);
     }
     
-    num_shapelets = (ts_len - shapelet_len + 1);
-    shapelets_target_distances = malloc(num_shapelets * sizeof(double));           // Array of all "shapelet_len"-sized distances to a given time series
+    num_shapelets = (target_ts->length - shapelet_len + 1);
+    shapelets_target_distances = malloc(num_shapelets * sizeof(double));   // Array of all "shapelet_len"-sized distances to a given time series
     
     for(i = 0; i < num_shapelets; i++){
         pivot_shapelet = init_shapelet(pivot_ts, i, shapelet_len);
-        distance = shapelet_ts_distance(&pivot_shapelet, target_ts, ts_len);
+        distance = shapelet_ts_distance(&pivot_shapelet, target_ts);
         shapelets_target_distances[i] = distance;
-        //printf("Distance from shapelet %d of pivot TS to target TS: %.5lf \n", i, distance);
     }
     
     return shapelets_target_distances;
@@ -268,7 +261,6 @@ void qsort_shapelets(Shapelet *shapelet_set, uint16_t size){
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
 // (DESTROY ALL k RETURNED SHAPELETS AFTER USAGE)
-/*
 Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t min, uint16_t max, uint16_t k){
     uint16_t i, l, j, position,  current_len, shapelets_index;
     uint32_t num_shapelets, total_num_shapelets;
@@ -287,7 +279,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     // total number of shapelets in each T[i] (TODO: implement analytically)
     total_num_shapelets = 0;
     for (l = min; l <= max; l++)
-        total_num_shapelets += ts_len - l + 1;
+        total_num_shapelets += T->length - l + 1;
     
     // For each time-series T[i] in T
     for (i = 0; i < num_of_ts; i++){
@@ -295,7 +287,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         shapelets_index = 0;
         // For each length between min and max
         for (l = min; l <= max; l++){ 
-            num_shapelets = ts_len - l + 1;                                                                     // Number of shapelets of length l in T[i]
+            num_shapelets = T->length - l + 1;                                                                     // Number of shapelets of length l in T[i]
             // For each shapelet of the given length
             for (position = 0; position < num_shapelets; position++){
                 shapelet_candidate = init_shapelet(T[i].values, position, l);                                            // Assemble each shapelet on the fly, instead of keeping them in a matrix
@@ -303,10 +295,10 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
                 
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_of_ts; j++)
-                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, T[j].values, T[j].lenght);    
+                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);    
                 
                 // F-Statistic as shapelet quality measure
-                shapelet_candidate.quality = f_statistic(shapelet_distances, ts_classes, num_of_ts, 2);
+                shapelet_candidate.quality = f_statistic(shapelet_distances, T, num_of_ts, 2);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
 
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
@@ -328,7 +320,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     }
     
     return k_shapelets;
-}*/
+}
 
 
 //returns 1 if compared shapelets are self similar
@@ -340,9 +332,8 @@ static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
         return 0;
     }
     // Shapelets are self similar if their indices overlap
-    // THIS FOLLOWS THE ORIGINAL PYTHON CODE, however, start_position + length should be using < instead of <= operator
-    if( ( (s1.start_position >= s2.start_position) && (s1.start_position <= s2.start_position + s2.length) ) ||
-        ( (s2.start_position >= s1.start_position) && (s2.start_position <= s1.start_position + s1.length) ) ) 
+    if( ( (s1.start_position >= s2.start_position) && (s1.start_position < s2.start_position + s2.length) ) ||
+        ( (s2.start_position >= s1.start_position) && (s2.start_position < s1.start_position + s1.length) ) ) 
     {
         return 1;
     }
