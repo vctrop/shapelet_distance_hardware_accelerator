@@ -57,6 +57,9 @@ double *length_wise_distances(double *pivot_ts, Timeseries *target_ts, uint16_t 
 // F-Statistic based on distance measures and associated classes
 double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
 
+// F-Statistic based on distance measures and associated binary classes
+double bin_f_statistic(double *measured_distances, Timeseries *ts_set, uint16_t num_of_ts);
+
 // Apply quick sort in a set of shapelets, ordering by quality measure
 void qsort_shapelets(Shapelet *shapelet_set, uint16_t size);
 

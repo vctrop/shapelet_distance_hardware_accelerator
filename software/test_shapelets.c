@@ -23,7 +23,7 @@ void print_shapelets(Shapelet * S, size_t num_shapelets)
 int main(int argc, char *argv[]){
     double subsequence_1[] = {1.0, 2.0, 2.0};
     double subsequence_2[] = {0.9, 2.0, 4.0};
-    double time_series[][9] = {{2.0, 0.0, 3.0, 4.0, 0.0, 6.7, 2.2, 1.4, 4.1}, {5.0, 0.5, 3.5, 5.0, 5.0, 0.5, 3.5, 5.0, 3.0}};
+    double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
     double pivot_ts[] = {2.0, 0.0, 3.0};
     double target_ts[] = {2.0, 1.0, 3.0};
     double distance, *len_wise_distances;
@@ -31,7 +31,21 @@ int main(int argc, char *argv[]){
     unsigned int i, j, k=4, num_shapelets, shapelet_size, ts_size;
     Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
     Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
+    Shapelet *k_best = malloc(k * sizeof(*k_best));
 
+    Timeseries T[4];
+    T[0] = init_timeseries(time_series_values[0], 0, 4);
+    T[1] = init_timeseries(time_series_values[1], 1, 4);
+    T[2] = init_timeseries(time_series_values[2], 0, 4);
+    T[3] = init_timeseries(time_series_values[3], 1, 4);
+    
+    k_best = shapelet_cached_selection(T, 4, 2, 3, k);
+    print_shapelets(k_best, k);
+    /*
+    double measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
+    double fstat = bin_f_statistic(measured_dis, T, 4);
+    printf("fstat: %g\n", fstat);
+    */
     //shapelets_array_1 = shapelet_cached_selection(time_series, ts_class, 2, 4, 1, 2, 3);
     // Euclidean distance calculation between sequences 1 and 2
     // distance = fp_euclidean_distance(subsequence_1, subsequence_2, 3);
@@ -54,7 +68,8 @@ int main(int argc, char *argv[]){
         // printf("%.5lf ", len_wise_distances[i]);
     // printf("\n");
     // free(len_wise_distances);
-    
+
+    /* tests qsort, self similars and merge
     shapelet_size = 2;
     ts_size = 9;        
     num_shapelets = ts_size - shapelet_size + 1;  // 3
@@ -87,5 +102,7 @@ int main(int argc, char *argv[]){
     printf("\nMerging shapelets!\n");
     merge_shapelets(shapelets_array_1, num_shapelets, shapelets_array_2, num_shapelets2);
     print_shapelets(shapelets_array_1, num_shapelets);
+    
     return 0;
+    */
 }

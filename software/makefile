@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -lm -Wall
+CFLAGS= -lm -Wall #-g #add -g for debugging
 OBJS= shapelet_transform.o test_shapelets.o
 
 all: test_shapelets
