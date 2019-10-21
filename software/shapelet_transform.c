@@ -63,7 +63,6 @@ void normalize_values(double *values, uint16_t length){
 double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet){
     double total_distance;
     double *pivot_values, *target_values;
-    printf("fp_eucidian_distances\n");
     if(pivot_shapelet->length != target_shapelet->length){
         perror("Error: different shapelet lengths ");
         exit(-1);
@@ -76,33 +75,27 @@ double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet
         printf("Error allocating pivot_values\n");
         exit(-1);
     }
-    int * a = malloc(1);
-    *a = 5;
     target_values = malloc(target_shapelet->length * sizeof(*target_values));
     if(target_values == NULL)
     {
         printf("Error allocating target_values\n");
         exit(-1);
     }
-    printf("alloc memeory\n");
     // load temporary value vector
     for(int i=0; i < pivot_shapelet->length; i++)
     {
         pivot_values[i] = pivot_shapelet->Ti[pivot_shapelet->start_position + i];
         target_values[i] = target_shapelet->Ti[target_shapelet->start_position + i];
     }
-    printf("Loaded vector\n");
     // normalize shapelets values to make the transform scale-independent
     normalize_values(pivot_values, pivot_shapelet->length);
     normalize_values(target_values, target_shapelet->length);
-    printf("normalized values\n");
     total_distance = 0.0;
     for (uint16_t i = 0; i < pivot_shapelet->length; i++)
         total_distance += pow(pivot_values[i] - target_values[i], 2);
     
     free(pivot_values);
     free(target_values);
-    printf("total_distance=%g\n", total_distance);
     return total_distance;
 }
 
@@ -116,12 +109,9 @@ double shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_ser
     // Loops over shapelets in the time-series
     for (i=0; i<num_shapelets; i++){
         // initialize shapelet i
-        printf("i:%d, pivot length %d", i, pivot_shapelet->length);
         ts_shapelet = init_shapelet(time_series->values, i, pivot_shapelet->length);
-        printf("initiated shapelet ts\n");
         // Compute shapelet-shapelet distance
         shapelet_distance = fp_euclidean_distance(pivot_shapelet, &ts_shapelet);
-        printf("calculated distance\n");
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
         if (shapelet_distance < minimum_distance)
             minimum_distance = shapelet_distance;
@@ -165,7 +155,7 @@ double bin_f_statistic(double *measured_distances, Timeseries *ts_set, uint16_t 
     double total_dists_avg, class_zero_avg, class_one_avg;
     double numerator_sum = 0.0, denominator_sum = 0.0;
     uint16_t class_zero_ts_num = 0, class_one_ts_num = 0;
-    
+
     if(num_of_ts <= 2)
     {
         printf("Number of time series must be greater than 2!");
@@ -173,11 +163,6 @@ double bin_f_statistic(double *measured_distances, Timeseries *ts_set, uint16_t 
     }
 
     // Count the number of time series in each class and compute the sum of distaces for each class
-    for(int i=0; i < num_of_ts; i++)
-    {
-        printf("distance %g, class=%d\n", measured_distances[i], ts_set[i].class);
-    }
-
     for(uint16_t i = 0; i < num_of_ts; i++){
         if (ts_set[i].class == 0){
             class_zero_sum += measured_distances[i];
@@ -192,17 +177,14 @@ double bin_f_statistic(double *measured_distances, Timeseries *ts_set, uint16_t 
             exit(-1);
         }
     }
-    printf("class zero: sum=%g, ts_num=%d\nclass one: sum=%g, ts_num=%d\n", class_zero_sum, class_zero_ts_num, class_one_sum, class_one_ts_num);
 
     // Calculate average values for each class and for the entire distances array
     class_zero_avg = class_zero_sum/class_zero_ts_num;
     class_one_avg = class_one_sum/class_one_ts_num;
     total_dists_sum = class_zero_sum + class_one_sum;
     total_dists_avg = total_dists_sum/num_of_ts;
-    printf("class zero: avg=%g, class one: avg=%g\n total_dist_avg=%g\n", class_zero_avg, class_one_avg, total_dists_avg);
     // Calculate the sum in f-stat formula numerator
     numerator_sum = pow(class_zero_avg - total_dists_avg, 2) + pow(class_one_avg - total_dists_avg, 2);
-    printf("Numerator sum: %g\n", numerator_sum);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_of_ts; i++){
         if (ts_set[i].class == 0){
@@ -216,7 +198,6 @@ double bin_f_statistic(double *measured_distances, Timeseries *ts_set, uint16_t 
             exit(-1);
         }
     }
-    printf("denominator sum: %g/%d =%g\n", denominator_sum, (num_of_ts-2), denominator_sum/(num_of_ts-2));
     if(denominator_sum == 0)
     {
         printf("Error calculating f statistic! Division by zero\n");
@@ -323,7 +304,6 @@ static int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
     const double shapelet_1_quality = ((const Shapelet *)shapelet_1)->quality;
     const double shapelet_2_quality = ((const Shapelet *)shapelet_2)->quality;
     
-    printf("Q1: %g, Q2: %g\n", shapelet_1_quality, shapelet_2_quality);
     if (shapelet_1_quality < shapelet_2_quality)
     {
         return 1;
@@ -349,23 +329,38 @@ void qsort_shapelets(Shapelet *shapelet_set, uint16_t size){
 // (DESTROY ALL k RETURNED SHAPELETS AFTER USAGE)
 Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t min, uint16_t max, uint16_t k){
     uint16_t i, l, j, position, shapelets_index;
-    uint32_t num_shapelets, total_num_shapelets;
+    uint32_t num_shapelets; //number of shapelets of lenght l 
+    uint32_t total_num_shapelets; //total number of shapelets of a given timeseries length from given min and max shapelet lenght parameters
+    uint32_t num_merged_shapelets; //total number of shapelets to be merged after removing self similars
     Shapelet *k_shapelets, *ts_shapelets;
     Shapelet shapelet_candidate;
     double *shapelet_distances;
     
+    //checks to assert if the parameters are valid
     if (min > max){
-        perror("Min greater than max");
+        printf("Min greater than max");
         exit(-1);
     }
 
-    k_shapelets = (Shapelet *) malloc(k*sizeof(Shapelet));
+    if(num_of_ts <= 2)
+    {
+        printf("Number of time series must be greater than 2!");
+        exit(-1);
+    }
+
+
+    k_shapelets = (Shapelet *) malloc(k*sizeof(*k_shapelets));
     if(k_shapelets == NULL)
     {
         printf("Error allocating k_shapelets\n");
         exit(-1);
     }
-    
+    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)
+    {
+        printf("Error on memset k_shapelets\n");
+        exit(-1);
+    }
+
     // total number of shapelets in each T[i] (TODO: implement analytically)
     total_num_shapelets = 0;
     for (l = min; l <= max; l++)
@@ -380,11 +375,9 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
             exit(-1);
         }
         shapelets_index = 0;
-        printf("Iteration i=%d\n", i);
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = T->length - l + 1;    
-            printf("Number of shapelets for length %d: %d\n",l, num_shapelets);                                                                 // Number of shapelets of length l in T[i]
             // For each shapelet of the given length
             for (position = 0; position < num_shapelets; position++){
                 shapelet_candidate = init_shapelet(T[i].values, position, l);                                      // Assemble each shapelet on the fly, instead of keeping them in a matrix
@@ -394,38 +387,26 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
                     printf("Error allocating shapelet_distances\n");
                     exit(-1);
                 }
-                printf("Allocating %ld bytes to shapelet_distances\n", num_of_ts * sizeof(*shapelet_distances));
-                printf("getting shapelet candidate at position=%d\n", position);
                 // Calculate distances from current shapelet candidate to each time series in T, 
-                //int * a = malloc(1);
-                if(num_shapelets -1 == position)
-                {
-                    printf("here\n");
-                }
                 for (j = 0; j < num_of_ts; j++)
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);    
-                printf("Calculated distances...\n");
                 // F-Statistic as shapelet quality measure
                 shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_of_ts);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
-                printf("Calculated f statistic: %g\n", shapelet_candidate.quality);
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
-                printf("Stored shapelet %d\n", shapelets_index);
                 shapelets_index++;
             }         
         }  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
         
         // Sort shapelets by quality
         qsort_shapelets(ts_shapelets, total_num_shapelets);
-        printf("sorted shapelets\n");
         // Remove self similar shapelets
-        ts_shapelets = remove_self_similars(ts_shapelets, &total_num_shapelets);
-        printf("Removed self similars\n");
+        num_merged_shapelets = total_num_shapelets;
+        ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
-        merge_shapelets(k_shapelets, k, ts_shapelets, total_num_shapelets);
+        merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
         free(ts_shapelets);
-        printf("Merged shapelets\n");
     }
     
     return k_shapelets;
