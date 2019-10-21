@@ -10,6 +10,7 @@
 #include <math.h>
 #include <errno.h>
 #include <string.h>
+#include <assert.h>
 
 //Shapelet structure
 typedef struct 
@@ -32,9 +33,11 @@ typedef struct{
 void fp_sizes(void);
 
 
+//allocates memory and checks for errors
+void *safe_alloc(size_t size);
+
 // Returns a timeseries structure of a given class 
 Timeseries init_timeseries(double * values, uint8_t class, uint16_t length);
-
 
 // Returns a new shapelet of a given size in a given time-series position
 Shapelet init_shapelet(double *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
