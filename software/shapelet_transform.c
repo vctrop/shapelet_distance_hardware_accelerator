@@ -54,7 +54,6 @@ void normalize_values(double *values, uint16_t length){
     for (uint16_t i = 0; i < length; i++)
         squares_sum += pow(values[i], 2);
     absolute_value = sqrt(squares_sum);
-    //printf("Absolute value is %lf\n", absolute_value);
 
     // check for possible division by zero error
     if(absolute_value == 0)
@@ -73,54 +72,54 @@ void normalize_values(double *values, uint16_t length){
 
 
 // Floating-point euclidean distance
-double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet){
+double fp_euclidean_distance(double *pivot_values, double *target_values, uint16_t length, double current_minimum_distance){
     double total_distance;
-    double *pivot_values, *target_values;
-    if(pivot_shapelet->length != target_shapelet->length){
-        perror("Error: different shapelet lengths ");
-        exit(-1);
-    }
 
-    // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
-    pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
-    target_values = safe_alloc(target_shapelet->length * sizeof(*target_values));
-
-    // load temporary value vector
-    for(int i=0; i < pivot_shapelet->length; i++)
-    {
-        pivot_values[i] = pivot_shapelet->Ti[pivot_shapelet->start_position + i];
-        target_values[i] = target_shapelet->Ti[target_shapelet->start_position + i];
-    }
-    // normalize shapelets values to make the transform scale-independent
-    normalize_values(pivot_values, pivot_shapelet->length);
-    normalize_values(target_values, target_shapelet->length);
     total_distance = 0.0;
-    for (uint16_t i = 0; i < pivot_shapelet->length; i++)
+    for (uint16_t i = 0; i < length; i++)
+    {
         total_distance += pow(pivot_values[i] - target_values[i], 2);
+        //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
+        if(total_distance >= current_minimum_distance) return INFINITY;
+    }
     
-    free(pivot_values);
-    free(target_values);
     return total_distance;
 }
 
 // Distance from a shapelet to an entire time-series
 double shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series){
     double shapelet_distance, minimum_distance = INFINITY;
-    Shapelet ts_shapelet;
-    uint32_t i, num_shapelets;
-    
-    num_shapelets = time_series->length - pivot_shapelet->length + 1;     // number of shapelets of length "shapelet_len" in time_series
+    double *pivot_values, *target_values;   // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
+    uint32_t i;
+    const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series
+
+    //normalize pivot shapelet
+    pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
+    memcpy(pivot_values, &pivot_shapelet->Ti[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
+    normalize_values(pivot_values, pivot_shapelet->length);
+
+    //allocate memory for target values 
+    //pivot shapelet and ts shapelets must always have equal length
+    target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
+
     // Loops over shapelets in the time-series
     for (i=0; i<num_shapelets; i++){
-        // initialize shapelet i
-        ts_shapelet = init_shapelet(time_series->values, i, pivot_shapelet->length);
+        // initialize normalized values of time series shapelet starting at i
+        memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
+        normalize_values(target_values, pivot_shapelet->length);
+
         // Compute shapelet-shapelet distance
-        shapelet_distance = fp_euclidean_distance(pivot_shapelet, &ts_shapelet);
+        shapelet_distance = fp_euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
+
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
         if (shapelet_distance < minimum_distance)
             minimum_distance = shapelet_distance;
+   
     }
-    
+
+    free(pivot_values);
+    free(target_values);
+
     return minimum_distance;
 }
 
@@ -356,11 +355,9 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         exit(-1);
     }
 
-    // total number of shapelets in each T[i] (TODO: implement analytically)
-    total_num_shapelets = 0;
-    for (l = min; l <= max; l++)
-        total_num_shapelets += T->length - l + 1;
-    
+    // total number of shapelets in each T[i] 
+    total_num_shapelets = (min-max-1) * (max + min - 2*T->length - 2)/(2);
+
     // For each time-series T[i] in T
     for (i = 0; i < num_of_ts; i++){
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));

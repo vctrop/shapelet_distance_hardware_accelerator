@@ -49,7 +49,7 @@ void normalize_values(double *values, uint16_t length);
 // uint64_t fixp_euclidean_distance(uint32_t *pivot_shapelet, uint32_t *target_shapelet, uint16_t size);
 
 // Floating-point euclidean distance
-double fp_euclidean_distance(Shapelet *pivot_shapelet, Shapelet *target_shapelet);
+double fp_euclidean_distance(double *pivot_values, double *target_values, uint16_t length, double current_minimum_distance);
 
 // Distance from a shapelet to an entire time-series
 double shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series);
