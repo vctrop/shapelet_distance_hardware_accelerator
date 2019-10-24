@@ -357,16 +357,20 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 
     // total number of shapelets in each T[i] 
     total_num_shapelets = (min-max-1) * (max + min - 2*T->length - 2)/(2);
-
+    printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
+    
     // For each time-series T[i] in T
     for (i = 0; i < num_of_ts; i++){
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
+        printf("[TS %u]\n", i);
+        printf("Shapelet #\tquality\n");
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = T->length - l + 1;    
             // For each shapelet of the given length
             for (position = 0; position < num_shapelets; position++){
+                
                 shapelet_candidate = init_shapelet(T[i].values, position, l);                                      // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
 
@@ -376,7 +380,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 
                 // F-Statistic as shapelet quality measure
                 shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_of_ts);
-
+                printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
