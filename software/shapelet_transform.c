@@ -364,7 +364,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
         printf("[TS %u]\n", i);
-        printf("Shapelet #\tquality\n");
+        //printf("Shapelet #\tquality\n");
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = T->length - l + 1;    
@@ -380,7 +380,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 
                 // F-Statistic as shapelet quality measure
                 shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_of_ts);
-                printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
+                //printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
@@ -397,6 +397,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
+        print_shapelets(k_shapelets, k);
         free(ts_shapelets);
     }
     
@@ -488,4 +489,19 @@ void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, 
     memcpy(k_shapelets, all_shapelets, k * sizeof(Shapelet));
 
     free(all_shapelets);
+}
+
+
+void print_shapelets(Shapelet * S, size_t num_shapelets){
+    inline double get_value(Shapelet *s, uint16_t j){
+        return s->Ti[s->start_position + j];
+    }
+    
+    for(int i=0; i < num_shapelets; i++)
+    {
+        printf("%dth Shapelet has length: %d, quality: %g \nValues from timseries %p:\t", i, S[i].length, S[i].quality, S[i].Ti); 
+        for(int j = 0; j < S[i].length; j++)
+            printf("%g ", get_value(&S[i], j));
+        printf("\n\n");
+    }
 }

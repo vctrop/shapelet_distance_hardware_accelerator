@@ -5,20 +5,6 @@
 #define TS_LEN 152
 #define NUM_SERIES 1000
 
-static inline double get_value(Shapelet *s, uint16_t j){
-    return s->Ti[s->start_position + j];
-}
-
-
-void print_shapelets(Shapelet * S, size_t num_shapelets){
-    for(int i=0; i < num_shapelets; i++)
-    {
-        printf("%dth Shapelet has length: %d, quality: %g \nValues from timseries %p:\t", i, S[i].length, S[i].quality, S[i].Ti); 
-        for(int j = 0; j < S[i].length; j++)
-            printf("%g ", get_value(&S[i], j));
-        printf("\n\n");
-    }
-}
 
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
@@ -76,16 +62,17 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 
 
 int main(int argc, char *argv[]){
-    double subsequence_1[] = {1.0, 2.0, 2.0};
-    double subsequence_2[] = {0.9, 2.0, 4.0};
-    double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
-    double pivot_ts[] = {2.0, 0.0, 3.0};
-    double target_ts[] = {2.0, 1.0, 3.0};
-    double distance, *len_wise_distances;
-    double *normalized_subseq;
-    unsigned int i, j, k=4, num_shapelets, shapelet_size;
-    Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
-    Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
+    // double subsequence_2[] = {0.9, 2.0, 4.0};
+    // double subsequence_1[] = {1.0, 2.0, 2.0};
+    // double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
+    // double pivot_ts[] = {2.0, 0.0, 3.0};
+    // double target_ts[] = {2.0, 1.0, 3.0};
+    // double distance, *len_wise_distances;
+    // double *normalized_subseq;
+    // Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
+    // Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
+    // unsigned int j, num_shapelets, shapelet_size;
+    unsigned int i,  k=10;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     // Timeseries T[4];
@@ -100,7 +87,7 @@ int main(int argc, char *argv[]){
         printf("[ TS: %u] first: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
     }
     
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, 10);
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
     print_shapelets(k_best, k);
 
     //k_best = shapelet_cached_selection(T, 4, 2, 3, k);
