@@ -2,14 +2,12 @@
 #include "shapelet_transform.h"
 #include <stdio.h>
 
-
 static inline double get_value(Shapelet *s, uint16_t j){
     return s->Ti[s->start_position + j];
 }
 
 
-void print_shapelets(Shapelet * S, size_t num_shapelets)
-{
+void print_shapelets(Shapelet * S, size_t num_shapelets){
     for(int i=0; i < num_shapelets; i++)
     {
         printf("%dth Shapelet has length: %d, quality: %g \nValues from timseries %p:\t", i, S[i].length, S[i].quality, S[i].Ti); 
@@ -17,6 +15,44 @@ void print_shapelets(Shapelet * S, size_t num_shapelets)
             printf("%g ", get_value(&S[i], j));
         printf("\n\n");
     }
+}
+
+
+// Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series 
+void read_wafer(Timeseries *ts_array, uint16_t length){
+    char filename[] = "data/Wafer/Wafer_TRAIN.csv";
+    FILE *file_descriptor;
+    char *field;
+    uint8_t ts_class;
+    const uint16_t ts_len = 152;
+    const uint16_t TS_BSIZE = 1800;
+    char time_series_buffer[TS_BSIZE];
+    double ts_values[ts_len];
+    
+    // Reads csv file and keeps its address at file_descriptor
+    file_descriptor = fopen(filename, "r");
+    if (file_descriptor == NULL){
+        perror("Error opening csv: );
+        exit(errno);
+    }
+    
+    for(uint16_t i = 0; i < length; i++){
+        if(fgets(time_series_buffer, TS_BSIZE, file_descriptor)){
+            perror("Error reading time series buffer: ");
+            exit(errno);
+        }
+        
+        // The first "ts_len" values are from the time series, and the next one is the ts class
+        for(uint16_t j = 0; j < ts_len; j++){
+            field = strtok(time_series_buffer, ",");
+            ts_values[i] = atof(field);
+        }
+        field = strtok(time_series_buffer, ",");
+        ts_class = atof(field);
+        
+        ts_array[i] = init_timeseries(ts_values, ts_class, ts_len);
+    }
+    
 }
 
 
