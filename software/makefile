@@ -9,3 +9,9 @@ test_shapelets: $(OBJS)
 .PHONY: clean
 clean:
 	$(RM) *.o test_shapelets
+
+# all: test_shapelets_float test_shapelets_fixed  
+# test_shapelets_float: $(OBJS)
+	# $(CC) -o $@ $^ -DUSE_FLOAT=1 $(CFLAGS)
+# test_shapelets_fixed: $(OBJS)
+	# $(CC) -o $@ $^ -DUSE_FLOAT=0 $(CFLAGS)

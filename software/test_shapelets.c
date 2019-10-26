@@ -64,7 +64,6 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 int main(int argc, char *argv[]){
     // double subsequence_2[] = {0.9, 2.0, 4.0};
     // double subsequence_1[] = {1.0, 2.0, 2.0};
-    // double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
     // double pivot_ts[] = {2.0, 0.0, 3.0};
     // double target_ts[] = {2.0, 1.0, 3.0};
     // double distance, *len_wise_distances;
@@ -72,26 +71,35 @@ int main(int argc, char *argv[]){
     // Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
     // Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
     // unsigned int j, num_shapelets, shapelet_size;
-    unsigned int i,  k=10;
+    unsigned int i,  k=4;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
-
-    // Timeseries T[4];
-    // T[0] = init_timeseries(time_series_values[0], 0, 4);
-    // T[1] = init_timeseries(time_series_values[1], 1, 4);
-    // T[2] = init_timeseries(time_series_values[2], 0, 4);
-    // T[3] = init_timeseries(time_series_values[3], 1, 4);
     
-    Timeseries T[NUM_SERIES];
-    read_wafer_train(T, NUM_SERIES);
-    for(i = 0; i < NUM_SERIES; i++){
-        printf("[ TS: %u] first: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
-    }
+    printf("%d\n", USE_FLOAT);
     
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
-    print_shapelets(k_best, k);
-
-    //k_best = shapelet_cached_selection(T, 4, 2, 3, k);
-    //print_shapelets(k_best, k);
+    #if USE_FLOAT == 1
+    double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
+    #else
+    fixedpt time_series_values[][4] = 
+    {{fixedpt_rconst(2.0), fixedpt_rconst(0.0), fixedpt_rconst(3.0), fixedpt_rconst(4.0)},
+    {fixedpt_rconst(0.5), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(3.0)},
+    {fixedpt_rconst(5.0), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(5.0)},
+    {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
+    #endif
+    
+    Timeseries T[4];
+    T[0] = init_timeseries(time_series_values[0], 0, 4);
+    T[1] = init_timeseries(time_series_values[1], 1, 4);
+    T[2] = init_timeseries(time_series_values[2], 0, 4);
+    T[3] = init_timeseries(time_series_values[3], 1, 4);
+    k_best = shapelet_cached_selection(T, 4, 2, 3, k);
+    
+    // Timeseries T[NUM_SERIES];
+    // read_wafer_train(T, NUM_SERIES);
+    // for(i = 0; i < NUM_SERIES; i++){
+        // printf("[ TS: %u] first: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+    // } 
+    // k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
+    
     /*
     double measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
     double fstat = bin_f_statistic(measured_dis, T, 4);
