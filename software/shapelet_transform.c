@@ -76,9 +76,12 @@ void vector_normalization(numeric_type *values, uint16_t length){
         return;
     
     // Compute normalized vector values
-    for (uint16_t i = 0; i < length; i++)
+    for (uint16_t i = 0; i < length; i++){
         values[i] = fixedpt_div(values[i], absolute_value);    
-
+        printf("value %d = ", i);
+        fixedpt_print(values[i]);
+        //printf("\n");
+    }
     #endif
 }
 
@@ -96,7 +99,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     #else
     for(uint16_t i = 0; i < length; i++){
         total_distance += fixedpt_pow(pivot_values[i] - target_values[i], FIXEDPT_TWO);
-        if(total_distance >= current_minimum_distance) return MAX_INT;
+        if(total_distance >= current_minimum_distance) return MAX_FIXEDPT;
     }  
     #endif
     
@@ -108,13 +111,12 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
 numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series){
     numeric_type shapelet_distance, minimum_distance;
     numeric_type *pivot_values, *target_values;   // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
-    uint32_t i;
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series
     
     #if USE_FLOAT == 1
     minimum_distance = INFINITY;
     #else
-    minimum_distance = MAX_INT;
+    minimum_distance = MAX_FIXEDPT;
     #endif
     
     // Normalize pivot shapelet
@@ -128,7 +130,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
 
     // Loops over shapelets in the time-series
-    for (i=0; i<num_shapelets; i++){
+    for (uint32_t i=0; i<num_shapelets; i++){
+        printf("Time series shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         // Normalize target shapelet values
@@ -262,8 +265,8 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     }
     
     f_stat = fixedpt_div(numerator_sum, fixedpt_div(denominator_sum, (num_of_ts - FIXEDPT_TWO)));
-    #endif
     
+    #endif
     return f_stat;
 }
 
@@ -378,9 +381,6 @@ static int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
 }
 
 
-
-
-
 // SHAPELET CACHED SELECTION (from algorithm 3 in "Classification of time series by shapelet transformation", Hills et al., 2013)
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
 // (DESTROY ALL k RETURNED SHAPELETS AFTER USAGE)
@@ -404,7 +404,6 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         printf("Number of time series must be greater than 2!");
         exit(-1);
     }
-
 
     k_shapelets = safe_alloc(k*sizeof(*k_shapelets));
     if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)
@@ -431,13 +430,14 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
                 
                 shapelet_candidate = init_shapelet(T[i].values, position, l);                                      // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
-
+                printf("(Pivot shapelet %d)\n", shapelets_index);
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_of_ts; j++)
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
 
                 // F-Statistic as shapelet quality measure
                 shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_of_ts);
+                
                 //printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
@@ -448,16 +448,17 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         
         // Sort shapelets by quality
         qsort(ts_shapelets, (size_t) total_num_shapelets, sizeof(*ts_shapelets), compare_shapelets);
-        
         // Remove self similar shapelets
         num_merged_shapelets = total_num_shapelets;
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
-
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        print_shapelets(k_shapelets, k);
+        
+        // print_shapelets(k_shapelets, k);
         free(ts_shapelets);
     }
+    
+    
     
     return k_shapelets;
 }
@@ -533,17 +534,17 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets){
     Shapelet* all_shapelets;
-    
+            
     all_shapelets = safe_alloc((k+ts_num_shapelets) * sizeof(Shapelet));
-
-    //append k_shapelets and ts_shapelets into a single vector
-    memcpy(all_shapelets, k_shapelets, k * sizeof(Shapelet));
-    memcpy(&all_shapelets[k], ts_shapelets, ts_num_shapelets * sizeof(Shapelet));
     
-    //sort merged vector by quality
-    qsort(all_shapelets, (size_t) ts_num_shapelets, sizeof(*all_shapelets), compare_shapelets);
-
-    //select only the k best shapelets from sorted vector
+    // Append k_shapelets and ts_shapelets into a single vector
+    memcpy(all_shapelets, k_shapelets, k * sizeof(Shapelet));
+    memcpy(all_shapelets + k, ts_shapelets, ts_num_shapelets * sizeof(Shapelet));
+        
+    // Sort merged vector by quality
+    qsort(all_shapelets, ts_num_shapelets + k, sizeof(*all_shapelets), compare_shapelets);
+    
+    // Select only the k best shapelets from sorted vector
     memcpy(k_shapelets, all_shapelets, k * sizeof(Shapelet));
 
     free(all_shapelets);
@@ -555,12 +556,6 @@ static inline numeric_type get_value(Shapelet *s, uint16_t j){
     return s->Ti[s->start_position + j];
 }
 
-static void fixedpt_print(fixedpt A){
-	char num[20];
-
-	fixedpt_str(A, num, -2);
-	puts(num);
-}
 
 // Print all shapelets in a shapelet array
 void print_shapelets(Shapelet * S, size_t num_shapelets){

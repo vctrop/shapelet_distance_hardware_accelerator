@@ -9,7 +9,7 @@
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
 // Free all double arrays from ts_array
-void read_wafer_train(Timeseries *ts_array, uint16_t length){
+/*void read_wafer_train(Timeseries *ts_array, uint16_t length){
     char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
@@ -58,7 +58,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
         }
     }
     
-}
+}*/
 
 
 int main(int argc, char *argv[]){
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
     unsigned int i,  k=4;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
     
-    printf("%d\n", USE_FLOAT);
+    printf("USE_FLOAT = %d\n", USE_FLOAT);
     
     #if USE_FLOAT == 1
     double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
@@ -92,7 +92,8 @@ int main(int argc, char *argv[]){
     T[2] = init_timeseries(time_series_values[2], 0, 4);
     T[3] = init_timeseries(time_series_values[3], 1, 4);
     k_best = shapelet_cached_selection(T, 4, 2, 3, k);
-    
+    print_shapelets(k_best, k);
+        
     // Timeseries T[NUM_SERIES];
     // read_wafer_train(T, NUM_SERIES);
     // for(i = 0; i < NUM_SERIES; i++){

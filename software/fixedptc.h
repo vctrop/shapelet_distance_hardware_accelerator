@@ -410,4 +410,11 @@ fixedpt_pow(fixedpt n, fixedpt exp)
 	return (fixedpt_exp(fixedpt_mul(fixedpt_ln(n), exp)));
 }
 
+static inline void fixedpt_print(fixedpt A){
+	char num[20];
+
+	fixedpt_str(A, num, -2);
+	puts(num);
+}
+
 #endif

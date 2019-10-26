@@ -21,7 +21,7 @@
 #if USE_FLOAT == 1
     typedef double numeric_type;
 #else
-    #define MAX_INT 0x7fffff00
+    #define MAX_FIXEDPT 0x7fffff00
     typedef fixedpt numeric_type;
 #endif
 
