@@ -48,37 +48,52 @@ Shapelet init_shapelet(numeric_type *time_series, uint16_t shapelet_position, ui
 
 // Generic vector normalization
 void vector_normalization(numeric_type *values, uint16_t length){
-    numeric_type squares_sum, absolute_value;
+    numeric_type squares_sum, absolute_value, temp_power;
     
     squares_sum = 0;
     #if USE_FLOAT == 1                                  // Floating point normalization
     // Compute absolute value
-    for (uint16_t i = 0; i < length; i++)
+    for (uint16_t i = 0; i < length; i++){
+        temp_power = pow(values[i], 2);
+        printf("v: %g\tpwr: %g\n", values[i], temp_power);
         squares_sum += pow(values[i], 2);
+    }
+    printf("Squares sum: %g\n", squares_sum); 
     absolute_value = sqrt(squares_sum);
-
+    printf("Abs: %g\n", absolute_value);
+    
     // check for possible division by zero error
     if(absolute_value == 0)
         return;
 
     // Compute normalized vector values
-    for (uint16_t i = 0; i < length; i++)
+    printf("Normalized value: ");
+    for (uint16_t i = 0; i < length; i++){
         values[i] = values[i] / absolute_value;
+        printf("%g\t", values[i]);
+    }
     
     #else                                           // Fixed point normalization
     // Compute absolute value
-    for (uint16_t i = 0; i < length; i++)
-        squares_sum += fixedpt_pow(values[i], fixedpt_fromint(2)); 
+    for (uint16_t i = 0; i < length; i++){
+        temp_power = fixedpt_pow(values[i], FIXEDPT_TWO); 
+        printf("value: "); fixedpt_print(values[i]); 
+        printf("power: "); fixedpt_print(temp_power);
+        squares_sum += temp_power;
+        //squares_sum += fixedpt_pow(values[i], FIXEDPT_TWO); 
+    }
+    printf("Squares sum: %s\n", fixedpt_cstr(squares_sum, 3));
     absolute_value = fixedpt_sqrt(squares_sum);
-    
+    printf("Abs: %s\n", fixedpt_cstr(absolute_value, 3));
     // Check for possible future division by zero
     if(absolute_value == 0)
         return;
     
     // Compute normalized vector values
+    printf("Normalized values: ");
     for (uint16_t i = 0; i < length; i++){
         values[i] = fixedpt_div(values[i], absolute_value);    
-        //printf("value %d = ", i);        fixedpt_print(values[i]);        printf("\n");
+        printf("%s\t", fixedpt_cstr(values[i], 3));
     }
     #endif
 }
@@ -89,7 +104,15 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     
     #if USE_FLOAT == 1
     for (uint16_t i = 0; i < length; i++){
-        total_distance += pow(pivot_values[i] - target_values[i], 2);
+        //printf("Values %d\n", i);
+        //printf("%g\n%g\n", pivot_values[i], target_values[i]);
+        
+        temp_difference = pivot_values[i] - target_values[i];
+        //printf("difference = %g\n", temp_difference);
+        
+        temp_power = pow(temp_difference, 2);
+        //printf("power = %g\n", temp_power);
+        total_distance += temp_power;
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
@@ -202,6 +225,12 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
 
     // Count the number of time series in each class and compute the sum of distaces for each class
     for(uint16_t i = 0; i < num_of_ts; i++){
+        /*#if USE_FLOAT == 1
+        printf("Measured distance %d: %g\n", i, measured_distances[i]);
+        #else
+        printf("Measured distance %d: ", i);
+        fixedpt_print(measured_distances[i]);
+        #endif*/
         if (ts_set[i].class == 0){
             class_zero_sum += measured_distances[i];
             class_zero_ts_num++;
@@ -222,11 +251,15 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     class_one_avg = class_one_sum/class_one_ts_num;
     total_dists_sum = class_zero_sum + class_one_sum;
     total_dists_avg = total_dists_sum/num_of_ts;
+    
+    //printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n %g\n, %g\n, %g\n, %g\n, %g\n, %g\n", class_zero_sum, class_one_sum, class_zero_avg, class_one_avg, total_dists_sum, total_dists_avg);
+    
     // Calculate the sum in f-stat formula numerator
     numerator_sum = pow(class_zero_avg - total_dists_avg, 2) + pow(class_one_avg - total_dists_avg, 2);
-    
+    //printf("Numerator sum: %g\n", numerator_sum);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_of_ts; i++){
+        //printf("Denominator sum before: %g\n", denominator_sum);
         if (ts_set[i].class == 0){
             denominator_sum += pow(measured_distances[i] - class_zero_avg, 2);
         }
@@ -237,6 +270,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
+        //printf("Denominator sum after: %g\n", denominator_sum);
     }
     if(denominator_sum == 0)
     {
@@ -247,14 +281,14 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     
     #else
     // Calculate average values for each class and for the entire distances array
-    class_zero_avg = fixedpt_div(class_zero_sum, class_zero_ts_num);
-    class_one_avg = fixedpt_div(class_one_sum, class_one_ts_num);
+    class_zero_avg = fixedpt_div(class_zero_sum, fixedpt_fromint(class_zero_ts_num));
+    class_one_avg = fixedpt_div(class_one_sum, fixedpt_fromint(class_one_ts_num));
     total_dists_sum = class_zero_sum + class_one_sum;
-    total_dists_avg = fixedpt_div(total_dists_sum, num_of_ts);
-    printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n");   fixedpt_print(class_zero_sum); fixedpt_print(class_one_sum); fixedpt_print(class_zero_avg);  fixedpt_print(class_one_avg);   fixedpt_print(total_dists_sum); fixedpt_print(total_dists_avg);
+    total_dists_avg = fixedpt_div(total_dists_sum, fixedpt_fromint(num_of_ts));
+    //printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n");   fixedpt_print(class_zero_sum); fixedpt_print(class_one_sum); fixedpt_print(class_zero_avg);  fixedpt_print(class_one_avg);   fixedpt_print(total_dists_sum); fixedpt_print(total_dists_avg);
     // Calculate the sum in f-stat formula numerator
     numerator_sum = fixedpt_pow(class_zero_avg - total_dists_avg, FIXEDPT_TWO) + fixedpt_pow(class_one_avg - total_dists_avg, FIXEDPT_TWO);
-    printf("Numerator sum: ");              fixedpt_print(numerator_sum);
+    //printf("Numerator sum: ");              fixedpt_print(numerator_sum);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_of_ts; i++){
         // fixedpt_print(measured_distances[i]);
@@ -263,7 +297,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
         // fixedpt_print(fixedpt_pow(measured_distances[i], FIXEDPT_TWO));
         // printf("\n");
         
-        printf("Denominator sum before: ");        fixedpt_print(denominator_sum);
+        //printf("Denominator sum before: ");        fixedpt_print(denominator_sum);
         if(ts_set[i].class == 0){
             temp_difference = measured_distances[i] - class_zero_avg;
         }
@@ -274,9 +308,9 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
-        printf("Temporary difference: ");   fixedpt_print(temp_difference);
+        //printf("Temporary difference: ");   fixedpt_print(temp_difference);
         denominator_sum += fixedpt_pow(temp_difference, FIXEDPT_TWO);
-        printf("Denominator sum after: ");        fixedpt_print(denominator_sum);
+        //printf("Denominator sum after: ");        fixedpt_print(denominator_sum);
         
     }
     if(denominator_sum == 0)
@@ -285,7 +319,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
         exit(-1);
     }
     
-    f_stat = fixedpt_div(numerator_sum, fixedpt_div(denominator_sum, (num_of_ts - FIXEDPT_TWO)));
+    f_stat = fixedpt_div(numerator_sum, fixedpt_div(denominator_sum, (fixedpt_fromint(num_of_ts) - FIXEDPT_TWO)));
     
     #endif
     return f_stat;
@@ -593,7 +627,7 @@ void print_shapelets(Shapelet * S, size_t num_shapelets){
         fixedpt_print(S[i].quality);
         printf("\nValues from timseries %p:\t", S[i].Ti); 
         for(int j = 0; j < S[i].length; j++)
-            printf("%g ", get_value(&S[i], j));
+            printf("%s ", fixedpt_cstr(get_value(&S[i], j),3));
         printf("\n\n");
             
         #endif

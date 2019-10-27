@@ -69,7 +69,9 @@
  */
 
 /* [Lib. modifications by Victor] 
- * Implement mod and make fixedpt_pow() support negative numbers. 
+ * Implement fixedpt_mod().
+ * fixedpt_pow() now supports negative numbers. 
+ * fix fixedpt_pow() for n = 0.
  */ 
 #ifndef FIXEDPT_BITS
 #define FIXEDPT_BITS	32
@@ -413,9 +415,13 @@ static inline fixedpt
 fixedpt_pow(fixedpt n, fixedpt exp)
 {
     
-	if (exp == 0)
-		return (FIXEDPT_ONE);
-	if (n < 0){
+    if (exp == 0)
+        return (FIXEDPT_ONE);
+   
+    if (n == 0)
+        return 0;
+
+    if (n < 0){
         n = -n;
         // If exponent is even, returns a positive result, otherwise returns a negative one
         if (fixedpt_mod(exp, 2) == 0)
