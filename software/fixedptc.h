@@ -68,6 +68,9 @@
  * SUCH DAMAGE.
  */
 
+/* [Lib. modifications by Victor] 
+ * Implement mod and make fixedpt_pow() support negative numbers. 
+ */ 
 #ifndef FIXEDPT_BITS
 #define FIXEDPT_BITS	32
 #endif
@@ -142,6 +145,12 @@ static inline fixedpt
 fixedpt_div(fixedpt A, fixedpt B)
 {
 	return (((fixedptd)A << FIXEDPT_FBITS) / (fixedptd)B);
+}
+
+static inline fixedpt
+fixedpt_mod(fixedpt A, fixedpt B)
+{
+    return (((fixedpt) A << FIXEDPT_FBITS) % (fixedpt)B);
 }
 
 /*
@@ -403,10 +412,19 @@ fixedpt_log(fixedpt x, fixedpt base)
 static inline fixedpt
 fixedpt_pow(fixedpt n, fixedpt exp)
 {
+    
 	if (exp == 0)
 		return (FIXEDPT_ONE);
-	if (n < 0)
-		return 0;
+	if (n < 0){
+        n = -n;
+        // If exponent is even, returns a positive result, otherwise returns a negative one
+        if (fixedpt_mod(exp, 2) == 0)
+            return (fixedpt_exp(fixedpt_mul(fixedpt_ln(n), exp)));
+        else
+            return -(fixedpt_exp(fixedpt_mul(fixedpt_ln(n), exp)));
+        
+    }
+    
 	return (fixedpt_exp(fixedpt_mul(fixedpt_ln(n), exp)));
 }
 
