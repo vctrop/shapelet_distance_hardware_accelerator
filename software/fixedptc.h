@@ -72,6 +72,7 @@
  * Implement fixedpt_mod().
  * fixedpt_pow() now supports negative numbers. 
  * fix fixedpt_pow() for n = 0.
+ * fixedpt_pow() accumulates error by calling multiple nested functions, implement more direct fixedpt_pow2()
  */ 
 #ifndef FIXEDPT_BITS
 #define FIXEDPT_BITS	32
@@ -94,7 +95,7 @@ typedef	__uint128_t fixedptud;
 #endif
 
 #ifndef FIXEDPT_WBITS
-#define FIXEDPT_WBITS	16
+#define FIXEDPT_WBITS	11
 #endif
 
 #if FIXEDPT_WBITS >= FIXEDPT_BITS
@@ -411,6 +412,7 @@ fixedpt_log(fixedpt x, fixedpt base)
 
 
 /* Return the power value (n^exp) of the given fixedpt numbers */
+// Bad results for small numbers
 static inline fixedpt
 fixedpt_pow(fixedpt n, fixedpt exp)
 {
@@ -432,6 +434,11 @@ fixedpt_pow(fixedpt n, fixedpt exp)
     }
     
 	return (fixedpt_exp(fixedpt_mul(fixedpt_ln(n), exp)));
+}
+
+static inline fixedpt
+fixedpt_pow2(fixedpt n){
+    return fixedpt_mul(n, n);
 }
 
 static inline void fixedpt_print(fixedpt A){

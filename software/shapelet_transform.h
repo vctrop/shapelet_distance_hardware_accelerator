@@ -11,10 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
-
-// Fixed point operations by Ivan Voras
-#include "fixedptc.h" 
-
+#include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
 #define USE_FLOAT 1
 
@@ -28,18 +25,18 @@
 //Shapelet structure
 typedef struct 
 {
-    uint16_t length;            //Number of points contained in the shapelet
-    uint16_t start_position;    //Index position on timeseries window
-    numeric_type quality;             //Quality measure value
-    numeric_type *Ti;                //Timeseries window pointer
+    uint16_t length;                    // Number of points contained in the shapelet
+    uint16_t start_position;            // Index position on timeseries window
+    numeric_type quality;               // Quality measure value
+    numeric_type *Ti;                   // Timeseries window pointer
 } Shapelet;
 
 
 //time series structure
 typedef struct{
-    uint8_t class;   //The time series class is represented by a number
+    uint8_t class;                      // The time series class is represented by a number
     numeric_type *values;    
-    uint16_t length;    //numer of points in time series
+    uint16_t length;                    // Number of points in time series
 } Timeseries;
 
 
