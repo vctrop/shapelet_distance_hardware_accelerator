@@ -115,7 +115,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     numeric_type shapelet_distance, minimum_distance;
     numeric_type *pivot_values, *target_values;   // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series
-    printf("Time series %p\n", time_series);
+    //printf("Time series %p\n", time_series);
     #if USE_FLOAT == 1
     minimum_distance = INFINITY;
     #else
@@ -134,7 +134,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 
     // Loops over shapelets in the time-series
     for (uint32_t i=0; i<num_shapelets; i++){
-        printf("Target shapelet %d\n", i);
+        //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         // Normalize target shapelet values
@@ -218,13 +218,13 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     total_dists_sum = class_zero_sum + class_one_sum;
     total_dists_avg = total_dists_sum/num_of_ts;
     
-    printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n%g\n%g\n%g\n%g\n%g\n%g\n", class_zero_sum, class_one_sum, class_zero_avg, class_one_avg, total_dists_sum, total_dists_avg);
+    //printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n%g\n%g\n%g\n%g\n%g\n%g\n", class_zero_sum, class_one_sum, class_zero_avg, class_one_avg, total_dists_sum, total_dists_avg);
     
     // Calculate the sum in f-stat formula numerator
     numerator_sum = pow(class_zero_avg - total_dists_avg, 2) + pow(class_one_avg - total_dists_avg, 2);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_of_ts; i++){
-        printf("Denominator sum before: %g\n", denominator_sum);
+        //printf("Denominator sum before: %g\n", denominator_sum);
         if (ts_set[i].class == 0){
             denominator_sum += pow(measured_distances[i] - class_zero_avg, 2);
         }
@@ -235,7 +235,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
-        printf("Denominator sum after: %g\n", denominator_sum);
+        //printf("Denominator sum after: %g\n", denominator_sum);
     }
     if(denominator_sum == 0)
     {
@@ -243,7 +243,6 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
         exit(-1);
     }
     f_stat = numerator_sum / (denominator_sum/(num_of_ts-2));
-    
     #else
     // Calculate average values for each class and for the entire distances array
     class_zero_avg = fixedpt_div(class_zero_sum, fixedpt_fromint(class_zero_ts_num));
@@ -255,7 +254,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     numerator_sum = fixedpt_pow2(class_zero_avg - total_dists_avg) + fixedpt_pow2(class_one_avg - total_dists_avg);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_of_ts; i++){
-        printf("Denominator sum before: ");        fixedpt_print(denominator_sum);
+        //printf("Denominator sum before: ");        fixedpt_print(denominator_sum);
         if(ts_set[i].class == 0){
             temp_difference = measured_distances[i] - class_zero_avg;
         }
@@ -266,6 +265,8 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
+        //printf("temp dif: ");   fixedpt_print(temp_difference);
+        //printf("temp dif squared: "); fixedpt_print(fixedpt_pow2(temp_difference));
         denominator_sum += fixedpt_pow2(temp_difference);
         
     }
@@ -278,6 +279,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     f_stat = fixedpt_div(numerator_sum, fixedpt_div(denominator_sum, (fixedpt_fromint(num_of_ts) - FIXEDPT_TWO)));
     
     #endif
+    
     return f_stat;
 }
 
@@ -441,7 +443,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
                 
                 shapelet_candidate = init_shapelet(T[i].values, position, l);                                      // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
-                printf("(Pivot shapelet %d)\n", shapelets_index);
+                //printf("(Pivot shapelet %d)\n", shapelets_index);
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_of_ts; j++)
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
@@ -465,7 +467,8 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
         
-        // print_shapelets(k_shapelets, k);
+        printf("After merging\n");
+        print_shapelets(k_shapelets, k);
         free(ts_shapelets);
     }
     

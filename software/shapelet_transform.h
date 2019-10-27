@@ -13,7 +13,7 @@
 #include <assert.h>
 #include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-#define USE_FLOAT 1
+#define USE_FLOAT 0
 
 #if USE_FLOAT == 1
     typedef double numeric_type;

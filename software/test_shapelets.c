@@ -9,7 +9,7 @@
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
 // Free all double arrays from ts_array
-/*void read_wafer_train(Timeseries *ts_array, uint16_t length){
+void read_wafer_train(Timeseries *ts_array, uint16_t length){
     char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
@@ -17,7 +17,7 @@
     const uint16_t TS_BSIZE = 2000;
     char time_series_buffer[TS_BSIZE];
     // double ts_values[TS_LEN];
-    double *ts_values;
+    numeric_type *ts_values;
     
     // Reads csv file and keeps its address at file_descriptor
     file_descriptor = fopen(filename, "r");
@@ -36,7 +36,9 @@
             field = strtok(time_series_buffer, ",");
             //printf("TIME-SERIES %u\n %s\t",i, field);
             
-            ts_values = (double *) malloc (TS_LEN * sizeof(*ts_values));
+            ts_values = (numeric_type *) malloc (TS_LEN * sizeof(*ts_values));
+            
+            #if USE_FLOAT == 1
             ts_values[0] = atof(field);
             
             for(uint16_t j = 1; j < TS_LEN; j++){
@@ -44,6 +46,17 @@
                 //printf("%s\t", field);
                 ts_values[j] = atof(field);
             }
+            
+            #else
+            ts_values[0] = fixedpt_fromfloat(atof(field));
+            
+            for(uint16_t j = 1; j < TS_LEN; j++){
+                field = strtok(NULL, ",");
+                //printf("%s\t", field);
+                ts_values[j] = fixedpt_fromfloat(atof(field));
+            }
+            #endif    
+            
             field = strtok(NULL, ",");
             if (field == NULL){
                 perror("\nError in class field: ");
@@ -58,7 +71,7 @@
         }
     }
     
-}*/
+}
 
 
 int main(int argc, char *argv[]){
@@ -86,20 +99,28 @@ int main(int argc, char *argv[]){
     {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
     #endif
     
-    Timeseries T[4];
+    /*Timeseries T[4];
     T[0] = init_timeseries(time_series_values[0], 0, 4);
     T[1] = init_timeseries(time_series_values[1], 1, 4);
     T[2] = init_timeseries(time_series_values[2], 0, 4);
     T[3] = init_timeseries(time_series_values[3], 1, 4);
     k_best = shapelet_cached_selection(T, 4, 2, 3, k);
     print_shapelets(k_best, k);
-        
-    // Timeseries T[NUM_SERIES];
-    // read_wafer_train(T, NUM_SERIES);
-    // for(i = 0; i < NUM_SERIES; i++){
-        // printf("[ TS: %u] first: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
-    // } 
-    // k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
+    */
+    
+    Timeseries T[NUM_SERIES];
+    read_wafer_train(T, NUM_SERIES);
+    k = 10;
+    for(i = 0; i < NUM_SERIES; i++){
+        #if USE_FLOAT == 1
+        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+        #else
+        printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
+        fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
+        #endif
+    } //TS_LEN
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
+    
     
     /*
     double measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};

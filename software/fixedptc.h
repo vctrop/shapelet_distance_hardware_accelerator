@@ -95,7 +95,7 @@ typedef	__uint128_t fixedptud;
 #endif
 
 #ifndef FIXEDPT_WBITS
-#define FIXEDPT_WBITS	11
+#define FIXEDPT_WBITS	4
 #endif
 
 #if FIXEDPT_WBITS >= FIXEDPT_BITS
@@ -132,6 +132,8 @@ typedef	__uint128_t fixedptud;
  * (e.g. microcontrollers, kernels), so we can't use floating point types directly.
  * Putting them only in macros will effectively make them optional. */
 #define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)(1 << FIXEDPT_FBITS))))
+#define fixedpt_fromfloat(T) ((fixedpt) ((T)*((float) (1 << FIXEDPT_FBITS))))
+
 //#define fixedpt_tofloat(T) ((float) ((T)*((float)(1)/(float)((fixedpt)1 << FIXEDPT_FBITS))))
 
 
