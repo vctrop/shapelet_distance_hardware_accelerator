@@ -8,7 +8,7 @@
 
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
-// Free all double arrays from ts_array
+// Free all float arrays from ts_array
 void read_wafer_train(Timeseries *ts_array, uint16_t length){
     char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
@@ -16,7 +16,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
     uint8_t ts_class;
     const uint16_t TS_BSIZE = 2000;
     char time_series_buffer[TS_BSIZE];
-    // double ts_values[TS_LEN];
+    // float ts_values[TS_LEN];
     numeric_type *ts_values;
     
     // Reads csv file and keeps its address at file_descriptor
@@ -75,12 +75,12 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 
 
 int main(int argc, char *argv[]){
-    // double subsequence_2[] = {0.9, 2.0, 4.0};
-    // double subsequence_1[] = {1.0, 2.0, 2.0};
-    // double pivot_ts[] = {2.0, 0.0, 3.0};
-    // double target_ts[] = {2.0, 1.0, 3.0};
-    // double distance, *len_wise_distances;
-    // double *normalized_subseq;
+    // float subsequence_2[] = {0.9, 2.0, 4.0};
+    // float subsequence_1[] = {1.0, 2.0, 2.0};
+    // float pivot_ts[] = {2.0, 0.0, 3.0};
+    // float target_ts[] = {2.0, 1.0, 3.0};
+    // float distance, *len_wise_distances;
+    // float *normalized_subseq;
     // Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
     // Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
     // unsigned int j, num_shapelets, shapelet_size;
@@ -98,15 +98,17 @@ int main(int argc, char *argv[]){
     
     
     
-    /*Timeseries T[4];
+    Timeseries T[4];
     T[0] = init_timeseries(time_series_values[0], 0, 4);
     T[1] = init_timeseries(time_series_values[1], 1, 4);
     T[2] = init_timeseries(time_series_values[2], 0, 4);
     T[3] = init_timeseries(time_series_values[3], 1, 4);
-    k_best = shapelet_cached_selection(T, 4, 2, 3, k);
-    print_shapelets(k_best, k);
-    */
+    //k_best = shapelet_cached_selection(T, 4, 2, 3, k);
     
+    
+    /*
+    
+    // Real-life dataset
     Timeseries T[NUM_SERIES];
     
     /*
@@ -127,12 +129,11 @@ int main(int argc, char *argv[]){
     }
     k=10;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
-    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k, 4);
     
     
     /*
-    double measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
-    double fstat = bin_f_statistic(measured_dis, T, 4);
+    float measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
+    float fstat = bin_f_statistic(measured_dis, T, 4);
     printf("fstat: %g\n", fstat);
     */
     //shapelets_array_1 = shapelet_cached_selection(time_series, ts_class, 2, 4, 1, 2, 3);
@@ -141,7 +142,6 @@ int main(int argc, char *argv[]){
     // printf("Euclidean distance is %lf\n", distance);
     
     // Normalize subsequence
-    // normalized_subseq = normalize_shapelet(subsequence_1, 3);
     // for (i=0; i<3; i++)
         // printf("%f ", normalized_subseq[i]);
     // printf("\n");
@@ -151,10 +151,6 @@ int main(int argc, char *argv[]){
     // distance = shapelet_ts_distance(subsequence_1, 3, time_series, 4);
     // printf("Shapelet to TS distance = %.4lf\n", distance);
     
-    // Distances from all (m - l + 1) shapelets of length l in the pivot time-series to the target time-series
-    // len_wise_distances = length_wise_distances(pivot_ts, target_ts, 3, 2);
-    // for(i = 0; i < (3 - 2 + 1); i++)
-        // printf("%.5lf ", len_wise_distances[i]);
     // printf("\n");
     // free(len_wise_distances);
 

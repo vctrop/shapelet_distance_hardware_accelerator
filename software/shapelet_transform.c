@@ -44,7 +44,7 @@ void vector_normalization(numeric_type *values, uint16_t length){
     numeric_type squares_sum, absolute_value;
     
     squares_sum = 0;
-    #ifdef USE_FLOAT                                 // Floating point normalization
+    #ifdef USE_FLOAT                                  // Floating point normalization
     // Compute absolute value
     for (uint16_t i = 0; i < length; i++){
         squares_sum += pow(values[i], 2);
@@ -284,18 +284,18 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
 }
 
 // floating point F-Statistic based on distance measures and associated classes
-double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes){
-    double f_stat;
-    double total_dists_sum, total_dists_average, *class_dist_sums, *class_dist_averages;
-    double final_averages_sum, final_individual_sum;
-    double **distances_by_class;
+float f_statistic(float *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes){
+    float f_stat;
+    float total_dists_sum, total_dists_average, *class_dist_sums, *class_dist_averages;
+    float final_averages_sum, final_individual_sum;
+    float **distances_by_class;
     uint16_t *ts_per_class, *class_wise_counter;
     uint16_t i, j;
     uint8_t class;
     
     // Allocate memory for sums and averages
-    class_dist_sums =  safe_alloc(num_classes * sizeof(double));
-    class_dist_averages =  safe_alloc(num_classes * sizeof(double));
+    class_dist_sums =  safe_alloc(num_classes * sizeof(*class_dist_sums));
+    class_dist_averages =  safe_alloc(num_classes * sizeof(*class_dist_averages));
     
     // Allocate the number of members per class and class-wise counter
     ts_per_class = safe_alloc(num_classes * sizeof(uint16_t));
@@ -312,7 +312,7 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
         perror("Error, could not initiliaze class_wise_counter: ");
         exit(errno);
     }
-    if(!memset(class_dist_sums, 0, num_classes * sizeof(double)))
+    if(!memset(class_dist_sums, 0, num_classes * sizeof(*class_dist_sums)))
     {
         perror("Error, could not initiliaze class_dist_sums: ");
         exit(errno);
@@ -325,9 +325,9 @@ double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num
     }
     
     // Allocate the splitted distances by class
-    distances_by_class = safe_alloc(num_classes * sizeof(double*));
+    distances_by_class = safe_alloc(num_classes * sizeof(*distances_by_class));
     for (i = 0; i < num_classes; i++)
-        distances_by_class[i] = safe_alloc(ts_per_class[i] * sizeof(double));
+        distances_by_class[i] = safe_alloc(ts_per_class[i] * sizeof(**distances_by_class));
     
     total_dists_sum = 0.0;
     // Split distances by class and calculate sums

@@ -63,7 +63,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 numeric_type *length_wise_distances(numeric_type *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len);
 
 // F-Statistic based on distance measures and associated classes
-double f_statistic(double *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
+float f_statistic(float *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
 
 // Generic F-Statistic based on distance measures and associated binary classes
 numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_set, uint16_t num_of_ts);

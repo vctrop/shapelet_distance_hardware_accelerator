@@ -74,11 +74,13 @@
  * fix fixedpt_pow() for n = 0.
  * fixedpt_pow() accumulates error by calling multiple nested functions, implement more direct fixedpt_pow2()
  */ 
+ 
 #ifndef FIXEDPT_BITS
 #define FIXEDPT_BITS	32
 #endif
 
 #include <stdint.h>
+#include <stdio.h>
 
 #if FIXEDPT_BITS == 32
 typedef int32_t fixedpt;
@@ -95,7 +97,7 @@ typedef	__uint128_t fixedptud;
 #endif
 
 #ifndef FIXEDPT_WBITS
-#define FIXEDPT_WBITS	4
+#define FIXEDPT_WBITS	7
 #endif
 
 #if FIXEDPT_WBITS >= FIXEDPT_BITS
