@@ -2,8 +2,8 @@
 #include "shapelet_transform.h"
 #include <stdio.h>
 
-#define TS_LEN 152
-#define NUM_SERIES 1000
+#define TS_LEN 8
+#define NUM_SERIES 8
 
 
 
@@ -38,7 +38,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
             
             ts_values = (numeric_type *) malloc (TS_LEN * sizeof(*ts_values));
             
-            #if USE_FLOAT == 1
+            #ifdef USE_FLOAT
             ts_values[0] = atof(field);
             
             for(uint16_t j = 1; j < TS_LEN; j++){
@@ -84,20 +84,19 @@ int main(int argc, char *argv[]){
     // Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
     // Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
     // unsigned int j, num_shapelets, shapelet_size;
-    unsigned int i,  k=4;
-    Shapelet *k_best = malloc(k * sizeof(*k_best));
+    unsigned int i,  k;
     
-    printf("USE_FLOAT = %d\n", USE_FLOAT);
     
-    #if USE_FLOAT == 1
-    double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
-    #else
-    fixedpt time_series_values[][4] = 
+    double time_series_values[NUM_SERIES][TS_LEN] = {{2.0, 0.0, 3.0, 4.0, 7.1, 4.2, 4.8, 8.9}, {0.5, 3.5, 5.0, 3.0, 1.3, 2.5, 8.9, 8.5}, {5.0, 3.5, 5.0, 5.0, 5.6, 5.2, 6.2, 6.0}, {6.7, 2.2, 1.4, 4.1, 3.1, 2.3, 4.2, 4.4},
+                                                 {1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9}, {7.3, 7.2, 7.0, 6.9, 6.6, 6.3, 6.5, 5.3}, {2.3, 2.1, 2.0, 3.0, 4.0, 3.5, 3.3, 3.4}, {5.1, 5.6, 5.7, 5.1, 5.0, 4.2, 4.2, 0.0}};
+    
+    fixedpt time_series_values_fx[][4] = 
     {{fixedpt_rconst(2.0), fixedpt_rconst(0.0), fixedpt_rconst(3.0), fixedpt_rconst(4.0)},
     {fixedpt_rconst(0.5), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(3.0)},
     {fixedpt_rconst(5.0), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(5.0)},
     {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
-    #endif
+    
+    
     
     /*Timeseries T[4];
     T[0] = init_timeseries(time_series_values[0], 0, 4);
@@ -109,17 +108,26 @@ int main(int argc, char *argv[]){
     */
     
     Timeseries T[NUM_SERIES];
+    
+    /*
     read_wafer_train(T, NUM_SERIES);
     k = 10;
     for(i = 0; i < NUM_SERIES; i++){
-        #if USE_FLOAT == 1
+        #ifdef USE_FLOAT
         printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
         #else
         printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
         fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
         #endif
     } //TS_LEN
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
+    */
+    for(int i =0; i < NUM_SERIES; i++)
+    {
+        T[i] = init_timeseries(time_series_values[i], i%2, TS_LEN);
+    }
+    k=10;
+    Shapelet *k_best = malloc(k * sizeof(*k_best));
+    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k, 4);
     
     
     /*

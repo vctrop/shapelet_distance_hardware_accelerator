@@ -44,7 +44,7 @@ void vector_normalization(numeric_type *values, uint16_t length){
     numeric_type squares_sum, absolute_value;
     
     squares_sum = 0;
-    #if USE_FLOAT == 1                                  // Floating point normalization
+    #ifdef USE_FLOAT                                 // Floating point normalization
     // Compute absolute value
     for (uint16_t i = 0; i < length; i++){
         squares_sum += pow(values[i], 2);
@@ -87,7 +87,7 @@ void vector_normalization(numeric_type *values, uint16_t length){
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
     
-    #if USE_FLOAT == 1
+    #ifdef USE_FLOAT
     for (uint16_t i = 0; i < length; i++){
         //printf("Values %d\n", i);
         //printf("%g\n%g\n", pivot_values[i], target_values[i]);
@@ -116,7 +116,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     numeric_type *pivot_values, *target_values;   // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series
     //printf("Time series %p\n", time_series);
-    #if USE_FLOAT == 1
+    #ifdef USE_FLOAT
     minimum_distance = INFINITY;
     #else
     minimum_distance = MAX_FIXEDPT;
@@ -211,7 +211,7 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
         }
     }
 
-    #if USE_FLOAT == 1
+    #ifdef USE_FLOAT
     // Calculate average values for each class and for the entire distances array
     class_zero_avg = class_zero_sum/class_zero_ts_num;
     class_one_avg = class_one_sum/class_one_ts_num;
@@ -475,6 +475,160 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     return k_shapelets;
 }
 
+//thread specific global variables and structures:
+typedef struct{
+    Shapelet * ts_shapelets;
+    uint16_t *shapelets_index;
+    uint16_t num_of_ts;
+    Timeseries * T; //pointer to  timeseries array
+    uint16_t i;     // current timeseries index
+    pthread_mutex_t * mutex;
+    uint16_t max;
+    uint16_t min;
+    uint32_t thread_id;
+} Thread_args;  // thread containing the argument for each thread function
+
+
+static void *task_shapelet_candidates(void * arg)
+{
+    uint32_t num_shapelets; //number of shapelets of lenght l 
+    Shapelet shapelet_candidate;
+    numeric_type *shapelet_distances;
+    // arguments passed via structure
+    Shapelet * ts_shapelets = ((Thread_args *) arg)->ts_shapelets;
+    uint16_t *shapelets_index = ((Thread_args *) arg)->shapelets_index;
+    uint16_t num_of_ts = ((Thread_args *) arg)->num_of_ts;
+    Timeseries *T = ((Thread_args *) arg)->T;
+    uint16_t i = ((Thread_args *) arg)->i;
+    uint32_t thread_id = ((Thread_args *) arg)->thread_id;
+    pthread_mutex_t * mutex = ((Thread_args *) arg)->mutex;
+    uint16_t max = ((Thread_args *) arg)->max;
+    uint16_t min = ((Thread_args *) arg)->min;
+
+    printf("Starting thread %d!\nnum_ts: %d, i: %d, max: %d, min: %d\n", thread_id, num_of_ts, i, max, min);
+    // For each length between min and max
+    for (int l = min; l <= max; l++){ 
+        num_shapelets = T->length - l + 1;    
+        printf("%d=num_shapelets: %d, l: %d\n", thread_id, num_shapelets, l);
+        // For each shapelet of the given length
+        for (int position = 0; position < num_shapelets; position++){
+            shapelet_candidate = init_shapelet(T[i].values, position, l);         // Assemble each shapelet on the fly, instead of keeping them in a matrix
+            shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
+            //printf("(Pivot shapelet %d)\n", shapelets_index);
+            // Calculate distances from current shapelet candidate to each time series in T, 
+            for (int j = 0; j < num_of_ts; j++)
+                shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
+
+            // F-Statistic as shapelet quality measure
+            shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_of_ts);
+            
+            //printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
+            free(shapelet_distances);   //shapelet_distances is only used to measure quality
+            // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
+            pthread_mutex_lock(mutex);
+                ts_shapelets[*shapelets_index] = shapelet_candidate;    //ts_shapelts and index are shared between threads
+                *shapelets_index++;
+            pthread_mutex_unlock(mutex);
+        }
+    }     
+    pthread_exit(NULL);    
+}
+
+
+//implements shapelet_cached_selection using multiple threads
+Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, const uint16_t min, const uint16_t max, uint16_t k, const uint16_t num_threads){
+    uint16_t i, l, shapelets_index;
+    uint32_t total_num_shapelets; //total number of shapelets of a given timeseries length from given min and max shapelet lenght parameters
+    uint32_t num_merged_shapelets; //total number of shapelets to be merged after removing self similars
+    Shapelet *k_shapelets, *ts_shapelets;
+
+    // thread spefic variables:
+    pthread_t * const threads = safe_alloc(num_threads * sizeof(*threads));
+    Thread_args * const args = safe_alloc(num_threads * sizeof(*args));
+    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; // mutex to controll shared resources (shapelet_index)
+
+    //checks to assert if the parameters are valid
+    if (min > max){
+        printf("Min greater than max");
+        exit(-1);
+    }
+
+    if(num_threads <= 0)
+    {
+        printf("Number of threads must be greater than zero!\n");
+    }
+
+    if(num_of_ts <= 2)
+    {
+        printf("Number of time series must be greater than 2!");
+        exit(-1);
+    }
+
+    k_shapelets = safe_alloc(k*sizeof(*k_shapelets));
+    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)
+    {
+        printf("Error on memset k_shapelets\n");
+        exit(-1);
+    }
+
+    // total number of shapelets in each T[i] 
+    total_num_shapelets = (min-max-1) * (max + min - 2*T->length - 2)/(2);
+    printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
+    
+    // For each time-series T[i] in T
+    for (i = 0; i < num_of_ts; i++){
+        ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
+        shapelets_index = 0;
+        printf("[TS %u]\n", i);
+        //printf("Shapelet #\tquality\n");
+        // For each length between min and max
+        for (l = 0; l <= num_threads && l <= max - min; l++){
+            //set arguments for each running thread
+            args[l].ts_shapelets = ts_shapelets;
+            args[l].shapelets_index = &shapelets_index;
+            args[l].num_of_ts = num_of_ts;
+            args[l].T = T;
+            args[l].i = i;
+            args[l].mutex = &mutex;
+            args[l].max =  min + (l+1)*(max-min)/num_threads;
+            //alocate a thread for each l from min to max
+            if(l == 0){
+                args[l].min = min + l*(max-min)/num_threads;
+            }
+            else{
+                args[l].min = min + l*(max-min)/num_threads + 1;
+            }
+            args[l].thread_id = l;
+
+            printf("Creating thread %d with min: %d max: %d\n", l, args[l].min, args[l].max);
+
+            if( pthread_create(&threads[l], NULL, task_shapelet_candidates, (void *) &args[l]) )
+            {
+                perror("Error creating thread\n");
+                exit(errno);
+            }
+        }  // Here all shapelets from T[i] should have been stored along with its quality measures in ts_shapelets                                                             
+        
+        //join all executing threads
+        for(int k = 0; k < num_threads; k++)
+            pthread_join(threads[i], NULL);
+        // Sort shapelets by quality
+        qsort(ts_shapelets, (size_t) total_num_shapelets, sizeof(*ts_shapelets), compare_shapelets);
+        // Remove self similar shapelets
+        num_merged_shapelets = total_num_shapelets;
+        ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
+        // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
+        merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
+        
+        printf("After merging\n");
+        print_shapelets(k_shapelets, k);
+        free(ts_shapelets);
+    }
+    free(threads);
+    free(args);
+    return k_shapelets;
+}
+
 
 // Returns 1 if compared shapelets are self similar, 0 otherwise
 static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
@@ -573,7 +727,7 @@ static inline numeric_type get_value(Shapelet *s, uint16_t j){
 void print_shapelets(Shapelet * S, size_t num_shapelets){
     for(int i=0; i < num_shapelets; i++)
     {   
-        #if USE_FLOAT == 1
+        #ifdef USE_FLOAT 
         printf("%dth Shapelet has length: %d, quality: %g \nValues from timseries %p:\t", i, S[i].length, S[i].quality, S[i].Ti); 
         for(int j = 0; j < S[i].length; j++)
             printf("%g ", get_value(&S[i], j));

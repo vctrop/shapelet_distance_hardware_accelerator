@@ -11,11 +11,12 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <pthread.h>                        // multi thread implementation
 #include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-#define USE_FLOAT 0
+//#define USE_FLOAT 0
 
-#if USE_FLOAT == 1
+#ifdef USE_FLOAT
     typedef double numeric_type;
 #else
     #define MAX_FIXEDPT 0x7fffff00
@@ -71,6 +72,11 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
 // Given a set T of time series attatched to labels, extract shapelets exhaustively from min to max lengths, keeping only the k best shapelets according to some criteria 
 // (FREE RETURNED SHAPELET SET AFTER USAGE)
 Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t min, uint16_t max, uint16_t k);
+
+//implements shapelet_cached_selection with multiple threads
+// the number of threads is the maximum threads that may be created 
+// however, if min + max < num_threads, fewer threads than expected will be used
+Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, const uint16_t min, const uint16_t max, uint16_t k, const uint16_t num_threads);
 
 // Remove self similar shapelets (shapelets with overlapping indices)
 Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
