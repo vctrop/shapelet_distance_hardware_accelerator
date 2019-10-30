@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -lm -Wall -pthread -O2  -DUSE_FLOAT#-g #add -g for debugging
+CFLAGS= -lm -Wall -pthread -O2 -DUSE_FLOAT -g #add -g for debugging
 OBJS= shapelet_transform.o test_shapelets.o
 
 all: test_shapelets.elf 

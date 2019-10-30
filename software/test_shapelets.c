@@ -2,8 +2,8 @@
 #include "shapelet_transform.h"
 #include <stdio.h>
 
-#define TS_LEN 8
-#define NUM_SERIES 8
+#define TS_LEN 152
+#define NUM_SERIES 1000
 
 
 
@@ -98,20 +98,14 @@ int main(int argc, char *argv[]){
     
     
     
-    Timeseries T[4];
-    T[0] = init_timeseries(time_series_values[0], 0, 4);
-    T[1] = init_timeseries(time_series_values[1], 1, 4);
-    T[2] = init_timeseries(time_series_values[2], 0, 4);
-    T[3] = init_timeseries(time_series_values[3], 1, 4);
-    //k_best = shapelet_cached_selection(T, 4, 2, 3, k);
     
     
-    /*
+
     
     // Real-life dataset
     Timeseries T[NUM_SERIES];
     
-    /*
+    
     read_wafer_train(T, NUM_SERIES);
     k = 10;
     for(i = 0; i < NUM_SERIES; i++){
@@ -121,16 +115,27 @@ int main(int argc, char *argv[]){
         printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
         fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
         #endif
-    } //TS_LEN
-    */
+    } 
+    
+    /*   
+    Timeseries T[NUM_SERIES];
     for(int i =0; i < NUM_SERIES; i++)
     {
         T[i] = init_timeseries(time_series_values[i], i%2, TS_LEN);
-    }
+        printf("[TS %d]:\t", i);
+        for(int j = 0; j < TS_LEN; j++)
+        {
+            printf("%g ", T[i].values[j]);
+        }
+        printf("\n");
+    }*/
+
     k=10;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
-    
-    
+
+    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 30, k, 27);
+
+    free(k_best);
     /*
     float measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
     float fstat = bin_f_statistic(measured_dis, T, 4);
