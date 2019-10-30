@@ -8,7 +8,7 @@
 
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
-// Free all double arrays from ts_array
+// Free all float arrays from ts_array
 void read_wafer_train(Timeseries *ts_array, uint16_t length){
     char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
@@ -16,7 +16,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
     uint8_t ts_class;
     const uint16_t TS_BSIZE = 2000;
     char time_series_buffer[TS_BSIZE];
-    // double ts_values[TS_LEN];
+    // float ts_values[TS_LEN];
     numeric_type *ts_values;
     
     // Reads csv file and keeps its address at file_descriptor
@@ -38,7 +38,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
             
             ts_values = (numeric_type *) malloc (TS_LEN * sizeof(*ts_values));
             
-            #if USE_FLOAT == 1
+            #ifdef USE_FLOAT
             ts_values[0] = atof(field);
             
             for(uint16_t j = 1; j < TS_LEN; j++){
@@ -75,22 +75,31 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 
 
 int main(int argc, char *argv[]){
-    // double subsequence_2[] = {0.9, 2.0, 4.0};
-    // double subsequence_1[] = {1.0, 2.0, 2.0};
-    // double pivot_ts[] = {2.0, 0.0, 3.0};
-    // double target_ts[] = {2.0, 1.0, 3.0};
-    // double distance, *len_wise_distances;
-    // double *normalized_subseq;
+    // float subsequence_2[] = {0.9, 2.0, 4.0};
+    // float subsequence_1[] = {1.0, 2.0, 2.0};
+    // float pivot_ts[] = {2.0, 0.0, 3.0};
+    // float target_ts[] = {2.0, 1.0, 3.0};
+    // float distance, *len_wise_distances;
+    // float *normalized_subseq;
     // Shapelet *shapelets_array_1 = malloc(k * sizeof(Shapelet));
     // Shapelet *shapelets_array_2 =  malloc(k*2 * sizeof(Shapelet));
     // unsigned int j, num_shapelets, shapelet_size;
-    unsigned int i,  k=4;
-    Shapelet *k_best = malloc(k * sizeof(*k_best));
+    unsigned int k;
+    Shapelet *k_best;
     
-    printf("USE_FLOAT = %d\n", USE_FLOAT);
+    #ifdef USE_FLOAT
+    printf("Using floating point\n");
+    #else
+    printf("Using fixed point\n");
+    #endif
     
-    #if USE_FLOAT == 1
-    double time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
+    
+    // Small synthetic dataset
+    k = 4;
+    k_best = malloc(k * sizeof(*k_best));
+    
+    #ifdef USE_FLOAT
+    float time_series_values[][4] = {{2.0, 0.0, 3.0, 4.0}, { 0.5, 3.5, 5.0, 3.0}, {5.0, 3.5, 5.0, 5.0}, {6.7, 2.2, 1.4, 4.1}};
     #else
     fixedpt time_series_values[][4] = 
     {{fixedpt_rconst(2.0), fixedpt_rconst(0.0), fixedpt_rconst(3.0), fixedpt_rconst(4.0)},
@@ -99,20 +108,23 @@ int main(int argc, char *argv[]){
     {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
     #endif
     
-    /*Timeseries T[4];
+    Timeseries T[4];
     T[0] = init_timeseries(time_series_values[0], 0, 4);
     T[1] = init_timeseries(time_series_values[1], 1, 4);
     T[2] = init_timeseries(time_series_values[2], 0, 4);
     T[3] = init_timeseries(time_series_values[3], 1, 4);
     k_best = shapelet_cached_selection(T, 4, 2, 3, k);
-    print_shapelets(k_best, k);
-    */
     
+    
+    /*
+    
+    // Real-life dataset
     Timeseries T[NUM_SERIES];
     read_wafer_train(T, NUM_SERIES);
     k = 10;
-    for(i = 0; i < NUM_SERIES; i++){
-        #if USE_FLOAT == 1
+    k_best = malloc(k * sizeof(*k_best));
+    for(uint16_t i = 0; i < NUM_SERIES; i++){
+        #ifdef USE_FLOAT
         printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
         #else
         printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
@@ -120,11 +132,11 @@ int main(int argc, char *argv[]){
         #endif
     } //TS_LEN
     k_best = shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k);
-    
+    */
     
     /*
-    double measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
-    double fstat = bin_f_statistic(measured_dis, T, 4);
+    float measured_dis[] = {0, 0.285014, 0.361536, 0.0998164};
+    float fstat = bin_f_statistic(measured_dis, T, 4);
     printf("fstat: %g\n", fstat);
     */
     //shapelets_array_1 = shapelet_cached_selection(time_series, ts_class, 2, 4, 1, 2, 3);
