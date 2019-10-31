@@ -130,10 +130,10 @@ int main(int argc, char *argv[]){
         printf("\n");
     }*/
 
-    k=10;
+    k=50;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 30, k, 27);
+    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k, 38);
 
     free(k_best);
     /*

@@ -23,15 +23,6 @@
     typedef fixedpt numeric_type;
 #endif
 
-//Shapelet structure
-typedef struct 
-{
-    uint16_t length;                    // Number of points contained in the shapelet
-    uint16_t start_position;            // Index position on timeseries window
-    numeric_type quality;               // Quality measure value
-    numeric_type *Ti;                   // Timeseries window pointer
-} Shapelet;
-
 
 //time series structure
 typedef struct{
@@ -40,6 +31,16 @@ typedef struct{
     uint16_t length;                    // Number of points in time series
 } Timeseries;
 
+//Shapelet structure
+typedef struct 
+{
+    uint16_t length;                    // Number of points contained in the shapelet
+    numeric_type quality;               // Quality measure value
+    Timeseries *Ti;                     // Timeseries from which the shapelet was extracted
+    uint16_t start_position;            // Index position on timeseries window
+    
+    //numeric_type *Ti;                   // Timeseries values window pointer
+} Shapelet;
 
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size);
@@ -48,7 +49,7 @@ void *safe_alloc(size_t size);
 Timeseries init_timeseries(numeric_type * values, uint8_t class, uint16_t length);
 
 // Returns a new shapelet of a given size in a given time-series position
-Shapelet init_shapelet(numeric_type *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
+Shapelet init_shapelet(Timeseries *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
 
 // Generic vector normalization
 void vector_normalization(numeric_type *values, uint16_t length);
@@ -60,10 +61,10 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
 numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series);
 
 // [HARDWARE-friendly, reducing memory transfer] Distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
-numeric_type *length_wise_distances(numeric_type *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len);
+//numeric_type *length_wise_distances(Timeseries *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len);
 
 // F-Statistic based on distance measures and associated classes
-float f_statistic(float *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
+//float f_statistic(float *measured_distances, uint8_t *ts_classes, uint16_t num_of_ts, uint8_t num_classes);
 
 // Generic F-Statistic based on distance measures and associated binary classes
 numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_set, uint16_t num_of_ts);
@@ -85,6 +86,6 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets);
 
 // Print all shapelets in a shapelet array
-void print_shapelets(Shapelet * S, size_t num_shapelets);
+void print_shapelets(Shapelet * S, size_t num_shapelets, Timeseries *T);
 
 #endif
