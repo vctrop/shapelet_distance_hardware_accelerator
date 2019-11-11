@@ -6,16 +6,11 @@ use ieee.std_logic_misc.all;
 use work.fpupack.all;
 use work.comppack.all;
 
+-- floating point division in 7 cycles after start signal falls (if the start signal remains HIGH, the division will not start)
 entity fp_div is
     port (
         clk_i 			: in std_logic;
         start_i         : in std_logic;
-
-        -- opeartion:
-        -- ==========
-        -- 0 = add,
-        -- 1 = sub
-        op_type         : in std_logic;
 
         -- Input Operands A & B
         opa_i        	: in std_logic_vector(31 downto 0); 
@@ -91,7 +86,6 @@ begin
 			 output_o => s_output_o,
              ine_o => post_norm_div_ine);
              
-	output_o <= s_output_o;
         -- Generate Exceptions 
 	underflow_o <= '1' when s_output_o(30 downto 23)="00000000" and post_norm_div_ine='1' else '0'; 
 	overflow_o <= '1' when s_output_o(30 downto 23)="11111111" and post_norm_div_ine='1' else '0';
@@ -100,7 +94,9 @@ begin
 	s_qnan_o <= '1' when s_output_o(30 downto 0)=QNAN else '0';
     s_snan_o <= '1' when opa_i(30 downto 0)=SNAN or opb_i(30 downto 0)=SNAN else '0';
 
-    qnan_o <= s_qnan_o;
-    snan_o <= s_snan_o;
-
+	--outputs
+	qnan_o <= s_qnan_o;
+	snan_o <= s_snan_o;
+	ine_o <= post_norm_div_ine;
+	output_o <= s_output_o;
 end architecture;

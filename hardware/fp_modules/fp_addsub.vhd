@@ -6,6 +6,8 @@ use ieee.std_logic_misc.all;
 use work.fpupack.all;
 use work.comppack.all;
 
+-- floating point addition / subtraction in 6 clock cycles
+
 entity fp_addsub is
     port (
         clk_i 			: in std_logic;
@@ -84,7 +86,6 @@ begin
             ine_o => postnorm_addsub_ine_o
             );
     
-	output_o <= s_output_o;
     -- Generate Exceptions 
 	underflow_o <= '1' when s_output_o(30 downto 23)="00000000" and postnorm_addsub_ine_o='1' else '0'; 
 	overflow_o <= '1' when s_output_o(30 downto 23)="11111111" and postnorm_addsub_ine_o='1' else '0';
@@ -93,7 +94,9 @@ begin
 	s_qnan_o <= '1' when s_output_o(30 downto 0)=QNAN else '0';
     s_snan_o <= '1' when opa_i(30 downto 0)=SNAN or opb_i(30 downto 0)=SNAN else '0';
 
+    --outputs
     qnan_o <= s_qnan_o;
     snan_o <= s_snan_o;
-
+    ine_o <= postnorm_addsub_ine_o;
+	output_o <= s_output_o;
 end architecture;
