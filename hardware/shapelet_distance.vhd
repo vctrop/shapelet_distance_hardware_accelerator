@@ -30,12 +30,14 @@ entity shapelet_distance is
         distance_o : out std_logic_vector(31 downto 0);
         
         -- Ready flag for operation completion
-        ready_o : out std_logic;
+        ready_o : out std_logic
     );
 end shapelet_distance;
 
-architecture rtl of shapelet_distance is
-    -- Define shapelet buffer and buffer fsm states
+architecture behavioral of shapelet_distance is
+
+    ---- SHAPELET BUFFERING DEFINITIONS 
+    -- Define shapelet buffer and buffer fsm state types 
     type shapelet_buffer_t is array (0 to MAX_LEN - 1) of std_logic_vector(31 downto 0);
     type buffer_state_t is (Sbegin, Srst_pivot, Srst_target, Sfill_pivot, Sfill_target, Send);
     
@@ -47,13 +49,13 @@ architecture rtl of shapelet_distance is
     signal counter : natural range 0 to MAX_LEN;
     
     -- Buffer ready flag (driver is FILL_BUFFER)
-    signal buffer_ready            : std_logic;
+    signal buffer_ready         : std_logic;
     
-    -- Buffer FSM state
+    -- Buffer FSM state (driver is FILL_BUFFER)
     signal buffer_state         : buffer_state_t;
     
     -- Buffer start signal (driver is XXX_PROCESS)
-    signal buffer_start            : std_logic;
+    signal buffer_start         : std_logic;
     
     -- Buffer filling command (driver is XXX_PROCESS)
     -- "00": fill none
@@ -61,13 +63,26 @@ architecture rtl of shapelet_distance is
     -- "10": fill target
     signal fill_cmd             : std_logic_vector(2 downto 0);
     
+    
+    ---- SHAPELET NORMALIZATION DEFINITIONS
+    -- Define normalization fsm state type
+    type norm_state_t is (Sbegin);
+    
+    -- Normalization fsm state (driver is NORMALIZE_SHAPELET)
+    signal norm_state           : norm_state_t;
+    
+    -- Normalization start flag (driver is (XXX_PROCESS)
+    signal norm_start           : std_logic;
+    
+    ---- SHAPELET DISTANCE DEFINITIONS
+    
     -- Shapelet length register, ranging from 3 to MAX_LEN (driver is XXX_PROCESS)
     signal shapelet_length      : natural range 3 to MAX_LEN;
     
 begin
 
     -- Process to fill pivot and target buffers
-    FILL_BUFFER: process(clk, rst_n, fill_cmd)
+    FILL_BUFFER: process(clk, rst_n, buffer_start, fill_cmd)
     begin
         if rising_edge(clk) then
             if rst_n = '0' then
@@ -112,7 +127,7 @@ begin
                         end if;
                     
                     -- Fill target shapelet
-                    when Starget =>
+                    when Sfill_target =>
                         target_shapelet(count) <= data_in;
                         count <= count + 1;
                         
@@ -131,9 +146,21 @@ begin
         end if;
     end process;
     
+    -- Process to normalize pivot and target shapelets
+    NORMALIZE_SHAPELET: process(clk, rst_n, norm_start)
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                norm_state <= Sbegin;
+            else
+                
+                
+            end if;
+        end if;
+    
+    end process;
     
     
     
     
-    
-end rtl;
+end behavioral;
