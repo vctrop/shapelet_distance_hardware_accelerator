@@ -6,6 +6,7 @@ use ieee.std_logic_misc.all;
 use work.fpupack.all;
 use work.comppack.all;
 
+-- floating point sqrt takes 31 cycles to complete
 entity fp_sqrt is
     port (
         clk_i 			: in std_logic;

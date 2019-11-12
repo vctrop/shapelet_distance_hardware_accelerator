@@ -146,7 +146,7 @@ architecture sqrt of tb_fp_modules is
     constant clk_period : time := 2* clk_half_period;
 begin
     clk <= not clk after clk_half_period;
-    start <= '1', '0' after 2*clk_period;
+    
 
     DUV: entity work.fp_sqrt
         port map (
@@ -171,7 +171,66 @@ begin
 
     process
     begin
-        opa <= x"40800000";
+        start <= '1';
+        opa <= x"40800000"; --4
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"41800000"; --16
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"420e0000"; --35.5
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"bf800000"; -- (-1)
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"40551eb8"; -- 3.33
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"49742400"; -- 1000000
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"49742416"; -- 1000001.4
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"411547ae"; -- 9.33
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+ 
+        start <= '1';
+        opa <= x"41840000"; -- 16.5
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+
+        start <= '1';
+        opa <= x"41bd47ae"; -- 16.5
+        wait for clk_period;
+        start <= '0';
+        wait for 35*clk_period;
+        
         wait;
     end process;
 end architecture sqrt;

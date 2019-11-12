@@ -81,7 +81,7 @@ signal s_state : t_state;
 signal b, b_2, r0, r0_2, r1, r1_2 : std_logic_vector(RD_WIDTH-1 downto 0);
 signal c : std_logic_vector(WIDTH_C-1 downto 0);
 
-	signal s_op1, s_op2, s_sum1a, s_sum1b, s_sum2a, s_sum2b : std_logic_vector(RD_WIDTH-1 downto 0);
+signal s_op1, s_op2, s_sum1a, s_sum1b, s_sum2a, s_sum2b : std_logic_vector(RD_WIDTH-1 downto 0);
 	
 begin
 
