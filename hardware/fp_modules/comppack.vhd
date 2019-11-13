@@ -57,17 +57,17 @@ package comppack is
 	--***Add/Substract units***
 	
 	component pre_norm_addsub is
-	port(clk_i 			: in std_logic;
-			 opa_i			: in std_logic_vector(31 downto 0);
-			 opb_i			: in std_logic_vector(31 downto 0);
+	port(clk_i 			        : in std_logic;
+                                : in std_logic_vector(31 downto 0);
+			 opb_i			    : in std_logic_vector(31 downto 0);
 			 fracta_28_o		: out std_logic_vector(27 downto 0);	-- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
 			 fractb_28_o		: out std_logic_vector(27 downto 0);
-			 exp_o			: out std_logic_vector(7 downto 0));
+			 exp_o			    : out std_logic_vector(7 downto 0));
 	end component;
 	
 	component addsub_28 is
-	port(clk_i 			  : in std_logic;
-			 fpu_op_i		   : in std_logic;
+	port(clk_i 			        : in std_logic;
+			 fpu_op_i		    : in std_logic;
 			 fracta_i			: in std_logic_vector(27 downto 0); -- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
 			 fractb_i			: in std_logic_vector(27 downto 0);
 			 signa_i 			: in std_logic;
@@ -77,12 +77,12 @@ package comppack is
 	end component;
 	
 	component post_norm_addsub is
-	port(clk_i 				: in std_logic;
+	port(clk_i 				    : in std_logic;
 			 opa_i 				: in std_logic_vector(31 downto 0);
 			 opb_i 				: in std_logic_vector(31 downto 0);
-			 fract_28_i		: in std_logic_vector(27 downto 0);	-- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
-			 exp_i			  : in std_logic_vector(7 downto 0);
-			 sign_i			  : in std_logic;
+			 fract_28_i		    : in std_logic_vector(27 downto 0);	-- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
+			 exp_i			    : in std_logic_vector(7 downto 0);
+			 sign_i			    : in std_logic;
 			 fpu_op_i			: in std_logic;
 			 rmode_i			: in std_logic_vector(1 downto 0);
 			 output_o			: out std_logic_vector(31 downto 0);
@@ -94,9 +94,9 @@ package comppack is
 	
 	component pre_norm_mul is
 	port(
-			 clk_i		  : in std_logic;
-			 opa_i			: in std_logic_vector(31 downto 0);
-			 opb_i			: in std_logic_vector(31 downto 0);
+			 clk_i		        : in std_logic;
+			 opa_i			    : in std_logic_vector(31 downto 0);
+			 opb_i			    : in std_logic_vector(31 downto 0);
 			 exp_10_o			: out std_logic_vector(9 downto 0);
 			 fracta_24_o		: out std_logic_vector(23 downto 0);	-- hidden(1) & fraction(23)
 			 fractb_24_o		: out std_logic_vector(23 downto 0)
@@ -105,7 +105,7 @@ package comppack is
 	
 	component mul_24 is
 	port(
-			 clk_i 			  : in std_logic;
+			 clk_i 			    : in std_logic;
 			 fracta_i			: in std_logic_vector(23 downto 0); -- hidden(1) & fraction(23)
 			 fractb_i			: in std_logic_vector(23 downto 0);
 			 signa_i 			: in std_logic;
@@ -133,13 +133,13 @@ package comppack is
 	
 	component post_norm_mul is
 	port(
-			 clk_i		  		: in std_logic;
+			 clk_i		  		    : in std_logic;
 			 opa_i					: in std_logic_vector(31 downto 0);
 			 opb_i					: in std_logic_vector(31 downto 0);
-			 exp_10_i			: in std_logic_vector(9 downto 0);
-			 fract_48_i		: in std_logic_vector(47 downto 0);	-- hidden(1) & fraction(23)
+			 exp_10_i			    : in std_logic_vector(9 downto 0);
+			 fract_48_i		        : in std_logic_vector(47 downto 0);	-- hidden(1) & fraction(23)
 			 sign_i					: in std_logic;
-			 rmode_i			: in std_logic_vector(1 downto 0);
+			 rmode_i			    : in std_logic_vector(1 downto 0);
 			 output_o				: out std_logic_vector(31 downto 0);
 			 ine_o					: out std_logic
 		);
@@ -185,7 +185,7 @@ package comppack is
 			 sign_i				: in std_logic;
 			 rmode_i			: in std_logic_vector(1 downto 0);
 			 output_o			: out std_logic_vector(FP_WIDTH-1 downto 0);
-			 ine_o				: out std_logic
+                ine_o				: out std_logic
 		);
 	end component;	
 	
@@ -194,8 +194,8 @@ package comppack is
 	
 	component pre_norm_sqrt is
 		port(
-			 clk_i		  : in std_logic;
-			 opa_i			: in std_logic_vector(31 downto 0);
+			 clk_i		        : in std_logic;
+			 opa_i			    : in std_logic_vector(31 downto 0);
 			 fracta_52_o		: out std_logic_vector(51 downto 0);
 			 exp_o				: out std_logic_vector(7 downto 0));
 	end component;
@@ -203,25 +203,125 @@ package comppack is
 	component sqrt is
 		generic	(RD_WIDTH: integer; SQ_WIDTH: integer); -- SQ_WIDTH = RD_WIDTH/2 (+ 1 if odd)
 		port(
-			 clk_i 			 : in std_logic;
-			 rad_i			: in std_logic_vector(RD_WIDTH-1 downto 0); -- hidden(1) & fraction(23)
+			 clk_i 			    : in std_logic;
+			 rad_i			    : in std_logic_vector(RD_WIDTH-1 downto 0); -- hidden(1) & fraction(23)
 			 start_i			: in std_logic;
 			 ready_o			: out std_logic;
-			 sqr_o			: out std_logic_vector(SQ_WIDTH-1 downto 0);
-			 ine_o			: out std_logic);
+			 sqr_o			    : out std_logic_vector(SQ_WIDTH-1 downto 0);
+			 ine_o			    : out std_logic);
 	end component;
 	
 	
 	component post_norm_sqrt is
 	port(	 clk_i		  		: in std_logic;
-			 opa_i					: in std_logic_vector(31 downto 0);
-			 fract_26_i		: in std_logic_vector(25 downto 0);	-- hidden(1) & fraction(11)
+			 opa_i				: in std_logic_vector(31 downto 0);
+			 fract_26_i		    : in std_logic_vector(25 downto 0);	-- hidden(1) & fraction(11)
 			 exp_i				: in std_logic_vector(7 downto 0);
 			 ine_i				: in std_logic;
 			 rmode_i			: in std_logic_vector(1 downto 0);
-			 output_o				: out std_logic_vector(31 downto 0);
-			 ine_o					: out std_logic);
+			 output_o			: out std_logic_vector(31 downto 0);
+			 ine_o				: out std_logic);
 	end component;
 	
+    
+    component fp_addsub is
+    port (
+        clk_i 			: in std_logic;
+
+        -- opeartion:
+        -- ==========
+        -- 0 = add,
+        -- 1 = sub
+        op_type         : in std_logic;
+
+        -- Input Operands A & B
+        opa_i        	: in std_logic_vector(31 downto 0); 
+        opb_i           : in std_logic_vector(31 downto 0);
+        
+        -- Output port
+        output_o        : out std_logic_vector(31 downto 0);
+        
+        -- Exceptions
+        ine_o 			: out std_logic; -- inexact
+        overflow_o  	: out std_logic; -- overflow
+        underflow_o 	: out std_logic; -- underflow
+        inf_o			: out std_logic; -- infinity
+        zero_o			: out std_logic; -- zero
+        qnan_o			: out std_logic; -- queit Not-a-Number
+        snan_o			: out std_logic -- signaling Not-a-Number
+	);   
+    end component;
+    
+    
+    component fp_mul is
+    port (
+        clk_i 			: in std_logic;
+        start_i         : in std_logic;
+
+        -- Input Operands A & B
+        opa_i        	: in std_logic_vector(31 downto 0); 
+        opb_i           : in std_logic_vector(31 downto 0);
+        
+        -- Output port
+        output_o        : out std_logic_vector(31 downto 0);
+        
+        -- Exceptions
+        ine_o 			: out std_logic; -- inexact
+        overflow_o  	: out std_logic; -- overflow
+        underflow_o 	: out std_logic; -- underflow
+        inf_o			: out std_logic; -- infinity
+        zero_o			: out std_logic; -- zero
+        qnan_o			: out std_logic; -- queit Not-a-Number
+        snan_o			: out std_logic -- signaling Not-a-Number
+	);   
+    end component;
 		
+    
+    component fp_div is
+    port (
+        clk_i 			: in std_logic;
+        start_i         : in std_logic;
+
+        -- Input Operands A & B
+        opa_i        	: in std_logic_vector(31 downto 0); 
+        opb_i           : in std_logic_vector(31 downto 0);
+        
+        -- Output port
+        output_o        : out std_logic_vector(31 downto 0);
+        
+        -- Exceptions
+        ine_o 			: out std_logic; -- inexact
+        overflow_o  	: out std_logic; -- overflow
+        underflow_o 	: out std_logic; -- underflow
+        div_zero_o      : out std_logic; -- division by zero
+        inf_o			: out std_logic; -- infinity
+        zero_o			: out std_logic; -- zero
+        qnan_o			: out std_logic; -- queit Not-a-Number
+        snan_o			: out std_logic -- signaling Not-a-Number
+	);   
+    end component;
+    
+    component fp_sqrt is
+    port (
+        clk_i 			: in std_logic;
+        start_i         : in std_logic;
+
+        -- Input Operands A & B
+        opa_i        	: in std_logic_vector(31 downto 0);
+        
+        -- Output port
+        output_o        : out std_logic_vector(31 downto 0);
+        
+        -- Exceptions
+        ine_o 			: out std_logic; -- inexact
+        overflow_o  	: out std_logic; -- overflow
+        underflow_o 	: out std_logic; -- underflow
+        inf_o			: out std_logic; -- infinity
+        zero_o			: out std_logic; -- zero
+        qnan_o			: out std_logic; -- queit Not-a-Number
+        snan_o			: out std_logic -- signaling Not-a-Number
+	);   
+    end component;
+        
+        
 end comppack;
