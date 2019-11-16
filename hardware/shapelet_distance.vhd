@@ -10,28 +10,28 @@ entity shapelet_distance is
     generic(
         -- Number of processig units (each PU is composed of square, accumulate, sub and div)
         NUM_PU: natural := 2;
-        -- Maximum shapelet length (must be multiple of 
-        MAX_LEN: natural 
+        -- Maximum shapelet length (must be multiple of NUM_PU)
+        MAX_LEN: natural := 12
     );
     port (
         clk     : in std_logic;
         rst_n   : in std_logic;
         
         -- Operation
-        -- "00": change length
-        -- "01": change pivot shapelet and normalize it
-        -- "10": change target shapelet and compute distance
-        op_i   : in std_logic_vector(1 downto 0);
+        -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
+        -- '1': change target shapelet and compute distance
+        op_i   : in std_logic;
         
-        -- Data input can be:
-        -- Unsigned int shapelet length
-        -- Single precision float shapelet datapoint
-        -- ? data_io : inout std_logic_vector(31 downto 0);
+        -- Data input is a single precision float shapelet datapoint
         data_i : in std_logic_vector(31 downto 0);
-        distance_o : out std_logic_vector(31 downto 0);
-        
+        length_i : in natural range 0 to MAX_LEN-1;
+
+        -- begins opeartions
+        start_i : in std_logic;        
         -- Ready flag for operation completion
         ready_o : out std_logic
+        --distance result
+        distance_o : out std_logic_vector(31 downto 0);
     );
 end shapelet_distance;
 
@@ -87,8 +87,7 @@ architecture behavioral of shapelet_distance is
     
     
     ---- FLOATING POINT OPERATORS
-    -- PU's single bit flags and single precision floating point array types 
-    type pu_flags_t                                     is array (0 to NUM_PU - 1) of std_logic;    
+    -- PU's single precision floating point array types   
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
     
     -- Array of accumulator registers (combinational)
@@ -96,17 +95,16 @@ architecture behavioral of shapelet_distance is
     signal accumulators_en_s                            : std_logic;
     
     -- addition/subtraction signals
-    signal add_or_sub_s                                 : pu_flags_t;   -- 0: add, 1: sub
+    signal add_or_sub_s                                 : std_logic;   -- 0: add, 1: sub
     signal addsub_opa_s                                 : pu_operands_t;
     signal addsub_opb_s                                 : pu_operands_t;
     signal addsub_out_s                                 : pu_operands_t;
     -- multiplication signals                          
-    signal mul_start_s                                  : pu_flags_t;
-    signal mul_opa_s                                    : pu_operands_t;
-    signal mul_opb_s                                    : pu_operands_t;
+    signal mul_start_s                                  : std_logic;
+    signal mul_operator_s                               : pu_operands_t;
     signal mul_out_s                                    : pu_operands_t;
     -- division signals                                
-    signal div_start_s                                  : pu_flags_t;
+    signal div_start_s                                  : std_logic;
     signal div_opa_s                                    : pu_operands_t;
     signal div_opb_s                                    : pu_operands_t;
     signal div_out_s                                    : pu_operands_t;
@@ -188,7 +186,7 @@ begin
                         buffer_pivot_s(reg_buf_counter_s) <= data_i;
                         reg_buf_counter_s <= reg_buf_counter_inc_s;
                         
-                        -- Stay until len(buffer) = reg_shapelet_length_s
+                        -- reapeat until len(buffer) = reg_shapelet_length_s
                         if reg_buf_counter_s = dec_length_s then
                             reg_buf_state_s <= Send;
                         else
@@ -200,7 +198,7 @@ begin
                         buffer_target_s(reg_buf_counter_s) <= data_i;
                         reg_buf_counter_s <= reg_buf_counter_inc_s;
                         
-                        -- Stay until len(buffer) = reg_shapelet_length_s
+                        -- repeat until len(buffer) = reg_shapelet_length_s
                         if reg_buf_counter_s = dec_length_s then
                             reg_buf_state_s <= Send;
                         else
@@ -222,7 +220,16 @@ begin
     -- Selects which shapelet is presented to the MUX
     input_buffer_s <=   buffer_pivot_s  when shapelet_sel_s = '0' else
                         buffer_target_s;
-    --
+
+    -- GENERATE MUX inputs
+    -- transform the linear input_buffer vector into a NUM_PE x LEN_MAX/NUM_PE matrix
+    -- each LINE of the matrix represents all elements of the input_buffer that will be input into a mux
+    -- at each input of the processing elements. 
+    -- for NUM_PE=2 and LEN_MAX=8 we have a buff(7 downto 0)
+    -- the matrix will be as follows:
+    -- ||       col(0)  col(1)  col(2)  col(3)
+    -- line(0)  buff(0) buff(2) buff(4) buff(6)             <-- these will form the inputs of mux(0)
+    -- line(1)  buff(1) buff(3) buff(5) buff(7)             <-- these will form the inputs of mux(1)
     OUTER: for i in NUM_PU - 1 downto 0 generate
         -- 
         INNER: for j in (LEN_MAX/NUM_PU - 1) downto 0 generate
@@ -245,22 +252,53 @@ begin
                 reg_block_sel_s <= reg_block_sel_s + 1;
             end if;
     end process;
-    -- 
-    MUX: for i in NUM_PU - 1 downto 0 generate
+    
+    -- GENERATE NUM_PE muxes that will be the data inputs for each processing unit
+    -- each mux formed by the LINES of the matrix. Each line containts 
+    -- all the elements that will be processed by that unit.
+    -- The sel signal is shared by all muxes created, so that
+    -- each processing unit will recieve the signal 0 to LEN_MAX/NUM_PE
+    -- for NUM_PE=2 and LEN_MAX=8 we have the following matrix
+    -- ||       col(0)  col(1)  col(2)  col(3)
+    -- line(0)  buff(0) buff(2) buff(4) buff(6)        <-- PE(0)
+    -- line(1)  buff(1) buff(3) buff(5) buff(7)        <-- PE(1)
+    --          ^       ^
+    --          |       |
+    --          sel=0   sel=1
+    -- when sel=1, processing unit 0 will receive buff(2) and processing unit 1 will recieve buff(3)
+    MUXES: for i in NUM_PU - 1 downto 0 generate
         shapelet_elements_mux_s(i) <= output_matrix_s(i)(reg_block_sel_s);
-    end generate MUX;
+    end generate MUXES;
     
     
     ---- PROCESSING UNITS
     accumulators_en_s  <= '1' when reg_norm_state_s = Sacc else '0';
+
+    -- Addsub
+    -- add_or_sub_s selcts if a addition='0' or subtraction='1' will be computed
+    add_or_sub_s <=  '0' when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else '1';
+    addsub_opa_s <=  reg_accumulators_s    when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else 
+                        div_out_s;
+    addsub_opb_s <=  mul_out_s            when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else
+                        input_buffer_s;
+
+    -- Normalization output is division output
+    norm_out_s <= div_out_s;
+
+    -- Multiplier 
+    mul_start_s <= '0'  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin else '1';
+    -- Square shapelet elements in normalization and the difference in euclidean distance calculation
+    -- the multiplier unit always computes A*A (A^2)
+    mul_operator_s <= shapelet_elements_mux_s  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin    else addsub_out_s;
     
+    -- Divider
+    div_start_s  <= '0' when reg_norm_state_s = Sdiv and reg_buf_state_s = Sbegin;
+    div_opa_s    <= shapelet_elements_mux_s;
+    --operand b always recieves the signal sqrt_out_s!
+
     -- Generate processing units (adder/subtractor, multiplier, divider, square root)
     PROCESSING_UNITS: for i in 0 to NUM_PU - 1 generate
-    
-    
-        -- Normalization output is division output
-        norm_out_s(i) <= div_out_s(i);
-    
+
         -- Accumulator registers
         acc_regs: process(clk, rst_n, accumulators_en_s)
         begin
@@ -273,20 +311,13 @@ begin
                     end if;
                 end if;
         end process;
-        
-        
-         -- Addsub 
-        add_or_sub_s(i) <=  '0'                      when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else '1';
-        addsub_opa_s(i) <=  reg_accumulators_s(i)    when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else 
-                            div_out_s;
-        addsub_opb_s(i) <=  mul_out_s(i)             when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else
-                            input_buffer_s;
-                            
+    
+        -- Used in accumulator operation and subtraction during distance calculation
         -- ADDSUB computes in 6 cycles
         addsub: fp_addsub
         port map(
             clk_i 			=> clk,      
-            op_type         => add_or_sub_s(i),                    -- 0 = add, 1 = sub
+            op_type         => add_or_sub_s,                    -- 0 = add, 1 = sub
             opa_i        	=> addsub_opa_s(i),
             opb_i           => addsub_opb_s(i),
             output_o        => addsub_out_s(i),
@@ -300,19 +331,13 @@ begin
             snan_o			=> open                 -- signaling Not-a-Number
         );
         
-        -- Multiplier 
-        mul_start_s(i) <= '0'                       when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin    else '1';
-        -- Square shapelet elements in normalization and the difference in euclidean distance calculation
-        mul_opa_s(i) <= shapelet_elements_mux_s(i)  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin    else addsub_out_s(i);
-        mul_opb_s(i) <= shapelet_elements_mux_s(i)  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin    else addsub_out_s(i);
-        
         -- MUL computes in 11 cycles
         mul: fp_mul
         port map(
             clk_i 			=> clk,
-            start_i         => mul_start_s(i),
-            opa_i        	=> mul_opa_s(i),                    -- Input Operands A & B
-            opb_i           => mul_opb_s(i),
+            start_i         => mul_start_s,
+            opa_i        	=> mul_operator_s(i),                    -- Input Operands A & B
+            opb_i           => mul_operator_s(i),
             output_o        => mul_out_s(i),
             -- Exceptions
             ine_o 			=> open,                -- inexact
@@ -324,18 +349,13 @@ begin
             snan_o			=> open                 -- signaling Not-a-Number
         );
         
-        -- Divisor 
-        div_start_s(i)  <= '0'                          when reg_norm_state_s = Sdiv and reg_buf_state_s = Sbegin;
-        div_opa_s(i)    <= shapelet_elements_mux_s(i);
-        div_opb_s(i)    <= sqrt_out_s;
-        
         -- Div computes in 33 cycles (says fpu code)
         div: fp_div
         port map(
             clk_i 			=> clk,
-            start_i         => div_start_s(i),
+            start_i         => div_start_s,
             opa_i        	=> div_opa_s(i),                    -- Input Operands A & B
-            opb_i           => div_opb_s(i),
+            opb_i           => sqrt_out_s,
             output_o        => div_out_s(i),
             
             -- Exceptions
@@ -378,7 +398,7 @@ begin
     sqrt_op <= acc_sum_out_s;
     sqrt_start_s <= '0' when reg_norm_state_s = Ssqrt and reg_buf_state_s = Sbegin else '1';
     
-    -- Sqrt computes in 33 cycles (outside for .. generate)
+    -- Sqrt computes in 33 cycles
     sqrt: fp_sqrt
     port map(
         clk_i 			=> clk,
@@ -416,7 +436,6 @@ begin
                         end if;
                         
                     when Ssquare =>
-                        
                         
                         if mul_ready_s = '1' then -- instantiate
                             reg_norm_state_s <= Ssum;
