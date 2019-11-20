@@ -57,8 +57,9 @@ package comppack is
 	--***Add/Substract units***
 	
 	component pre_norm_addsub is
-	port(clk_i 			        : in std_logic;
-                                : in std_logic_vector(31 downto 0);
+	port(
+			 clk_i 			        : in std_logic;
+             opa_i              : in std_logic_vector(31 downto 0);
 			 opb_i			    : in std_logic_vector(31 downto 0);
 			 fracta_28_o		: out std_logic_vector(27 downto 0);	-- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
 			 fractb_28_o		: out std_logic_vector(27 downto 0);
@@ -73,11 +74,13 @@ package comppack is
 			 signa_i 			: in std_logic;
 			 signb_i 			: in std_logic;
 			 fract_o			: out std_logic_vector(27 downto 0);
-			 sign_o 			: out std_logic);
+			 sign_o 			: out std_logic
+		);
 	end component;
 	
 	component post_norm_addsub is
-	port(clk_i 				    : in std_logic;
+	port(
+			 clk_i 				    : in std_logic;
 			 opa_i 				: in std_logic_vector(31 downto 0);
 			 opb_i 				: in std_logic_vector(31 downto 0);
 			 fract_28_i		    : in std_logic_vector(27 downto 0);	-- carry(1) & hidden(1) & fraction(23) & guard(1) & round(1) & sticky(1)
@@ -114,7 +117,7 @@ package comppack is
 			 fract_o			: out std_logic_vector(47 downto 0);
 			 sign_o 			: out std_logic;
 			 ready_o			: out std_logic
-			 );
+		);
 	end component;
 	
 	component serial_mul is
@@ -128,7 +131,7 @@ package comppack is
 			 fract_o			: out std_logic_vector(2*FRAC_WIDTH+1 downto 0);
 			 sign_o 			: out std_logic;
 			 ready_o			: out std_logic
-			 );
+		);
 	end component;
 	
 	component post_norm_mul is
@@ -171,7 +174,7 @@ package comppack is
 			 rmndr_o			: out std_logic_vector(FRAC_WIDTH+3 downto 0);
 			 sign_o 			: out std_logic;
 			 div_zero_o			: out std_logic
-			 );
+		);
 	end component;	
 	
 	component post_norm_div is
@@ -185,7 +188,7 @@ package comppack is
 			 sign_i				: in std_logic;
 			 rmode_i			: in std_logic_vector(1 downto 0);
 			 output_o			: out std_logic_vector(FP_WIDTH-1 downto 0);
-                ine_o				: out std_logic
+             ine_o				: out std_logic
 		);
 	end component;	
 	
@@ -208,12 +211,14 @@ package comppack is
 			 start_i			: in std_logic;
 			 ready_o			: out std_logic;
 			 sqr_o			    : out std_logic_vector(SQ_WIDTH-1 downto 0);
-			 ine_o			    : out std_logic);
+			 ine_o			    : out std_logic
+		);
 	end component;
 	
 	
 	component post_norm_sqrt is
-	port(	 clk_i		  		: in std_logic;
+	port(	 
+			 clk_i		  		: in std_logic;
 			 opa_i				: in std_logic_vector(31 downto 0);
 			 fract_26_i		    : in std_logic_vector(25 downto 0);	-- hidden(1) & fraction(11)
 			 exp_i				: in std_logic_vector(7 downto 0);
