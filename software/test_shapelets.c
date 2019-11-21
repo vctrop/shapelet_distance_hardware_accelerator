@@ -96,10 +96,6 @@ int main(int argc, char *argv[]){
     {fixedpt_rconst(5.0), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(5.0)},
     {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
     
-    
-    
-    
-    
 
     
     // Real-life dataset
@@ -107,15 +103,14 @@ int main(int argc, char *argv[]){
     
     
     read_wafer_train(T, NUM_SERIES);
-    k = 10;
-    for(i = 0; i < NUM_SERIES; i++){
-        #ifdef USE_FLOAT
-        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
-        #else
-        printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
-        fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
-        #endif
-    } 
+    // for(i = 0; i < NUM_SERIES; i++){
+        // #ifdef USE_FLOAT
+        // printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+        // #else
+        // printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
+        // fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
+        // #endif
+    // } 
     
     /*   
     Timeseries T[NUM_SERIES];
@@ -133,7 +128,8 @@ int main(int argc, char *argv[]){
     k=50;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, TS_LEN, k, 38);
+    //k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 10, k, 38);
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 10, k);
 
     free(k_best);
     /*
