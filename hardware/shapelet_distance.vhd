@@ -1,7 +1,8 @@
 library IEEE;
-use IEEE.numeric_std.all
+use IEEE.numeric_std.all;
 use ieee.std_logic_1164.all;
 
+use work.comppack.all;
 -- 
 -- 
 -- 
@@ -15,7 +16,7 @@ entity shapelet_distance is
     );
     port (
         clk         : in std_logic;
-        rst_n       : in std_logic;
+        rst         : in std_logic;
         
         -- Operation
         -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
@@ -29,9 +30,9 @@ entity shapelet_distance is
         -- begins opeartions
         start_i     : in std_logic;        
         -- Ready flag for operation completion
-        ready_o     : out std_logic
+        ready_o     : out std_logic;
         --distance result
-        distance_o  : out std_logic_vector(31 downto 0);
+        distance_o  : out std_logic_vector(31 downto 0)
     );
 end shapelet_distance;
 
@@ -43,6 +44,9 @@ architecture behavioral of shapelet_distance is
     -- Register to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
    
+    -- Register to keep output result
+    signal reg_output_s                                 : std_logic_vector(31 downto 0);
+
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (Sbegin, Sset_len, Sbuf_rst, Sbuf_load,
                                                             Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_acc_clear, Snorm_div, 
@@ -56,22 +60,24 @@ architecture behavioral of shapelet_distance is
     signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
     -- Operation counter and its incremented by NUM_PU version
     signal reg_acc_counter_s                            : natural range 0 to MAX_LEN;
-    
+    signal inc_acc_counter_s                            : natural range 0 to MAX_LEN;
     ---- SHAPELET BUFFERING DEFINITIONS 
     -- Define shapelet buffer and buffer fsm state types 
     type shapelet_buffer_t                              is array (0 to MAX_LEN - 1) of std_logic_vector(31 downto 0);
-    --type buffer_state_t                                 is (Sbegin, Srst_pivot, Srst_target, Sfill_pivot, Sfill_target, Send);
-    -- Shapelet buffers (drivers are their separate processes)
+    -- Defines the en signal for each element of pivot buffer
+    type pivot_en_t                                           is array (0 to MAX_LEN - 1) of std_logic;
+
+    -- Shapelet pivot buffer
     signal buffer_pivot_s                               : shapelet_buffer_t;
-    signal buffer_target_s                              : shapelet_buffer_t;
-    -- Buffers write signals
-    signal pivot_buf_wr_s                               : std_logic;
-    signal target_buf_wr_s                              : std_logic;    
-    -- Buffer reset signals
     signal pivot_buf_rst_s                              : std_logic;
-    signal target_buf_rst_s                             : std_logic;
-    
-   
+    signal en_pivot_load_s                              : pivot_en_t; --pivot enable for each element of pivot_buffer_s when loading elements from data_i
+    signal en_pivot_wb_s                                : pivot_en_t; --pivot enable for each element of pivot_buffer_s when writting back PU's results
+    signal pivot_input_s                                : shapelet_buffer_t;  -- mux that selects between data_i and PU's outputs
+    -- Shapelet target buffer
+    signal buffer_target_s                              : shapelet_buffer_t;
+    signal target_buf_wr_s                              : std_logic;   
+    signal target_buf_rst_s                             : std_logic; 
+
     ---- FLOATING POINT OPERATORS
     -- PU's single precision floating point array types   
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
@@ -110,89 +116,65 @@ architecture behavioral of shapelet_distance is
     
     -- sqrt signals                                     
     signal sqrt_start_s                                 : std_logic;
-    signal sqrt_opa_s                                   : std_logic_vector(31 downto 0);
-    signal sqrt_opb_s                                   : std_logic_vector(31 downto 0);
+    signal sqrt_op_s                                    : std_logic_vector(31 downto 0);
     signal sqrt_out_s                                   : std_logic_vector(31 downto 0);
     
     ---- SHAPELETS POSITIONS MUX
     --
-    type positions_by_pu_t                              is array(0 to LEN_MAX/NUM_PU-1)  of std_logic_vector(31 downto 0);
+    type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU-1)  of std_logic_vector(31 downto 0);
     -- 
     type pu_matrix_t                                    is array(0 to NUM_PU-1)         of positions_by_pu_t;
     
     -- Input buffer may be either pivot or target shapelets
     signal input_buffer_s                               : shapelet_buffer_t;
-    -- Register to count how many blocks of shapelet positions were already presented to the PUs, acting as a MUX selector for the shapelet . (reg_norm_count_s is an absolute element count)
-    signal reg_block_sel_s                              : natural range 0 to LEN_MAX/NUM_PU;
+    -- Register to count how many blocks of shapelet positions were already presented to the PUs, acting as a MUX selector for the shapelet . (reg_acc_count_s is an absolute element count)
+    signal reg_block_sel_s                              : natural range 0 to MAX_LEN/NUM_PU-1;
     signal block_sel_rst_s                              : std_logic;
     signal block_sel_inc_s                              : std_logic;
     -- Matrix with processing units as rows and shapelet positions for each PU as columns
-    signal output_matrix_s                              : pu_matrix_t;
+    signal matrix_representation_s                              : pu_matrix_t;
     -- The shapelet positions presented to each of the NUM_PU processing elements
     signal shapelet_elements_mux_s                      : pu_operands_t;
     
 begin
-    -- Decrement reg_shapelet_length_s
-    -- dec_length_s <= reg_shapelet_length_s - 1;
-    
-    -- buffer_pivot_in_s() <= data_i when reg_buf_state_s = Sfill_pivot else
-                        -- ; -- when reg_norm_state_s = 
-                        
-    -- ---- REGISTER ARRAYS DEFINITION
-    -- -- PIVOT DRIVER
-    
-    -- pivot_buf_wr_s <= '1' when ? else '0';
-    
-    -- PIVOT_BUFFER: process(clk) 
-    -- begin
-        -- if rising_edge(clk) then
-            -- if rst_n = '0' or pivot_buf_rst_s = '1' then
-                -- buffer_pivot_s <= (others => (others => '0'));
-            -- else
-                -- if pivot_buf_rst_s = '1' then
-                    -- buffer_pivot_s <= (others => (others => '0'));
-                
-                -- elsif pivot_buf_wr_s = '1' then
-                    -- buffer_pivot_s() <= buffer_pivot_in_s();
-                
-                -- end if;
-            -- end if;
-        -- end if;
-    -- end process;
-    
-    
-    -- PIVOT BUFFER DRIVER
-    -- TODO: coerência com o código
-    -- pivot é reescrito em reg_state_s = Swb_pivot
-    ADDS: for i in input_buffer'range generate 
-        wr_buf(i) <= '1' when address = i and fromMEM = '1' else '0';
+    -- PIVOT BUFFER 
+    -- enables writing to pivot buffer when loading values from data_i
+    ADDS: for i in buffer_pivot_s'range generate 
+        en_pivot_load_s(i) <= '1' when reg_buf_counter_s = i and reg_state_s = Sbuf_load else '0';
     end generate;
 
-    GEN_INPUT_BUFFER: for i in input_buffer'range generate
+    -- 
+    GEN_WB_INPUT_J: for j in 0 to MAX_LEN/NUM_PU-1 generate
+        GEN_WB_INPUT_I: for i in 0 to NUM_PU-1 generate
+            -- enables writing to corresponding pivot buffer elements when writing back after normalization
+            en_pivot_wb_s(i + j*NUM_PU) <= '1' when reg_block_sel_s = j and reg_state_s = Swb_pivot else '0'; 
+            -- selects if the pivot buffer will receive data from data_i or data from PU's
+            pivot_input_s(i + j*NUM_PU) <= data_i when reg_state_s = Sbuf_load else div_out_s(i);
+        end generate;
+    end generate;
+
+    -- the pivot buffer receives data from PU's or data_i
+    -- the elements that will be loaded from data_i are enabled by en_pivot_load_s
+    -- the elements that will be written back are enabled by en_pivot_wb_s
+    GEN_PIVOT_BUFFER: for i in buffer_pivot_s'range generate
         process(clk)
         begin 
             if rising_edge(clk) then
-                if rst = '1' then
-                    input_buffer(i) <= (others => '0');
-                elsif buff_en(i) = '1' or wr_buf(i) = '1' then
-                    input_buffer(i) <= wb_input(i);
+                if rst = '0' or pivot_buf_rst_s = '1' then
+                    buffer_pivot_s(i) <= (others => '0');
+                elsif en_pivot_load_s(i) = '1' or en_pivot_wb_s(i) = '1' then
+                    buffer_pivot_s(i) <= pivot_input_s(i);
                 end if;
             end if;
         end process;
     end generate;
     
-    GEN_WB_INPUT_J: for j in 0 to LEN_MAX/NUM_PE-1 generate
-        GEN_WB_INPUT_I: for i in 0 to NUM_PE-1 generate
-            buff_en(i + j*NUM_PE) <= '1' when sel = j and wb_i = '1' else '0'; 
-            wb_input(i + j*NUM_PE) <= data_i when fromMEM = '1' else output_mux(i);
-        end generate;
-    end generate;
     
-    -- TARGET BUFFER DRIVER
+    -- TARGET BUFFER
     TARGET_BUFFER: process(clk) 
     begin
         if rising_edge(clk) then
-            if rst_n = '0' or target_buf_rst_s = '1' then
+            if rst = '0' or target_buf_rst_s = '1' then
                 buffer_target_s <= (others => (others => '0'));
             else
                 if target_buf_rst_s = '1' then
@@ -205,20 +187,16 @@ begin
     end process;
     
     
-     -- Decrement reg_shapelet_length_s
-    dec_length_s <= reg_shapelet_length_s - 1;
-    
     inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
     -- Buffers control signals
     pivot_buf_rst_s     <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '0' else '0';
     target_buf_rst_s    <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '1' else '0';
-    pivot_buf_wr_s      <= '1' when (reg_state_s = Sbuf_load or reg_state_s = Sout_distance) and reg_op_s = '0' else '0';
     target_buf_wr_s     <= '1' when reg_state_s = Sbuf_load             and reg_op_s = '1' else '0';
     
     CONTROL_FSM: process(clk)
     begin
     if rising_edge(clk) then
-        if rst_n = '0' then
+        if rst = '0' then
             reg_state_s <= Sbegin;
             
         else
@@ -264,7 +242,7 @@ begin
                     -- Next state
                     -- Is multiplication ready?
                     if fp_ready_s = '1' then                
-                        reg_norm_state_s <= Snorm_sum_acc;
+                        reg_state_s <= Snorm_sum_acc;
                     end if;
                 
                 when Snorm_sum_acc  =>  
@@ -303,7 +281,7 @@ begin
                     
                     -- Next state
                     -- Is division ready?
-                    if fp_ready_s '1' then
+                    if fp_ready_s = '1' then
                         -- Operating with pivot shapelet
                         if reg_op_s = '0' then
                             reg_state_s <= Swb_pivot;
@@ -364,10 +342,8 @@ begin
                 
             end case;
         end if;
-        
+    end if;    
     end process;
-    
-    
     
     -- ACCUMMULATOR DRIVER
     accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_acc_clear    else '0';
@@ -376,15 +352,15 @@ begin
     acc_regs: process(clk)
     begin
         if rising_edge(clk) then
-            if rst_n = '0' or accumulators_rst_s = '1' then
+            if rst = '0' or accumulators_rst_s = '1' then
                 reg_accumulators_s <= (others => (others => '0'));
             else
                 if accumulators_wr_s = '1' then
                     reg_accumulators_s <= addsub_out_s;
                 end if;
             end if;
+        end if;
     end process;
-    
     
     ---- MUX to present shapelet positions to the right Processing Units
     -- Selects which shapelet is presented to the MUX
@@ -392,21 +368,21 @@ begin
                         buffer_target_s;
 
     -- GENERATE MUX inputs
-    -- transform the linear input_buffer vector into a NUM_PE x LEN_MAX/NUM_PE matrix
+    -- transform the linear input_buffer vector into a NUM_PU x MAX_LEN/NUM_PU matrix
     -- each LINE of the matrix represents all elements of the input_buffer that will be input into a mux
     -- at each input of the processing elements. 
-    -- for NUM_PE=2 and LEN_MAX=8 we have a buff(7 downto 0)
+    -- for NUM_PU=2 and MAX_LEN=8 we have a buff(7 downto 0)
     -- the matrix will be as follows:
     -- ||       col(0)  col(1)  col(2)  col(3)
     -- line(0)  buff(0) buff(2) buff(4) buff(6)             <-- these will form the inputs of mux(0)
     -- line(1)  buff(1) buff(3) buff(5) buff(7)             <-- these will form the inputs of mux(1)
     OUTER: for i in NUM_PU - 1 downto 0 generate
-        INNER: for j in (LEN_MAX/NUM_PU - 1) downto 0 generate
-            output_matrix_s(i)(j) <= input_buffer_s(i + j*NUM_PU);
+        INNER: for j in (MAX_LEN/NUM_PU - 1) downto 0 generate
+            matrix_representation_s(i)(j) <= input_buffer_s(i + j*NUM_PU);
         end generate INNER;
     end generate OUTER;
     
-    -- Mux selector is a counter of how many blocks were processed to the moment (designed as a separate process so it can be set both in normalization and euclidean distance, do the same with reg_norm_count_s and reg_dist_count_s)
+    -- Mux selector is a counter of how many blocks were processed to the moment 
     block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_sqrt                                 else '0';
     block_sel_inc_s <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Swb_pivot or reg_state_s = Sdist_reg_acc   else '0';
     
@@ -415,26 +391,27 @@ begin
         if rising_edge(clk) then
             if block_sel_rst_s = '1' then
                 reg_block_sel_s <= 0;
-            else if block_sel_inc_s = '1' then
+            elsif block_sel_inc_s = '1' then
                 reg_block_sel_s <= reg_block_sel_s + 1;
             end if;
+        end if;
     end process;
     
-    -- GENERATE NUM_PE muxes that will be the data inputs for each processing unit
+    -- GENERATE NUM_PU muxes that will be the data inputs for each processing unit
     -- each mux formed by the LINES of the matrix. Each line containts 
     -- all the elements that will be processed by that unit.
     -- The sel signal is shared by all muxes created, so that
-    -- each processing unit will recieve the signal 0 to LEN_MAX/NUM_PE
-    -- for NUM_PE=2 and LEN_MAX=8 we have the following matrix
+    -- each processing unit will recieve the signal 0 to MAX_LEN/NUM_PU
+    -- for NUM_PU=2 and MAX_LEN=8 we have the following matrix
     -- ||       col(0)  col(1)  col(2)  col(3)
     -- line(0)  buff(0) buff(2) buff(4) buff(6)        <-- PE(0)
     -- line(1)  buff(1) buff(3) buff(5) buff(7)        <-- PE(1)
     --          ^       ^
     --          |       |
     --          sel=0   sel=1
-    -- when sel=1, processing unit 0 will receive buff(2) and processing unit 1 will recieve buff(3)
+    -- eg. when sel=1, processing unit 0 will receive buff(2) and processing unit 1 will recieve buff(3)
     MUXES: for i in NUM_PU - 1 downto 0 generate
-        shapelet_elements_mux_s(i) <= output_matrix_s(i)(reg_block_sel_s);
+        shapelet_elements_mux_s(i) <= matrix_representation_s(i)(reg_block_sel_s);
     end generate MUXES;
     
     
@@ -444,11 +421,8 @@ begin
     add_or_sub_s    <=  '1'                     when reg_state_s = Sdist_sub    else '0';
     addsub_opa_s    <=  div_out_s               when reg_state_s = Sdist_sub    else 
                         reg_accumulators_s; 
-    addsub_opb_s    <=  input_buffer_s          when reg_state_s = Sdist_sub    else
+    addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Sdist_sub    else
                         mul_out_s;
-
-    -- Normalization output is division output
-    norm_out_s      <=  div_out_s;
 
     -- Multiplier 
     mul_start_s     <= '0'                      when reg_state_s = Snorm_square or reg_state_s = Sdist_square   else '1';
@@ -469,18 +443,18 @@ begin
                         "01" when reg_state_s = Snorm_div   or reg_state_s = Snorm_sqrt else        -- Division and square root
                         "10"; -- when reg_state_s = Snorm_square or reg_state_s = Sdist_square      -- Multiplication
     
-    cycle_counter: cycle_counter
-    port map(
+    cycle_counter: entity work.cycle_counter
+    port map(   
         clk     => clk,
-        rst     => not rst_n;
+        rst     => rst,
         -- mode defines the number of cycles to count down
         -- 00 = 6   ( add / sub)
         -- 01 = 33  ( division or sqrt)
         -- 10 = 11  ( multiplication )
         -- 11 = 0     
-        mode_i  => counter_mode_s;
+        mode_i  => counter_mode_s,
 
-        start_i => counter_start_s   -- start countdown
+        start_i => counter_start_s,   -- start countdown
         ready_o => fp_ready_s  -- ready signal indicating cycle_counter has finished counting. Active for 1 clock cycle
     
     );
@@ -543,7 +517,7 @@ begin
             qnan_o			 => open,                       -- queit Not-a-Number
             snan_o			 => open                        -- signaling Not-a-Number
         );
-    end generate PROC_ELEMENTS; 
+    end generate PROCESSING_UNITS; 
     
     
     -- FUTURE: ADDER TREE
@@ -570,7 +544,7 @@ begin
     );
     
     -- Single SQRT unit
-    sqrt_op <= acc_sum_out_s;
+    sqrt_op_s <= acc_sum_out_s;
     sqrt_start_s <= '0'         when reg_state_s = Snorm_sqrt   else '1';
     
     -- Sqrt computes in 33 cycles
@@ -578,7 +552,7 @@ begin
     port map(
         clk_i 			=> clk,
         start_i         => sqrt_start_s,
-        opa_i        	=> sqrt_op,
+        opa_i        	=> sqrt_op_s,
         output_o        => sqrt_out_s,
         -- Exceptions
         ine_o 			=> open,                            -- inexact

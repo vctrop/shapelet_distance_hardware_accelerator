@@ -26,7 +26,7 @@ architecture countdown of cycle_counter is
     constant mode_00 : std_logic_vector(5 downto 0) := "000110";  -- 6
     constant mode_01 : std_logic_vector(5 downto 0) := "100001"; -- 33
     constant mode_10 : std_logic_vector(5 downto 0) := "001011"; -- 11
-    constant mode_11 : std_logic_vector(5 downto 0) := "000000"; -- 31
+    constant mode_11 : std_logic_vector(5 downto 0) := "000000"; -- 
     signal reg_count_value_s, new_count_value_s : std_logic_vector(5 downto 0);        -- maximun counter value is 33
 
 begin
