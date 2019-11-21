@@ -36,82 +36,107 @@ entity shapelet_distance is
 end shapelet_distance;
 
 architecture behavioral of shapelet_distance is
-
+    
+    -- Flip-flop to keep the desired operation constant during the entire processing
+    signal reg_op_s                                     : std_logic;
+    
+    -- Register to keep the shapelet length
+    signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
+   
+    -- Shapelet distance FSM states definition
+    type fsm_state_t                                    is (Sbegin, Sset_len, Sbuf_rst, Sbuf_load,
+                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_div, 
+                                                            Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
+                                                            Swb_pivot, Sout_distance);
+    -- Register to keep FSM state
+    signal reg_state_s                              : fsm_state_t;
+    
+     
+    -- Buffer filling counter and its incremented by 1 version
+    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
+    -- Operation counter and its incremented by NUM_PU version
+    signal reg_acc_counter_s                            : natural range 0 to MAX_LEN;
+    
     ---- SHAPELET BUFFERING DEFINITIONS 
     -- Define shapelet buffer and buffer fsm state types 
     type shapelet_buffer_t                              is array (0 to MAX_LEN - 1) of std_logic_vector(31 downto 0);
-    type buffer_state_t                                 is (Sbegin, Srst_pivot, Srst_target, Sfill_pivot, Sfill_target, Send);
+    --type buffer_state_t                                 is (Sbegin, Srst_pivot, Srst_target, Sfill_pivot, Sfill_target, Send);
     -- Shapelet buffers (drivers are their separate processes)
     signal buffer_pivot_s                               : shapelet_buffer_t;
     signal buffer_target_s                              : shapelet_buffer_t;
-    -- Buffers enable signals
-    signal pivot_buf_wr_s                                 : std_logic;
-    signal target_buf_wr_s                                : std_logic;    
+    -- Buffers write signals
+    signal pivot_buf_wr_s                               : std_logic;
+    signal target_buf_wr_s                              : std_logic;    
     -- Buffer reset signals
-    signal pivot_buf_rst_s                                : std_logic;
-    signal target_buf_rst_s                               : std_logic;
+    signal pivot_buf_rst_s                              : std_logic;
+    signal target_buf_rst_s                             : std_logic;
     
     -- Buffer filling counter (driver is FILL_BUFFER)
-    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
+    --signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
     -- Incremented reg_buf_counter_s net (combinational)
-    signal reg_buf_counter_inc_s                        : natural range 0 to MAX_LEN;
+    -- signal reg_buf_counter_inc_s                        : natural range 0 to MAX_LEN;
     -- Buffer ready flag (driver is FILL_BUFFER)
-    signal buffer_ready_s                               : std_logic;
+    --signal buffer_ready_s                               : std_logic;
     -- Buffer FSM state (driver is FILL_BUFFER)
-    signal reg_buf_state_s                               : buffer_state_t;
+    --signal reg_buf_state_s                               : buffer_state_t;
     -- Buffer start signal (driver is XXX_PROCESS)
-    signal buffer_start_s                               : std_logic;
+    --signal buffer_start_s                               : std_logic;
     -- Selects which buffer is filled (driver is XXX_PROCESS)
     -- '0': fill pivot
     -- '1': fill target
-    signal fill_selector_s                              : std_logic;
+    --signal fill_selector_s                              : std_logic;
     
     
     ---- SHAPELET NORMALIZATION DEFINITIONS
     -- Define normalization fsm state type
-    type norm_state_t                                   is (Sbegin, Ssquare, Ssum, Sacc, Ssqrt, Sdiv, Sout_div);
+    --type norm_state_t                                   is (Sbegin, Ssquare, Ssum, Sacc, Ssqrt, Sdiv, Sout_div);
     -- Normalization fsm state (driver is NORMALIZE_SHAPELET)
-    signal reg_norm_state_s                                 : norm_state_t;
+    --signal reg_norm_state_s                                 : norm_state_t;
     -- Normalization start flag (driver is (XXX_PROCESS)
-    signal norm_start_s                                 : std_logic;
+    --signal norm_start_s                                 : std_logic;
     -- Normalization ready flag
-    signal norm_ready_s                                 : std_logic;
+    --signal norm_ready_s                                 : std_logic;
     -- Selects which shapelet is normalized
-    signal norm_selector_s                              : std_logic;
+    -- signal norm_selector_s                              : std_logic;
     -- Processed points counter register                        
-    signal reg_norm_count_s                             : natural range 3 to MAX_LEN;
+    -- signal reg_norm_count_s                             : natural range 3 to MAX_LEN;
     -- reg_norm_count_s incremented by NUM_PU
-    signal norm_count_inc_s                             : natural range 3 to MAX_LEN;
+    -- signal norm_count_inc_s                             : natural range 3 to MAX_LEN;
     -- Normalization outputs
-    signal norm_out_s                                   : pu_operands_t;
+    --signal norm_out_s                                   : pu_operands_t;
     
     
     ---- SHAPELET DISTANCE DEFINITIONS
     -- Shapelet length register, ranging from 3 to MAX_LEN (driver is XXX_PROCESS)
-    signal reg_shapelet_length_s                            : natural range 3 to MAX_LEN;
+    
     -- Decremented shapelet length signal (combinational)
-    signal dec_length_s                                 : natural range 3 to MAX_LEN;
+    --signal dec_length_s                                 : natural range 3 to MAX_LEN;
     
     
     ---- FLOATING POINT OPERATORS
     -- PU's single precision floating point array types   
+    signal addsub_ready
+    
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
     
     -- Array of accumulator registers (combinational)
     signal reg_accumulators_s                           : pu_operands_t;
-    signal accumulators_en_s                            : std_logic;
+    signal accumulators_wr_s                            : std_logic;
     
     -- addition/subtraction signals
     signal add_or_sub_s                                 : std_logic;   -- 0: add, 1: sub
+    signal add_or_sub_ready_s                           : std_logic;
     signal addsub_opa_s                                 : pu_operands_t;
     signal addsub_opb_s                                 : pu_operands_t;
     signal addsub_out_s                                 : pu_operands_t;
     -- multiplication signals                          
     signal mul_start_s                                  : std_logic;
+    signal mul_ready_s                                  : std_logic;
     signal mul_operator_s                               : pu_operands_t;
     signal mul_out_s                                    : pu_operands_t;
     -- division signals                                
     signal div_start_s                                  : std_logic;
+    signal div_ready_s                                  : std_logic;
     signal div_opa_s                                    : pu_operands_t;
     signal div_opb_s                                    : pu_operands_t;
     signal div_out_s                                    : pu_operands_t;
@@ -123,6 +148,7 @@ architecture behavioral of shapelet_distance is
     
     -- sqrt signals                                     
     signal sqrt_start_s                                 : std_logic;
+    signal sqrt_ready_s                                 : std_logic;
     signal sqrt_opa_s                                   : std_logic_vector(31 downto 0);
     signal sqrt_opb_s                                   : std_logic_vector(31 downto 0);
     signal sqrt_out_s                                   : std_logic_vector(31 downto 0);
@@ -148,32 +174,32 @@ architecture behavioral of shapelet_distance is
     
 begin
     -- Decrement reg_shapelet_length_s
-    dec_length_s <= reg_shapelet_length_s - 1;
+    -- dec_length_s <= reg_shapelet_length_s - 1;
     
-    buffer_pivot_in_s() <= data_i when reg_buf_state_s = Sfill_pivot else
-                        ; -- when reg_norm_state_s = 
+    -- buffer_pivot_in_s() <= data_i when reg_buf_state_s = Sfill_pivot else
+                        -- ; -- when reg_norm_state_s = 
                         
-    ---- REGISTER ARRAYS DEFINITION
-    -- PIVOT DRIVER
-    pivot_buf_rst_s <= '1' when reg_buf_state_s = Srst_pivot else '0';
-    pivot_buf_wr_s <= '1' when ? else '0';
+    -- ---- REGISTER ARRAYS DEFINITION
+    -- -- PIVOT DRIVER
     
-    PIVOT_BUFFER: process(clk, rst_n, pivot_buf_rst_s, pivot_buf_wr_s) 
-    begin
-        if rising_edge(clk) then
-            if rst_n = '0' or pivot_buf_rst_s = '1' then
-                buffer_pivot_s <= (others => (others => '0'));
-            else
-                if pivot_buf_rst_s = '1' then
-                    buffer_pivot_s <= (others => (others => '0'));
+    -- pivot_buf_wr_s <= '1' when ? else '0';
+    
+    -- PIVOT_BUFFER: process(clk) 
+    -- begin
+        -- if rising_edge(clk) then
+            -- if rst_n = '0' or pivot_buf_rst_s = '1' then
+                -- buffer_pivot_s <= (others => (others => '0'));
+            -- else
+                -- if pivot_buf_rst_s = '1' then
+                    -- buffer_pivot_s <= (others => (others => '0'));
                 
-                elsif pivot_buf_wr_s = '1' then
-                    buffer_pivot_s() <= buffer_pivot_in_s();
+                -- elsif pivot_buf_wr_s = '1' then
+                    -- buffer_pivot_s() <= buffer_pivot_in_s();
                 
-                end if;
-            end if;
-        end if;
-    end process;
+                -- end if;
+            -- end if;
+        -- end if;
+    -- end process;
     
     
     -- INSERIR CODIGO DO JULIO
@@ -181,9 +207,7 @@ begin
     
    
     -- TARGET DRIVER
-    target_buf_wr_s <= '1' when reg_buf_state_s = fill_target else '0';
-    target_buf_rst_s <= '1' when 
-    TARGET_BUFFER: process(clk, rst_n, target_buf_rst_s, target_buf_wr_s) 
+    TARGET_BUFFER: process(clk) 
     begin
         if rising_edge(clk) then
             if rst_n = '0' or target_buf_rst_s = '1' then
@@ -199,83 +223,124 @@ begin
     end process;
     
     
-    ---- BUFFER FILLING
-    buffer_ready_s <= '1' when reg_buf_state_s = Send else '0';
-    -- Increment reg_buf_counter_s
-    reg_buf_counter_inc_s <= reg_buf_counter_s + 1;
-    -- Process to fill pivot and target buffers
-    FILL_BUFFER: process(clk, rst_n, buffer_start_s, fill_selector_s)
+     -- Decrement reg_shapelet_length_s
+    dec_length_s <= reg_shapelet_length_s - 1;
+    -- Buffers control signals
+    pivot_buf_rst_s     <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '0' else '0';
+    target_buf_rst_s    <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '1' else '0';
+    pivot_buf_wr_s      <= '1' when (reg_state_s = Sbuf_load or reg_state_s = Sout_distance) and reg_op_s = '0' else '0';
+    target_buf_wr_s     <= '1' when reg_state_s = Sbuf_load             and reg_op_s = '1' else '0';
+    
+    CONTROL_FSM: process(clk)
     begin
-        if rising_edge(clk) then
-            if rst_n = '0' then
-                reg_buf_state_s <= Sbegin;
-            else
-                case reg_buf_state_s is
-                    -- Reset ready, reg_buf_counter_s and decide buffer according to fill_cmd
-                    when Sbegin =>
-                        reg_buf_counter_s <= 0;
-                        
-                        -- Fill pivot shapelet
-                        if buffer_start_s = '1' and fill_selector_s = '0' then
-                            reg_buf_state_s <= Srst_pivot;
-                        -- Fill target shapelet
-                        else if buffer_start_s = '1' and fill_selector_s = '1' then
-                            reg_buf_state_s <= Srst_target;
-                        else
-                            reg_buf_state_s <= Sbegin;
-                        end if;
-                        
-                    -- Clear pivot buffer
-                    when Srst_pivot =>
-                        reg_buf_state_s <= Sfill_pivot;
-                        
-                    -- Clear target buffer
-                    when Srst_target =>
-                        reg_buf_state_s <= Sfill_target;
-                         
-                    -- Fill pivot shapelet
-                    when Sfill_pivot =>
-                        reg_buf_counter_s <= reg_buf_counter_inc_s;
-                        
-                        -- reapeat until len(buffer) = reg_shapelet_length_s
-                        if reg_buf_counter_s = dec_length_s then
-                            reg_buf_state_s <= Send;
-                        else
-                            reg_buf_state_s <= Sfill_pivot;
-                        end if;
+    if rising_edge(clk) then
+        if rst_n = '0' then
+            reg_state_s <= Sbegin;
+            
+        else
+            case reg_state_s is
+                when Sbegin         =>
+                    reg_op_s <= op_i;
+                    reg_buf_counter_s <= 0;
+                    reg_acc_counter_s <= 0;
                     
-                    -- Fill target shapelet
-                    when Sfill_target =>
-                        reg_buf_counter_s <= reg_buf_counter_inc_s;
-                        
-                        -- repeat until len(buffer) = reg_shapelet_length_s
-                        if reg_buf_counter_s = dec_length_s then
-                            reg_buf_state_s <= Send;
+                    if start_i = '1' then
+                        -- Operation is set target
+                        if op_i = '1' then
+                            reg_state_s <= Sbuf_rst;
+                        -- Operation is set pivot
                         else
-                            reg_buf_state_s <= Sfill_target;
+                            reg_state_s <= Sset_len;
                         end if;
+                    end if;
                     
-                    when Send =>
-                        reg_buf_state_s <= Sbegin;
-                end case;
-            end if;
+                when Sset_len       => 
+                    reg_shapelet_length_s <= length_i;
+                    -- Next state
+                    reg_state_s <= Sbuf_rst;
+                
+                when Sbuf_rst       =>
+                    -- Next state
+                    reg_state_s <= Sbuf_load;
+                
+                when Sbuf_load      => 
+                    reg_buf_counter_s <= reg_buf_counter_s + 1;
+                    
+                    -- Next state
+                    -- Reapeat until current buffer length = shapelet length - 1
+                    if reg_buf_counter_s = reg_shapelet_length_s - 1 then
+                        reg_state_s <= Snorm_square;
+                    end if;
+                    
+                
+                when Snorm_square   =>
+                    
+                    -- Next state
+                    if mul_ready_s = '1' then
+                        reg_norm_state_s <= Snorm_sum_acc;
+                    end if;
+                
+                when Snorm_sum_acc  =>  
+                    
+                    -- Next state
+                    if add_or_sub_ready_s = '1' then
+                        reg_state_s <= Snorm_reg_acc;
+                    end if;
+                
+                when Snorm_reg_acc  =>
+                    reg_acc_counter_s <= reg_acc_counter_s + 1;
+                    
+                    -- Next state
+                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                        reg_state_s <= Snorm_sqrt;
+                    else
+                        reg_state_s <= Snorm_square;
+                    end if;
+                
+                when Snorm_sqrt     =>  
+                    reg_acc_counter_s <= 0;
+                    
+                    -- Next state
+                    if sqrt_ready_s = '1' then
+                        reg_state_s <= Snorm_div;
+                    end if;
+                
+                when Snorm_div      =>  
+                    
+                
+                when Sdist_sub      =>  
+                
+                when Sdist_square   =>  
+                
+                when Sdist_sum_acc  =>  
+                
+                when Sdist_reg_acc  =>  
+                
+                when Swb_pivot      =>  
+                
+                when Sout_distance  =>  
+                
+            end case;
         end if;
+        
     end process;
     
+    
+    
     -- ACCUMMULATOR DRIVER
-    accumulators_en_s  <= '1' when reg_norm_state_s = Sacc else '0';
+    accumulators_wr_s  <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc else '0';
     -- Accummulator registers
-        acc_regs: process(clk, rst_n, accumulators_en_s, accumulators_rst_s)
-        begin
-            if rising_edge(clk) then
-                if rst_n = '0' or accumulators_rst_s = '1' then
-                    reg_accumulators_s <= (others => (others => '0'));
-                else
-                    if accumulators_en_s = '1' then
-                        reg_accumulators_s <= addsub_out_s;
-                    end if;
+    acc_regs: process(clk)
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' or accumulators_rst_s = '1' then
+                reg_accumulators_s <= (others => (others => '0'));
+            else
+                if accumulators_wr_s = '1' then
+                    reg_accumulators_s <= addsub_out_s;
                 end if;
-        end process;
+            end if;
+    end process;
     
     
     ---- MUX to present shapelet positions to the right Processing Units
@@ -306,10 +371,10 @@ begin
 
     
     -- Mux selector is a counter of how many blocks were processed to the moment (designed as a separate process so it can be set both in normalization and euclidean distance, do the same with reg_norm_count_s and reg_dist_count_s)
-    block_sel_rst_s <= '1' when reg_norm_state_s = Sbegin or reg_norm_state_s = Ssqrt  else '0';
-    block_sel_inc_s <= '1' when reg_norm_state_s = Sacc or reg_norm_state_s = Sout_div else '0';
+    block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_sqrt  else '0';
+    block_sel_inc_s <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Snorm_div else '0';
     
-    reg_selector: process(clk, block_sel_rst_s, block_sel_inc_s)
+    reg_selector: process(clk)
     begin
         if rising_edge(clk) then
             if block_sel_rst_s = '1' then
@@ -338,46 +403,31 @@ begin
     
     
     ---- PROCESSING UNITS
-    accumulators_en_s  <= '1' when reg_norm_state_s = Sacc else '0';
-
     -- Addsub
     -- add_or_sub_s selcts if a addition='0' or subtraction='1' will be computed
-    add_or_sub_s <=  '0' when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else '1';
-    addsub_opa_s <=  reg_accumulators_s    when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else 
-                        div_out_s;
-    addsub_opb_s <=  mul_out_s            when reg_norm_state_s = Ssum and reg_buf_state_s = Sbegin else
-                        input_buffer_s;
+    add_or_sub_s    <=  '1'                     when reg_state_s = Sdist_sub    else '0';
+    addsub_opa_s    <=  div_out_s               when reg_state_s = Sdist_sub    else 
+                        reg_accumulators_s;
+    addsub_opb_s    <=  input_buffer_s          when reg_state_s = Sdist_sub    else
+                        mul_out_s;
 
     -- Normalization output is division output
-    norm_out_s <= div_out_s;
+    norm_out_s      <=  div_out_s;
 
     -- Multiplier 
-    mul_start_s <= '0'  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin else '1';
+    mul_start_s     <= '0'                      when reg_state_s = Snorm_square or reg_state_s = Sdist_square   else '1';
     -- Square shapelet elements in normalization and the difference in euclidean distance calculation
     -- the multiplier unit always computes A*A (A^2)
-    mul_operator_s <= shapelet_elements_mux_s  when reg_norm_state_s = Ssquare and reg_buf_state_s = Sbegin    else addsub_out_s;
+    mul_operator_s  <=  shapelet_elements_mux_s when reg_state_s = Snorm_square     else 
+                        addsub_out_s;
     
     -- Divider
-    div_start_s  <= '0' when reg_norm_state_s = Sdiv and reg_buf_state_s = Sbegin;
+    div_start_s  <= '0'                         when reg_state_s = Snorm_div        else '1';
     div_opa_s    <= shapelet_elements_mux_s;
     --operand b always recieves the signal sqrt_out_s!
 
     -- Generate processing units (adder/subtractor, multiplier, divider, square root)
     PROCESSING_UNITS: for i in 0 to NUM_PU - 1 generate
-
-        -- Accumulator registers
-        acc_regs: process(clk, rst_n, accumulators_en_s)
-        begin
-            if rising_edge(clk) then
-                if rst_n = '0' then
-                    reg_accumulators_s(i) <= (others => (others => '0'));
-                else
-                    if accumulators_en_s = '1' then
-                        reg_accumulators_s(i) <= addsub_out_s(i);
-                    end if;
-                end if;
-        end process;
-    
         -- Used in accumulator operation and subtraction during distance calculation
         -- ADDSUB computes in 6 cycles
         addsub: fp_addsub
@@ -462,7 +512,7 @@ begin
     
     -- Single SQRT unit
     sqrt_op <= acc_sum_out_s;
-    sqrt_start_s <= '0' when reg_norm_state_s = Ssqrt and reg_buf_state_s = Sbegin else '1';
+    sqrt_start_s <= '0'         when reg_state_s = Snorm_sqrt   else '1';
     
     -- Sqrt computes in 33 cycles
     sqrt: fp_sqrt
@@ -483,74 +533,76 @@ begin
     
     
     -- Normalization combinational logic
-    norm_count_inc_s <= reg_norm_count_s + NUM_PU;
-    norm_ready_s <= '1' when reg_norm_state_s = Send else '0';
+    -- norm_count_inc_s <= reg_norm_count_s + NUM_PU;
+    -- norm_ready_s    <= '1' when reg_norm_state_s = Send else '0';
 
-    -- Normalization sequential logic
-    NORMALIZE_SHAPELET: process(clk, rst_n, norm_start_s)
-    begin
-        if rising_edge(clk) then
-            if rst_n = '0' then
-                reg_norm_state_s <= Sbegin;
-            else
-                case reg_norm_state_s is 
-                    when Sbegin =>
-                        reg_norm_count_s <= 0;
+    -- -- Normalization sequential logic
+    -- NORMALIZE_SHAPELET: process(clk)
+    -- begin
+        -- if rising_edge(clk) then
+            -- if rst_n = '0' then
+                -- reg_norm_state_s <= Sbegin;
+            -- else
+                -- case reg_norm_state_s is 
+                    -- when Sbegin =>
+                        -- reg_norm_count_s <= 0;
                         
-                        if norm_start_s = '1' then
-                            reg_norm_state_s <= Ssquare;
-                        end if;
+                        -- if norm_start_s = '1' then
+                            -- reg_norm_state_s <= Ssquare;
+                        -- end if;
                         
-                    when Ssquare =>
+                    -- when Ssquare =>
                         
-                        if mul_ready_s = '1' then -- instantiate
-                            reg_norm_state_s <= Ssum;
-                        end if;
+                        -- if mul_ready_s = '1' then -- instantiate
+                            -- reg_norm_state_s <= Ssum;
+                        -- end if;
                         
-                    when Ssum =>
+                    -- when Ssum =>
                         
-                        if add_ready = '1' then           -- instatiate
-                            reg_norm_state_s <= Sacc;
-                        end if;
+                        -- if add_ready = '1' then           -- instatiate
+                            -- reg_norm_state_s <= Sacc;
+                        -- end if;
                         
-                    when Sacc =>
-                        reg_norm_count_s <= norm_count_inc_s;
+                    -- when Sacc =>
+                        -- reg_norm_count_s <= norm_count_inc_s;
                         
-                        if reg_norm_count_s >= reg_shapelet_length_s then
-                            reg_norm_state_s <= Ssqrt;
-                        else 
-                            reg_norm_state_s <= Ssquare;
-                        end if;
+                        -- if reg_norm_count_s >= reg_shapelet_length_s then
+                            -- reg_norm_state_s <= Ssqrt;
+                        -- else 
+                            -- reg_norm_state_s <= Ssquare;
+                        -- end if;
                     
-                    when Ssqrt =>
-                        reg_norm_count_s <= 0;
+                    -- when Ssqrt =>
+                        -- reg_norm_count_s <= 0;
                         
-                        if sqrt_ready_s = '1' then          -- instantiate
-                            reg_norm_state_s <= Sdiv;    
-                        end if;
+                        -- if sqrt_ready_s = '1' then          -- instantiate
+                            -- reg_norm_state_s <= Sdiv;    
+                        -- end if;
                     
-                    when Sdiv =>
-                        
-                        if div_ready_s = '1' then           -- instantiate
-                            reg_norm_state_s <= Sout_div;
-                        end if;
-                        
-                    when Sout_div =>
-                        reg_norm_count_s <= norm_count_inc_s;
-                        
-                        if reg_norm_count_s >= reg_shapelet_length_s then
-                            reg_norm_state_s <= Send;
-                        else 
-                            reg_norm_state_s <= Sdiv;
-                        end if;
                     
-                    when Send =>
-                        reg_norm_state_s <= Sbegin;
+                    -- TODO:
+                    -- when Sdiv =>
+                        
+                        -- if div_ready_s = '1' then           -- instantiate
+                            -- reg_norm_state_s <= Sout_div;
+                        -- end if;
+                        
+                    -- when Sout_div =>
+                        -- reg_norm_count_s <= norm_count_inc_s;
+                        
+                        -- if reg_norm_count_s >= reg_shapelet_length_s then
+                            -- reg_norm_state_s <= Send;
+                        -- else 
+                            -- reg_norm_state_s <= Sdiv;
+                        -- end if;
                     
-                end case; 
-            end if;
-        end if;
-    end process;
+                    -- when Send =>
+                        -- reg_norm_state_s <= Sbegin;
+                    
+                -- end case; 
+            -- end if;
+        -- end if;
+    -- end process;
     
     
     
