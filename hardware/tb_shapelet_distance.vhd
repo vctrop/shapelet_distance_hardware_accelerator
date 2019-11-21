@@ -1,0 +1,175 @@
+library IEEE;
+use IEEE.numeric_std.all;
+use ieee.std_logic_1164.all;
+
+use std.textio.all;
+use work.test_pkg.all;
+
+
+entity tb_shapelet_distance is
+end tb_shapelet_distance;
+
+architecture behavioral of tb_shapelet_distance is
+
+    component shapelet_distance is
+        generic(
+            -- Number of processig units (each PU is composed of square, accumulate, sub and div)
+            NUM_PU      : natural;
+            -- Maximum shapelet length (must be multiple of NUM_PU)
+            MAX_LEN     : natural
+        );
+        port (
+            clk         : in std_logic;
+            rst         : in std_logic;
+            
+            -- Operation
+            -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
+            -- '1': change target shapelet and compute distance
+            op_i        : in std_logic;
+            
+            -- Data input is a single precision float shapelet datapoint
+            data_i      : in std_logic_vector(31 downto 0);
+            length_i    : in natural range 0 to MAX_LEN-1;
+    
+            -- begins opeartions
+            start_i     : in std_logic;        
+            -- Ready flag for operation completion
+            ready_o     : out std_logic;
+            --distance result
+            distance_o  : out std_logic_vector(31 downto 0)
+        );
+    end component;
+    
+    constant half_clk_period : time := 100 ns;
+    constant clK_period : time := 2*half_clk_period;
+
+    -- generic constants
+    constant NUM_PU : natural := 2;
+    constant MAX_LEN : natural := 150;
+
+    file testFile : TEXT open READ_MODE is "vetor.txt";
+
+    signal clk : std_logic := '0';
+    signal rst : std_logic := '1';
+    signal start, ready, op : std_logic;
+    signal data, distance, expected_output : std_logic_vector(31 downto 0);
+    signal length : natural;
+    signal index : natural;
+
+begin
+    clk <= not clk after clk_half_period;
+    rst <= '0' after 2*clk_period;  -- wait 2 clk cycles before starting simulation
+    
+    DUV: shapelet_distance
+        generic(
+            -- Number of processig units (each PU is composed of square, accumulate, sub and div)
+            NUM_PU      => NUM_PU;
+            -- Maximum shapelet length (must be multiple of NUM_PU)
+            MAX_LEN     => MAX_LEN
+        );
+        port map(
+            clk         => clk,
+            rst         => rst,
+            
+            -- Operation
+            -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
+            -- '1': change target shapelet and compute distance
+            op_i        => op
+            
+            -- Data input is a single precision float shapelet datapoint
+            data_i      => data,
+            length_i    => length,
+    
+            -- begins opeartions
+            start_i     => start_i      
+            -- Ready flag for operation completion
+            ready_o     => ready,
+            --distance result
+            distance_o  => distance
+        );
+
+    process
+        variable fileLine	: line;				-- Stores a read line from a text file
+        variable str 		: string(1 to 4);	-- Stores an 8 characters string
+        variable char		: character;		-- Stores a single character
+        variable bool		: boolean;			-- 
+    begin
+        index <= 0;
+        wait until rst = '0'; -- wait for the circuit to be reset
+
+        -- read all lines in the test file
+        while not (endfile(testFile)) loop
+            
+            -- pivot normalization 
+            
+            readline(testFile, fileLine);   -- read the line containing length
+            for i in 1 to 4 loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            lenght <= to_integer(StringToStdLogicVector(str));
+            read(fileLine, char, bool); -- read the space separating the values
+
+            assert length > 0 report "Inconpatible length " & length'image severity warning;
+
+            -- Start normalization
+            start <= '1'
+            op <= '0';
+            wait for clk_period;
+
+            start <= '0'
+            
+            -- load pivot values
+
+            readline(testFile, fileLine);
+            for i in range 0 to length-1 loop
+
+                for i in 1 to 4 loop
+                    read(fileLine, char, bool);
+                    str(i) := char;
+                end loop;
+                data <= StringToStdLogicVector(str);
+
+                read(fileLine, char, bool); -- read the space separating the values
+
+                wait for clk_period;
+            end loop;
+
+            wait until ready = '1';
+
+            -- loads target and waits for output
+            start <= '1'
+            op <= '1';
+            wait for clk_period;
+            start <= '0'
+            
+            readline(testFile, fileLine);
+
+            for i in range 0 to length-1 loop
+                for i in 1 to 4 loop
+                    read(fileLine, char, bool);
+                    str(i) := char;
+                end loop;
+                data <= StringToStdLogicVector(str);
+
+                read(fileLine, char, bool); -- read the space separating the values
+                wait for clk_period;
+            end loop;
+
+            wait until ready = '1';
+
+            --read expected output
+            readline(testFile, fileLine);
+            for i in 1 to 4 loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            expected_output <= StringToStdLogicVector(str);
+
+            report "shapelet " & index'image & " has output " & distance'image & "expected " & expected_output'image;
+            
+            index <= index + 1;
+        end loop;
+        wait;
+    end process;
+end behavioral ; -- behavioral
