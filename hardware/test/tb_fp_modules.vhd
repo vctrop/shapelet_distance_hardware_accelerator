@@ -12,7 +12,8 @@ architecture adder of tb_fp_modules is
     signal opa, opb, addsub_out : std_logic_vector(31 downto 0);
     constant clk_half_period : time := 5 ns;
     constant clk_period : time := 2* clk_half_period;
-	
+    signal time_to_compute: integer;
+
 begin
 
     clk <= not clk after clk_half_period;
@@ -61,6 +62,7 @@ architecture multiplier of tb_fp_modules is
     signal opa, opb, result : std_logic_vector(31 downto 0);
 	constant clk_half_period : time := 5 ns;
     constant clk_period : time := 2* clk_half_period;
+    constant numer_of_cycles : integer := 35;
 begin
 
     clk <= not clk after clk_half_period;
@@ -92,6 +94,7 @@ begin
     begin
         opa <= x"3e800000";
         opb <= x"3f000000";
+	wait for 10*clk_period;
         wait;
     end process;
 end architecture multiplier;
@@ -105,7 +108,6 @@ architecture divider of tb_fp_modules is
     constant clk_period : time := 2* clk_half_period;
 begin
     clk <= not clk after clk_half_period;
-    start <= '1', '0' after 2*clk_period;
 
     DUV: entity work.fp_div
         port map (
@@ -130,10 +132,34 @@ begin
             snan_o			=> snan
         );   
         
+    
+
     process
     begin
-        opa <= x"3e800000";
-        opb <= x"3f000000";
+        start <= '1';
+        opa <= (others=> '0');
+        opb <= (others=> '0');
+        wait for 5*clk_period;
+        opa <= x"41800000"; --16
+        opb <= x"420e0000"; --35.5
+        wait for clk_period;
+        start <= '0';
+        wait for 40*clk_period;
+        wait;
+        --start <= '1';
+        opa <= x"420e0000"; --35.5
+        opb <= x"bf800000"; -- (-1)
+        wait for clk_period;
+        --start <= '0';
+        wait for 35*clk_period;
+
+        --start <= '1';
+        opa <= x"bf800000"; -- (-1)
+        opb <= x"40551eb8"; -- 3.33
+        wait for clk_period;
+        --start <= '0';
+        wait for 35*clk_period;
+
         wait;
     end process;
 end architecture divider;
@@ -144,6 +170,7 @@ architecture sqrt of tb_fp_modules is
     signal opa, result : std_logic_vector(31 downto 0);
 	constant clk_half_period : time := 5 ns;
     constant clk_period : time := 2* clk_half_period;
+    constant numer_of_cycles : integer := 35;
 begin
     clk <= not clk after clk_half_period;
     
