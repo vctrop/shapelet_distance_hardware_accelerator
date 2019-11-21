@@ -40,7 +40,7 @@ architecture behavioral of tb_shapelet_distance is
         );
     end component;
     
-    constant half_clk_period : time := 100 ns;
+    constant half_clk_period : time := 5 ns;
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
@@ -57,16 +57,16 @@ architecture behavioral of tb_shapelet_distance is
     signal index : natural;
 
 begin
-    clk <= not clk after clk_half_period;
+    clk <= not clk after half_clk_period;
     rst <= '0' after 2*clk_period;  -- wait 2 clk cycles before starting simulation
     
     DUV: shapelet_distance
-        generic(
+        generic map(
             -- Number of processig units (each PU is composed of square, accumulate, sub and div)
-            NUM_PU      => NUM_PU;
+            NUM_PU      => NUM_PU,
             -- Maximum shapelet length (must be multiple of NUM_PU)
             MAX_LEN     => MAX_LEN
-        );
+        )
         port map(
             clk         => clk,
             rst         => rst,
@@ -74,14 +74,14 @@ begin
             -- Operation
             -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
             -- '1': change target shapelet and compute distance
-            op_i        => op
+            op_i        => op,
             
             -- Data input is a single precision float shapelet datapoint
             data_i      => data,
             length_i    => length,
     
             -- begins opeartions
-            start_i     => start_i      
+            start_i     => start,      
             -- Ready flag for operation completion
             ready_o     => ready,
             --distance result
@@ -90,9 +90,10 @@ begin
 
     process
         variable fileLine	: line;				-- Stores a read line from a text file
-        variable str 		: string(1 to 4);	-- Stores an 8 characters string
+        variable str 		: string(1 to 8);	-- Stores an 8 characters string
         variable char		: character;		-- Stores a single character
-        variable bool		: boolean;			-- 
+        variable bool		: boolean;	
+ 
     begin
         index <= 0;
         wait until rst = '0'; -- wait for the circuit to be reset
@@ -103,28 +104,29 @@ begin
             -- pivot normalization 
             
             readline(testFile, fileLine);   -- read the line containing length
-            for i in 1 to 4 loop
+            for i in str'range loop
                 read(fileLine, char, bool);
                 str(i) := char;
             end loop;
-            lenght <= to_integer(StringToStdLogicVector(str));
+
+            length <= to_integer(unsigned(StringToStdLogicVector(str)));
             read(fileLine, char, bool); -- read the space separating the values
 
-            assert length > 0 report "Inconpatible length " & length'image severity warning;
+            assert length > 0 report "Incompatible length < 0 !" severity warning;
 
             -- Start normalization
-            start <= '1'
+            start <= '1';
             op <= '0';
             wait for clk_period;
 
-            start <= '0'
+            start <= '0';
             
             -- load pivot values
 
             readline(testFile, fileLine);
-            for i in range 0 to length-1 loop
+            for i in 0 to length-1 loop
 
-                for i in 1 to 4 loop
+                for i in str'range  loop
                     read(fileLine, char, bool);
                     str(i) := char;
                 end loop;
@@ -138,15 +140,15 @@ begin
             wait until ready = '1';
 
             -- loads target and waits for output
-            start <= '1'
+            start <= '1';
             op <= '1';
             wait for clk_period;
-            start <= '0'
+            start <= '0';
             
             readline(testFile, fileLine);
 
-            for i in range 0 to length-1 loop
-                for i in 1 to 4 loop
+            for i in 0 to length-1 loop
+                for i in str'range  loop
                     read(fileLine, char, bool);
                     str(i) := char;
                 end loop;
@@ -160,13 +162,13 @@ begin
 
             --read expected output
             readline(testFile, fileLine);
-            for i in 1 to 4 loop
+            for i in str'range loop
                 read(fileLine, char, bool);
                 str(i) := char;
             end loop;
             expected_output <= StringToStdLogicVector(str);
 
-            report "shapelet " & index'image & " has output " & distance'image & "expected " & expected_output'image;
+            report "shapelet " & natural'image(index) & " has output " & integer'image(to_integer(unsigned(distance))) & "expected " & integer'image(to_integer(unsigned(expected_output)));
             
             index <= index + 1;
         end loop;
