@@ -17,7 +17,7 @@
 //#define USE_FLOAT 0
 
 #ifdef USE_FLOAT
-    typedef double numeric_type;
+    typedef float numeric_type;
 #else
     #define MAX_FIXEDPT 0x7fffff00
     typedef fixedpt numeric_type;
@@ -84,6 +84,9 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
    
 // Merge ts_shapelets with k_shapelets and keep only best k shapelets
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets);
+
+// Print all positions of a certain shapelet as HEX
+void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len);
 
 // Print all shapelets in a shapelet array
 void print_shapelets(Shapelet * S, size_t num_shapelets, Timeseries *T);
