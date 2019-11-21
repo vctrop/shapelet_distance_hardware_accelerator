@@ -71,48 +71,7 @@ architecture behavioral of shapelet_distance is
     signal pivot_buf_rst_s                              : std_logic;
     signal target_buf_rst_s                             : std_logic;
     
-    -- Buffer filling counter (driver is FILL_BUFFER)
-    --signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
-    -- Incremented reg_buf_counter_s net (combinational)
-    -- signal reg_buf_counter_inc_s                        : natural range 0 to MAX_LEN;
-    -- Buffer ready flag (driver is FILL_BUFFER)
-    --signal buffer_ready_s                               : std_logic;
-    -- Buffer FSM state (driver is FILL_BUFFER)
-    --signal reg_buf_state_s                               : buffer_state_t;
-    -- Buffer start signal (driver is XXX_PROCESS)
-    --signal buffer_start_s                               : std_logic;
-    -- Selects which buffer is filled (driver is XXX_PROCESS)
-    -- '0': fill pivot
-    -- '1': fill target
-    --signal fill_selector_s                              : std_logic;
-    
-    
-    ---- SHAPELET NORMALIZATION DEFINITIONS
-    -- Define normalization fsm state type
-    --type norm_state_t                                   is (Sbegin, Ssquare, Ssum, Sacc, Ssqrt, Sdiv, Sout_div);
-    -- Normalization fsm state (driver is NORMALIZE_SHAPELET)
-    --signal reg_norm_state_s                                 : norm_state_t;
-    -- Normalization start flag (driver is (XXX_PROCESS)
-    --signal norm_start_s                                 : std_logic;
-    -- Normalization ready flag
-    --signal norm_ready_s                                 : std_logic;
-    -- Selects which shapelet is normalized
-    -- signal norm_selector_s                              : std_logic;
-    -- Processed points counter register                        
-    -- signal reg_norm_count_s                             : natural range 3 to MAX_LEN;
-    -- reg_norm_count_s incremented by NUM_PU
-    -- signal norm_count_inc_s                             : natural range 3 to MAX_LEN;
-    -- Normalization outputs
-    --signal norm_out_s                                   : pu_operands_t;
-    
-    
-    ---- SHAPELET DISTANCE DEFINITIONS
-    -- Shapelet length register, ranging from 3 to MAX_LEN (driver is XXX_PROCESS)
-    
-    -- Decremented shapelet length signal (combinational)
-    --signal dec_length_s                                 : natural range 3 to MAX_LEN;
-    
-    
+   
     ---- FLOATING POINT OPERATORS
     -- PU's single precision floating point array types   
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
@@ -198,11 +157,34 @@ begin
     -- end process;
     
     
-    -- INSERIR CODIGO DO JULIO
+    -- PIVOT BUFFER DRIVER
+    -- TODO: coerência com o código
+    -- pivot é reescrito em reg_state_s = Swb_pivot
+    ADDS: for i in input_buffer'range generate 
+        wr_buf(i) <= '1' when address = i and fromMEM = '1' else '0';
+    end generate;
+
+    GEN_INPUT_BUFFER: for i in input_buffer'range generate
+        process(clk)
+        begin 
+            if rising_edge(clk) then
+                if rst = '1' then
+                    input_buffer(i) <= (others => '0');
+                elsif buff_en(i) = '1' or wr_buf(i) = '1' then
+                    input_buffer(i) <= wb_input(i);
+                end if;
+            end if;
+        end process;
+    end generate;
     
+    GEN_WB_INPUT_J: for j in 0 to LEN_MAX/NUM_PE-1 generate
+        GEN_WB_INPUT_I: for i in 0 to NUM_PE-1 generate
+            buff_en(i + j*NUM_PE) <= '1' when sel = j and wb_i = '1' else '0'; 
+            wb_input(i + j*NUM_PE) <= data_i when fromMEM = '1' else output_mux(i);
+        end generate;
+    end generate;
     
-   
-    -- TARGET DRIVER
+    -- TARGET BUFFER DRIVER
     TARGET_BUFFER: process(clk) 
     begin
         if rising_edge(clk) then
@@ -221,6 +203,8 @@ begin
     
      -- Decrement reg_shapelet_length_s
     dec_length_s <= reg_shapelet_length_s - 1;
+    
+    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
     -- Buffers control signals
     pivot_buf_rst_s     <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '0' else '0';
     target_buf_rst_s    <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '1' else '0';
@@ -237,6 +221,7 @@ begin
             case reg_state_s is
                 when Sbegin         =>
                     reg_op_s <= op_i;
+                    -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num só reg
                     reg_buf_counter_s <= 0;
                     reg_acc_counter_s <= 0;
                     
@@ -284,7 +269,7 @@ begin
                     end if;
                 
                 when Snorm_reg_acc  =>
-                    reg_acc_counter_s <= reg_acc_counter_s + 1;
+                    reg_acc_counter_s <= inc_acc_counter_s;
                     
                     -- Next state
                     if reg_acc_counter_s >= reg_shapelet_length_s then
@@ -303,7 +288,24 @@ begin
                 
                 when Snorm_div      =>  
                     
+                    -- Next state
+                    -- pivot
+                    if  div_ready_s = '1' and reg_op_s = '0' then
+                        reg_state_s <= Swb_pivot;
+                    --target
+                    elsif div_ready_s = '1' and reg_op_s = '1' then
+                        reg_state_s <= Sdist_sub;
+                    end if;
                 
+                when Swb_pivot      =>  
+                    reg_acc_counter_s <= inc_acc_counter_s;
+                    
+                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                        reg_state_s <= Sbegin;
+                    else
+                        reg_state_s <= Snorm_div;
+                    end if;
+                    
                 when Sdist_sub      =>  
                 
                 when Sdist_square   =>  
@@ -311,8 +313,6 @@ begin
                 when Sdist_sum_acc  =>  
                 
                 when Sdist_reg_acc  =>  
-                
-                when Swb_pivot      =>  
                 
                 when Sout_distance  =>  
                 
@@ -360,8 +360,8 @@ begin
     end generate OUTER;
     
     -- Mux selector is a counter of how many blocks were processed to the moment (designed as a separate process so it can be set both in normalization and euclidean distance, do the same with reg_norm_count_s and reg_dist_count_s)
-    block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_sqrt  else '0';
-    block_sel_inc_s <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Snorm_div else '0';
+    block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_sqrt                                 else '0';
+    block_sel_inc_s <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Swb_pivot or reg_state_s = Sdist_reg_acc   else '0';
     
     reg_selector: process(clk)
     begin
@@ -396,7 +396,7 @@ begin
     -- add_or_sub_s selcts if a addition='0' or subtraction='1' will be computed
     add_or_sub_s    <=  '1'                     when reg_state_s = Sdist_sub    else '0';
     addsub_opa_s    <=  div_out_s               when reg_state_s = Sdist_sub    else 
-                        reg_accumulators_s;
+                        reg_accumulators_s; 
     addsub_opb_s    <=  input_buffer_s          when reg_state_s = Sdist_sub    else
                         mul_out_s;
 
