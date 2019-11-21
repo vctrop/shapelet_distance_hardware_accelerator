@@ -115,8 +115,6 @@ architecture behavioral of shapelet_distance is
     
     ---- FLOATING POINT OPERATORS
     -- PU's single precision floating point array types   
-    signal addsub_ready
-    
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
     
     -- Array of accumulator registers (combinational)
@@ -155,18 +153,16 @@ architecture behavioral of shapelet_distance is
     
     ---- SHAPELETS POSITIONS MUX
     --
-    type positions_by_pu_t is array(0 to LEN_MAX/NUM_PU-1) of std_logic_vector(31 downto 0);
+    type positions_by_pu_t                              is array(0 to LEN_MAX/NUM_PU-1)  of std_logic_vector(31 downto 0);
     -- 
-    type pu_matrix_t is array(0 to NUM_PU-1) of positions_by_pu_t;
+    type pu_matrix_t                                    is array(0 to NUM_PU-1)         of positions_by_pu_t;
     
-    -- Shapelet selector, 0: pivot, 1:target
-    signal shapelet_sel_s                               : std_logic;
     -- Input buffer may be either pivot or target shapelets
     signal input_buffer_s                               : shapelet_buffer_t;
     -- Register to count how many blocks of shapelet positions were already presented to the PUs, acting as a MUX selector for the shapelet . (reg_norm_count_s is an absolute element count)
-    signal reg_block_sel_s                                 : natural range 0 to LEN_MAX/NUM_PU;
-    signal block_sel_rst_s                                 : std_logic;
-    signal block_sel_inc_s                                 : std_logic;
+    signal reg_block_sel_s                              : natural range 0 to LEN_MAX/NUM_PU;
+    signal block_sel_rst_s                              : std_logic;
+    signal block_sel_inc_s                              : std_logic;
     -- Matrix with processing units as rows and shapelet positions for each PU as columns
     signal output_matrix_s                              : pu_matrix_t;
     -- The shapelet positions presented to each of the NUM_PU processing elements
@@ -344,11 +340,8 @@ begin
     
     
     ---- MUX to present shapelet positions to the right Processing Units
-    -- Selec which shapelet will go under the mux generated below
-    shapelet_sel_s <=   '0' when ? else '1';
-    
     -- Selects which shapelet is presented to the MUX
-    input_buffer_s <=   buffer_pivot_s  when shapelet_sel_s = '0' else
+    input_buffer_s <=   buffer_pivot_s  when reg_op_s = '0' else
                         buffer_target_s;
 
     -- GENERATE MUX inputs
@@ -361,14 +354,10 @@ begin
     -- line(0)  buff(0) buff(2) buff(4) buff(6)             <-- these will form the inputs of mux(0)
     -- line(1)  buff(1) buff(3) buff(5) buff(7)             <-- these will form the inputs of mux(1)
     OUTER: for i in NUM_PU - 1 downto 0 generate
-        -- 
         INNER: for j in (LEN_MAX/NUM_PU - 1) downto 0 generate
-            -- 
             output_matrix_s(i)(j) <= input_buffer_s(i + j*NUM_PU);
         end generate INNER;
-        
     end generate OUTER;
-
     
     -- Mux selector is a counter of how many blocks were processed to the moment (designed as a separate process so it can be set both in normalization and euclidean distance, do the same with reg_norm_count_s and reg_dist_count_s)
     block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_sqrt  else '0';
