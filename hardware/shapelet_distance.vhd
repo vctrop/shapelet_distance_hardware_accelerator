@@ -9,29 +9,29 @@ use ieee.std_logic_1164.all;
 entity shapelet_distance is
     generic(
         -- Number of processig units (each PU is composed of square, accumulate, sub and div)
-        NUM_PU: natural := 2;
+        NUM_PU      : natural := 2;
         -- Maximum shapelet length (must be multiple of NUM_PU)
-        MAX_LEN: natural := 12
+        MAX_LEN     : natural := 12
     );
     port (
-        clk     : in std_logic;
-        rst_n   : in std_logic;
+        clk         : in std_logic;
+        rst_n       : in std_logic;
         
         -- Operation
         -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
         -- '1': change target shapelet and compute distance
-        op_i   : in std_logic;
+        op_i        : in std_logic;
         
         -- Data input is a single precision float shapelet datapoint
-        data_i : in std_logic_vector(31 downto 0);
-        length_i : in natural range 0 to MAX_LEN-1;
+        data_i      : in std_logic_vector(31 downto 0);
+        length_i    : in natural range 0 to MAX_LEN-1;
 
         -- begins opeartions
-        start_i : in std_logic;        
+        start_i     : in std_logic;        
         -- Ready flag for operation completion
-        ready_o : out std_logic
+        ready_o     : out std_logic
         --distance result
-        distance_o : out std_logic_vector(31 downto 0);
+        distance_o  : out std_logic_vector(31 downto 0);
     );
 end shapelet_distance;
 
@@ -45,11 +45,11 @@ architecture behavioral of shapelet_distance is
    
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (Sbegin, Sset_len, Sbuf_rst, Sbuf_load,
-                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_div, 
+                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_acc_clear, Snorm_div, 
                                                             Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
                                                             Swb_pivot, Sout_distance);
     -- Register to keep FSM state
-    signal reg_state_s                              : fsm_state_t;
+    signal reg_state_s                                  : fsm_state_t;
     
      
     -- Buffer filling counter and its incremented by 1 version
@@ -76,24 +76,29 @@ architecture behavioral of shapelet_distance is
     -- PU's single precision floating point array types   
     type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
     
-    -- Array of accumulator registers (combinational)
+    -- Array of accumulator registers
     signal reg_accumulators_s                           : pu_operands_t;
     signal accumulators_wr_s                            : std_logic;
+    signal accumulators_rst_s                           : std_logic;
+    
+    -- Cycle counter signals
+    signal counter_start_s                              : std_logic;
+    signal counter_mode_s                               : std_logic_vector(1 downto 0);
+    
+    -- All floating point operations are flagged ready by the same signal
+    signal fp_ready_s                                   : std_logic;
     
     -- addition/subtraction signals
     signal add_or_sub_s                                 : std_logic;   -- 0: add, 1: sub
-    signal add_or_sub_ready_s                           : std_logic;
     signal addsub_opa_s                                 : pu_operands_t;
     signal addsub_opb_s                                 : pu_operands_t;
     signal addsub_out_s                                 : pu_operands_t;
     -- multiplication signals                          
     signal mul_start_s                                  : std_logic;
-    signal mul_ready_s                                  : std_logic;
     signal mul_operator_s                               : pu_operands_t;
     signal mul_out_s                                    : pu_operands_t;
     -- division signals                                
     signal div_start_s                                  : std_logic;
-    signal div_ready_s                                  : std_logic;
     signal div_opa_s                                    : pu_operands_t;
     signal div_opb_s                                    : pu_operands_t;
     signal div_out_s                                    : pu_operands_t;
@@ -105,7 +110,6 @@ architecture behavioral of shapelet_distance is
     
     -- sqrt signals                                     
     signal sqrt_start_s                                 : std_logic;
-    signal sqrt_ready_s                                 : std_logic;
     signal sqrt_opa_s                                   : std_logic_vector(31 downto 0);
     signal sqrt_opb_s                                   : std_logic_vector(31 downto 0);
     signal sqrt_out_s                                   : std_logic_vector(31 downto 0);
@@ -220,6 +224,7 @@ begin
         else
             case reg_state_s is
                 when Sbegin         =>
+                    reg_output_s <= (others => '0');
                     reg_op_s <= op_i;
                     -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num só reg
                     reg_buf_counter_s <= 0;
@@ -257,14 +262,16 @@ begin
                 when Snorm_square   =>
                     
                     -- Next state
-                    if mul_ready_s = '1' then
+                    -- Is multiplication ready?
+                    if fp_ready_s = '1' then                
                         reg_norm_state_s <= Snorm_sum_acc;
                     end if;
                 
                 when Snorm_sum_acc  =>  
                     
                     -- Next state
-                    if add_or_sub_ready_s = '1' then
+                    -- Is sum ready?
+                    if fp_ready_s = '1' then
                         reg_state_s <= Snorm_reg_acc;
                     end if;
                 
@@ -282,24 +289,35 @@ begin
                     reg_acc_counter_s <= 0;
                     
                     -- Next state
-                    if sqrt_ready_s = '1' then
-                        reg_state_s <= Snorm_div;
+                    -- Is sqrt ready?
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Snorm_acc_clear;
                     end if;
                 
+               when Snorm_acc_clear =>
+                    
+                    -- Next state
+                    reg_state_s <= Snorm_div;
+                    
                 when Snorm_div      =>  
                     
                     -- Next state
-                    -- pivot
-                    if  div_ready_s = '1' and reg_op_s = '0' then
-                        reg_state_s <= Swb_pivot;
-                    --target
-                    elsif div_ready_s = '1' and reg_op_s = '1' then
-                        reg_state_s <= Sdist_sub;
+                    -- Is division ready?
+                    if fp_ready_s '1' then
+                        -- Operating with pivot shapelet
+                        if reg_op_s = '0' then
+                            reg_state_s <= Swb_pivot;
+                        -- Operating with target shapelet
+                        else
+                            reg_state_s <= Sdist_sub;
+                        end if;
                     end if;
+                    
                 
                 when Swb_pivot      =>  
                     reg_acc_counter_s <= inc_acc_counter_s;
                     
+                    -- Next state
                     if reg_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Sbegin;
                     else
@@ -307,14 +325,42 @@ begin
                     end if;
                     
                 when Sdist_sub      =>  
-                
+                        
+                    -- Next state
+                    -- Is subtraction ready?
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Sdist_square;
+                    end if;
+                    
                 when Sdist_square   =>  
+                    
+                    -- Next state
+                    -- Is multiplication ready?
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Sdist_sum_acc;
+                    end if;
                 
                 when Sdist_sum_acc  =>  
+                    
+                    -- Next state
+                    -- Is sum ready?
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Sdist_reg_acc;
+                    end if;
                 
                 when Sdist_reg_acc  =>  
-                
-                when Sout_distance  =>  
+                    reg_acc_counter_s <= inc_acc_counter_s;
+                    
+                    -- Next state
+                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                        reg_state_s <= Sout_distance;
+                    else
+                        reg_state_s <= Snorm_div;
+                    end if;
+                    
+                    
+                when Sout_distance  =>
+                    reg_output_s <= acc_sum_out_s;
                 
             end case;
         end if;
@@ -324,7 +370,8 @@ begin
     
     
     -- ACCUMMULATOR DRIVER
-    accumulators_wr_s  <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc else '0';
+    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_acc_clear    else '0';
+    accumulators_wr_s   <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc      else '0';
     -- Accummulator registers
     acc_regs: process(clk)
     begin
@@ -415,6 +462,29 @@ begin
     div_opa_s    <= shapelet_elements_mux_s;
     --operand b always recieves the signal sqrt_out_s!
 
+    -- Start cycle counter when an operation start is set down
+    counter_start_s <= '1'  when mul_start_s = '0' or div_start_s = '0' or sqrt_start_s = '0' else '0';
+    -- Counter mode
+    counter_mode_s  <=  "00" when reg_state_s = Snorm_sum_acc                           else        -- Addition
+                        "01" when reg_state_s = Snorm_div   or reg_state_s = Snorm_sqrt else        -- Division and square root
+                        "10"; -- when reg_state_s = Snorm_square or reg_state_s = Sdist_square      -- Multiplication
+    
+    cycle_counter: cycle_counter
+    port map(
+        clk     => clk,
+        rst     => not rst_n;
+        -- mode defines the number of cycles to count down
+        -- 00 = 6   ( add / sub)
+        -- 01 = 33  ( division or sqrt)
+        -- 10 = 11  ( multiplication )
+        -- 11 = 0     
+        mode_i  => counter_mode_s;
+
+        start_i => counter_start_s   -- start countdown
+        ready_o => fp_ready_s  -- ready signal indicating cycle_counter has finished counting. Active for 1 clock cycle
+    
+    );
+    
     -- Generate processing units (adder/subtractor, multiplier, divider, square root)
     PROCESSING_UNITS: for i in 0 to NUM_PU - 1 generate
         -- Used in accumulator operation and subtraction during distance calculation
@@ -519,80 +589,6 @@ begin
         qnan_o			=> open,                            -- queit Not-a-Number
         snan_o			=> open                             -- signaling Not-a-Number
     );
-    
-    
-    -- Normalization combinational logic
-    -- norm_count_inc_s <= reg_norm_count_s + NUM_PU;
-    -- norm_ready_s    <= '1' when reg_norm_state_s = Send else '0';
-
-    -- -- Normalization sequential logic
-    -- NORMALIZE_SHAPELET: process(clk)
-    -- begin
-        -- if rising_edge(clk) then
-            -- if rst_n = '0' then
-                -- reg_norm_state_s <= Sbegin;
-            -- else
-                -- case reg_norm_state_s is 
-                    -- when Sbegin =>
-                        -- reg_norm_count_s <= 0;
-                        
-                        -- if norm_start_s = '1' then
-                            -- reg_norm_state_s <= Ssquare;
-                        -- end if;
-                        
-                    -- when Ssquare =>
-                        
-                        -- if mul_ready_s = '1' then -- instantiate
-                            -- reg_norm_state_s <= Ssum;
-                        -- end if;
-                        
-                    -- when Ssum =>
-                        
-                        -- if add_ready = '1' then           -- instatiate
-                            -- reg_norm_state_s <= Sacc;
-                        -- end if;
-                        
-                    -- when Sacc =>
-                        -- reg_norm_count_s <= norm_count_inc_s;
-                        
-                        -- if reg_norm_count_s >= reg_shapelet_length_s then
-                            -- reg_norm_state_s <= Ssqrt;
-                        -- else 
-                            -- reg_norm_state_s <= Ssquare;
-                        -- end if;
-                    
-                    -- when Ssqrt =>
-                        -- reg_norm_count_s <= 0;
-                        
-                        -- if sqrt_ready_s = '1' then          -- instantiate
-                            -- reg_norm_state_s <= Sdiv;    
-                        -- end if;
-                    
-                    
-                    -- TODO:
-                    -- when Sdiv =>
-                        
-                        -- if div_ready_s = '1' then           -- instantiate
-                            -- reg_norm_state_s <= Sout_div;
-                        -- end if;
-                        
-                    -- when Sout_div =>
-                        -- reg_norm_count_s <= norm_count_inc_s;
-                        
-                        -- if reg_norm_count_s >= reg_shapelet_length_s then
-                            -- reg_norm_state_s <= Send;
-                        -- else 
-                            -- reg_norm_state_s <= Sdiv;
-                        -- end if;
-                    
-                    -- when Send =>
-                        -- reg_norm_state_s <= Sbegin;
-                    
-                -- end case; 
-            -- end if;
-        -- end if;
-    -- end process;
-    
-    
+        
     
 end behavioral;

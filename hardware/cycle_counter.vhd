@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity counter is
+entity cycle_counter is
     port (
         clk : in   std_logic;
         rst : in   std_logic;
@@ -14,11 +14,11 @@ entity counter is
         mode_i : in std_logic_vector(1 downto 0); 
 
         start_i : in  std_logic;   -- start countdown
-        ready_o : out  std_logic   -- ready signal indicating counter has finished counting. Active for 1 clock cycle
+        ready_o : out  std_logic   -- ready signal indicating cycle_counter has finished counting. Active for 1 clock cycle
     );
-end entity counter;
+end entity cycle_counter;
 
-architecture countdown of counter is
+architecture countdown of cycle_counter is
     type state is (S0, S1);
     signal cs : state;      -- current state
 
@@ -31,7 +31,7 @@ architecture countdown of counter is
 
 begin
 
-    process(clk, rst, start_i)
+    process(clk)
     begin
         if rising_edge(clk) then
             if rst='1' then
