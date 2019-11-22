@@ -45,7 +45,7 @@ architecture behavioral of shapelet_distance is
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
    
     -- Register to keep output result
-    signal reg_output_s                                 : std_logic_vector(31 downto 0);
+    signal reg_distance_s                               : std_logic_vector(31 downto 0);
 
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (Sbegin, Sset_len, Sbuf_rst, Sbuf_load,
@@ -187,8 +187,13 @@ begin
         end if;
     end process;
     
+    -- Entity outputs
+    distance_o  <= reg_distance_s;
+    ready_o     <= '1' when reg_state_s = Sout_distance else '0';
     
+    -- Increment reg_acc_counter_s out of process to create a single adder
     inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
+    
     -- Buffers control signals
     pivot_buf_rst_s     <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '0' else '0';
     target_buf_rst_s    <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '1' else '0';
@@ -203,7 +208,7 @@ begin
         else
             case reg_state_s is
                 when Sbegin         =>
-                    reg_output_s <= (others => '0');
+                    reg_distance_s <= (others => '0');
                     reg_op_s <= op_i;
                     -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num só reg
                     reg_buf_counter_s <= 0;
@@ -341,7 +346,7 @@ begin
                     
                     
                 when Sout_distance  =>
-                    reg_output_s <= acc_sum_out_s;
+                    reg_distance_s <= acc_sum_out_s;
                 
             end case;
         end if;

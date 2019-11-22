@@ -59,6 +59,7 @@ architecture behavioral of tb_shapelet_distance is
 begin
     clk <= not clk after half_clk_period;
     rst <= '1' after clk_period;  -- wait 2 clk cycles before starting simulation
+
     
     DUV: shapelet_distance
         generic map(
@@ -115,13 +116,16 @@ begin
 
             --assert length > 0 report "Incompatible length < 0 !" severity warning;
 
+
             -- Start normalization
             start <= '1';
             op <= '0';
             wait for clk_period;
 
             start <= '0';
+
             report "loading values";
+
             -- load pivot values
 
             readline(testFile, fileLine);
