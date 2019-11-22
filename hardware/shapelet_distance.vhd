@@ -99,6 +99,7 @@ architecture behavioral of shapelet_distance is
     signal addsub_opa_s                                 : pu_operands_t;
     signal addsub_opb_s                                 : pu_operands_t;
     signal addsub_out_s                                 : pu_operands_t;
+    signal addsub_start_s                               : std_logic;    -- used to start the cycle counter
     -- multiplication signals                          
     signal mul_start_s                                  : std_logic;
     signal mul_operator_s                               : pu_operands_t;
@@ -296,7 +297,9 @@ begin
                     reg_acc_counter_s <= inc_acc_counter_s;
                     
                     -- Next state
-                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                    -- checks if the next iteration will exceed the shapelet length
+                    -- this is to offset the fact that we begin the iterations at 0
+                    if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Sbegin;
                     else
                         reg_state_s <= Snorm_div;
@@ -423,6 +426,7 @@ begin
                         reg_accumulators_s; 
     addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Sdist_sub    else
                         mul_out_s;
+    addsub_start_s <= '0'                       when reg_state_s = Snorm_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sdist_sum_acc else '1';
 
     -- Multiplier 
     mul_start_s     <= '0'                      when reg_state_s = Snorm_square or reg_state_s = Sdist_square   else '1';
@@ -437,7 +441,7 @@ begin
     --operand b always recieves the signal sqrt_out_s!
 
     -- Start cycle counter when an operation start is set down
-    counter_start_s <= '1'  when mul_start_s = '0' or div_start_s = '0' or sqrt_start_s = '0' else '0';
+    counter_start_s <= '1'  when addsub_start_s = '0' or mul_start_s = '0' or div_start_s = '0' or sqrt_start_s = '0' else '0';
     -- Counter mode
     counter_mode_s  <=  "00" when reg_state_s = Snorm_sum_acc                           else        -- Addition
                         "01" when reg_state_s = Snorm_div   or reg_state_s = Snorm_sqrt else        -- Division and square root
