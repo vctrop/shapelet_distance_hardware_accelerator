@@ -23,9 +23,9 @@ architecture countdown of cycle_counter is
     signal reg_cs_s : state;      -- current state
 
     --define the amount of cycles to count for each mode
-    constant mode_00 : std_logic_vector(5 downto 0) := "000110";  -- 6
-    constant mode_01 : std_logic_vector(5 downto 0) := "100001"; -- 33
-    constant mode_10 : std_logic_vector(5 downto 0) := "001011"; -- 11
+    constant mode_00 : std_logic_vector(5 downto 0) := "001000";  -- 8
+    constant mode_01 : std_logic_vector(5 downto 0) := "100011"; -- 35
+    constant mode_10 : std_logic_vector(5 downto 0) := "001111"; -- 15
     constant mode_11 : std_logic_vector(5 downto 0) := "000000"; -- 
     signal reg_count_value_s, new_count_value_s : std_logic_vector(5 downto 0);        -- maximun counter value is 33
 
