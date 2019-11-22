@@ -130,12 +130,12 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
     
-    //printf("Length: %u\n", pivot_shapelet->length);
     
-    if (pivot_shapelet->length == 4){
-        //printf("Pivot shapelet\n");
-        print_shapelet_elements(pivot_values, pivot_shapelet->length);
-    }
+    // if (pivot_shapelet->length == 4){
+        // printf("Length: %08x\n", pivot_shapelet->length);
+        // printf("Pivot shapelet\n");
+        // print_shapelet_elements(pivot_values, pivot_shapelet->length);
+    // }
    
     vector_normalization(pivot_values, pivot_shapelet->length);
     
@@ -149,26 +149,26 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
-        if (pivot_shapelet->length == 4 && i == 0){
-            //printf("Target shapelet\n");
-            print_shapelet_elements(target_values, pivot_shapelet->length);
-        }
+        // if (pivot_shapelet->length == 4 && i == 0){
+            // printf("Target shapelet\n");
+            // print_shapelet_elements(target_values, pivot_shapelet->length);
+        // }
         // Normalize target shapelet values
         vector_normalization(target_values, pivot_shapelet->length);
         
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         
-        if (pivot_shapelet->length == 4 && i == 0){
-            //printf("Distance\n");
-            // Union to represent float as unsigned without type prunning
-            union {
-                float f;
-                uint32_t u;
-            } f2u;
-            f2u.f = shapelet_distance;
-            printf("%x\n", f2u.u);
-        }
+        // if (pivot_shapelet->length == 4 && i == 0){
+            // printf("Distance\n");
+            // // Union to represent float as unsigned without type prunning
+            // union {
+                // float f;
+                // uint32_t u;
+            // } f2u;
+            // f2u.f = shapelet_distance;
+            // printf("%08x\n", f2u.u);
+        // }
         
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
         if (shapelet_distance < minimum_distance)
@@ -497,9 +497,11 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
         
         printf("After merging\n");
-        print_shapelets(k_shapelets, k, T);
+        print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
+    
+    shapelet_set_to_csv(k_shapelets, k, T);
     
     return k_shapelets;
 }
@@ -663,7 +665,7 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        print_shapelets(k_shapelets, k, T);
+        print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
 
@@ -774,20 +776,20 @@ void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shap
             uint32_t u;
     } f2u;
     
-    // for (i = 0; i < shapelet_len; i++){
-        // printf("%g ", shapelet_values[i]);
-    // }    
-    // printf("\n");
+    for (i = 0; i < shapelet_len; i++){
+        printf("%g ", shapelet_values[i]);
+    }    
+    printf("\n");
     
     for (i = 0; i < shapelet_len; i++){
         f2u.f = shapelet_values[i]  ;
-        printf("%x ", f2u.u);
+        printf("%08x ", f2u.u);
     }    
     printf("\n");
 }
 
 // Print all shapelets in a shapelet array
-void print_shapelets(Shapelet * S, size_t num_shapelets, Timeseries *T){
+void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T){
     uint64_t ts_i;                      // index of a given time series
 
     for(int i=0; i < num_shapelets; i++)
@@ -803,12 +805,45 @@ void print_shapelets(Shapelet * S, size_t num_shapelets, Timeseries *T){
         printf("%dth Shapelet has length: %d, quality:", i, S[i].length);
         fixedpt_print(S[i].quality);
         printf("\nValues from timseries %p:\t", S[i].Ti); 
-        for(int j = 0; j < S[i].length; j++)
-            printf("%s ", fixedpt_cstr(get_value(&S[i], j),3));
-        printf("\n\n");
+        // for(int j = 0; j < S[i].length; j++)
+            // printf("%s ", fixedpt_cstr(get_value(&S[i], j),3));
+        // printf("\n\n");
             
         #endif
     }
+}
+
+
+// Given a set of shapelets and the base address of the time-series set they were extracted,
+// write both shapelet description and values to a csv file 
+// Floating-point only
+void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T){
+    uint64_t ts_i;
+    const char file_name[] = "shapelet_archive.csv";
+    FILE *file_descriptor;
+    
+    file_descriptor = fopen(file_name, "w");
+    if (file_descriptor == NULL){
+        perror("Error at shapelet archive file opening");
+        exit(errno);
+    }
+    
+    for (int i = 0; i < num_shapelets; i++){
+        ts_i = (uint64_t)(shapelet_set[i].Ti - T);
+        // Write shapelet description
+        fprintf(file_descriptor, "Shapelet %d is from TS %ld,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
+        // Write shapelet elements
+        for(int j = 0; j < shapelet_set[i].length; j++){
+            fprintf(file_descriptor, "%g", get_value(&shapelet_set[i], j));
+            // Unless its the last element, write comma
+            if (j != shapelet_set[i].length - 1){
+                fprintf(file_descriptor, ",");
+            }
+        }
+        fprintf(file_descriptor, "\n");
+    }
+        
+    
 }
 
 // 

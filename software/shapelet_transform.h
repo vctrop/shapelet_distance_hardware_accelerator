@@ -37,6 +37,7 @@ typedef struct
     uint16_t length;                    // Number of points contained in the shapelet
     numeric_type quality;               // Quality measure value
     Timeseries *Ti;                     // Timeseries from which the shapelet was extracted
+    
     uint16_t start_position;            // Index position on timeseries window
     
     //numeric_type *Ti;                   // Timeseries values window pointer
@@ -89,6 +90,6 @@ void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, 
 void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len);
 
 // Print all shapelets in a shapelet array
-void print_shapelets(Shapelet * S, size_t num_shapelets, Timeseries *T);
+void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T);
 
 #endif
