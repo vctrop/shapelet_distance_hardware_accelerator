@@ -19,8 +19,8 @@ entity cycle_counter is
 end entity cycle_counter;
 
 architecture countdown of cycle_counter is
-    type state is (S0, S1);
-    signal cs : state;      -- current state
+    type state is (Swait, Scountdown);
+    signal reg_cs_s : state;      -- current state
 
     --define the amount of cycles to count for each mode
     constant mode_00 : std_logic_vector(5 downto 0) := "000110";  -- 6
@@ -34,25 +34,25 @@ begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if rst='1' then
-                cs <= S0;
+            if rst='0' then
+                reg_cs_s <= Swait;
                 reg_count_value_s <= (others=> '0');
             else
-                case cs is 
-                    when S0 =>                  -- wait for start signal
+                case reg_cs_s is 
+                    when Swait =>                  -- wait for start signal
                         if start_i = '1' then     
-                            cs <= S1;
+                            reg_cs_s <= Scountdown;
                             reg_count_value_s <= new_count_value_s;
                         else
-                            cs <= S0;
+                            reg_cs_s <= Swait;
                         end if;
 
-                    when S1 =>                  -- count down on this state
+                    when Scountdown =>                  -- count down on this state
                         if reg_count_value_s = "000000" then
-                            cs <= S0;
+                            reg_cs_s <= Swait;
                         else
                             reg_count_value_s <= std_Logic_vector(unsigned(reg_count_value_s) - 1);
-                            cs <= S1;
+                            reg_cs_s <= Scountdown;
                         end if;
 
                 end case;   
@@ -66,6 +66,6 @@ begin
                         mode_10 when mode_i = "10" else
                         mode_11;
     -- ready active during the third state
-    ready_o <= '1' when cs = S1 and reg_count_value_s = "000000" else '0';
+    ready_o <= '1' when reg_cs_s = Scountdown and reg_count_value_s = "000000" else '0';
 
 end countdown ; -- countdown

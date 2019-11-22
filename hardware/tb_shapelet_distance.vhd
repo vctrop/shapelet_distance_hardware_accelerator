@@ -50,7 +50,7 @@ architecture behavioral of tb_shapelet_distance is
     file testFile : TEXT open READ_MODE is "vetor.txt";
 
     signal clk : std_logic := '0';
-    signal rst : std_logic := '1';
+    signal rst : std_logic := '0';
     signal start, ready, op : std_logic;
     signal data, distance, expected_output : std_logic_vector(31 downto 0);
     signal length : natural;
@@ -58,7 +58,8 @@ architecture behavioral of tb_shapelet_distance is
 
 begin
     clk <= not clk after half_clk_period;
-    rst <= '0' after 2*clk_period;  -- wait 2 clk cycles before starting simulation
+    rst <= '1' after clk_period;  -- wait 2 clk cycles before starting simulation
+
     
     DUV: shapelet_distance
         generic map(
@@ -96,8 +97,9 @@ begin
  
     begin
         index <= 0;
-        wait until rst = '0'; -- wait for the circuit to be reset
-
+        wait until rst = '1'; -- wait for the circuit to be reset
+		--wait until clk = '0'; -- synchronize with clk
+		wait for half_clk_period;
         -- read all lines in the test file
         while not (endfile(testFile)) loop
             
@@ -112,7 +114,8 @@ begin
             length <= to_integer(unsigned(StringToStdLogicVector(str)));
             read(fileLine, char, bool); -- read the space separating the values
 
-            assert length > 0 report "Incompatible length < 0 !" severity warning;
+            --assert length > 0 report "Incompatible length < 0 !" severity warning;
+
 
             -- Start normalization
             start <= '1';
@@ -120,7 +123,9 @@ begin
             wait for clk_period;
 
             start <= '0';
-            
+
+            report "loading values";
+
             -- load pivot values
 
             readline(testFile, fileLine);
@@ -136,7 +141,7 @@ begin
 
                 wait for clk_period;
             end loop;
-
+			report "waiting for normalization";
             wait until ready = '1';
 
             -- loads target and waits for output
