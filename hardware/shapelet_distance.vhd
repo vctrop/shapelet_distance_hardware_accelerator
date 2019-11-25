@@ -48,10 +48,10 @@ architecture behavioral of shapelet_distance is
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
 
     -- Shapelet distance FSM states definition
-    type fsm_state_t                                    is (Sbegin, Sset_len, Sbuf_rst, Sbuf_load,
-                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_acc_clear, Snorm_div, 
+    type fsm_state_t                                    is (Sbegin, Sbuf_rst, Sbuf_load,
+                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_div, 
                                                             Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
-                                                            Swb_pivot, Sout_distance);
+                                                            Swb_pivot, Snorm_ready, Sout_distance);
     -- Register to keep FSM state
     signal reg_state_s                                  : fsm_state_t;
     
@@ -139,9 +139,9 @@ architecture behavioral of shapelet_distance is
     
 begin
     -- PIVOT BUFFER 
-    -- enables writing to pivot buffer when loading values from data_i
+    -- enables writing to pivot buffer when loading values from data_i during operation 0
     ADDS: for i in buffer_pivot_s'range generate 
-        en_pivot_load_s(i) <= '1' when reg_buf_counter_s = i and reg_state_s = Sbuf_load else '0';
+        en_pivot_load_s(i) <= '1' when reg_buf_counter_s = i and reg_state_s = Sbuf_load and reg_op_s = '0' else '0';
     end generate;
 
     -- 
@@ -189,7 +189,7 @@ begin
     
     -- Entity outputs
     distance_o  <= reg_distance_s;
-    ready_o     <= '1' when reg_state_s = Sout_distance else '0';
+    ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Snorm_ready else '0';
     
     -- Increment reg_acc_counter_s out of process to create a single adder
     inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
@@ -215,19 +215,13 @@ begin
                     reg_acc_counter_s <= 0;
                     
                     if start_i = '1' then
-                        -- Operation is set target
-                        if op_i = '1' then
+                        -- Operation is set pivot and change length
+                        if op_i = '0' then
+                            reg_shapelet_length_s <= length_i;
                             reg_state_s <= Sbuf_rst;
-                        -- Operation is set pivot
-                        else
-                            reg_state_s <= Sset_len;
                         end if;
+                        reg_state_s <= Sbuf_rst;
                     end if;
-                    
-                when Sset_len       => 
-                    reg_shapelet_length_s <= length_i;
-                    -- Next state
-                    reg_state_s <= Sbuf_rst;
                 
                 when Sbuf_rst       =>
                     -- Next state
@@ -263,7 +257,9 @@ begin
                     reg_acc_counter_s <= inc_acc_counter_s;
                     
                     -- Next state
-                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                    -- checks if the next iteration will exceed the shapelet length
+                    -- this is to offset the fact that we begin the iterations at 0
+                    if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Snorm_sqrt;
                     else
                         reg_state_s <= Snorm_square;
@@ -275,13 +271,8 @@ begin
                     -- Next state
                     -- Is sqrt ready?
                     if fp_ready_s = '1' then
-                        reg_state_s <= Snorm_acc_clear;
+                        reg_state_s <= Snorm_div;
                     end if;
-                
-               when Snorm_acc_clear =>
-                    
-                    -- Next state
-                    reg_state_s <= Snorm_div;
                     
                 when Snorm_div      =>  
                     
@@ -305,10 +296,14 @@ begin
                     -- checks if the next iteration will exceed the shapelet length
                     -- this is to offset the fact that we begin the iterations at 0
                     if inc_acc_counter_s >= reg_shapelet_length_s then
-                        reg_state_s <= Sbegin;
+                        reg_state_s <= Snorm_ready;
                     else
                         reg_state_s <= Snorm_div;
-                    end if;
+                    end if; 
+
+                when Snorm_ready    =>
+                    -- activate ready signal for 1 cycle at the end of operation 0
+                    reg_state_s <= Sbegin;    -- end operation 1  
                     
                 when Sdist_sub      =>  
                         
@@ -338,7 +333,9 @@ begin
                     reg_acc_counter_s <= inc_acc_counter_s;
                     
                     -- Next state
-                    if reg_acc_counter_s >= reg_shapelet_length_s then
+                    -- checks if the next iteration will exceed the shapelet length
+                    -- this is to offset the fact that we begin the iterations at 0
+                    if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Sout_distance;
                     else
                         reg_state_s <= Snorm_div;
@@ -347,6 +344,7 @@ begin
                     
                 when Sout_distance  =>
                     reg_distance_s <= acc_sum_out_s;
+                    reg_state_s <= Sbegin;          -- end operation 1
                 
             end case;
         end if;
@@ -354,7 +352,8 @@ begin
     end process;
     
     -- ACCUMMULATOR DRIVER
-    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or reg_state_s = Snorm_acc_clear    else '0';
+    -- reset the accumulator at the start of the FSM and after taking the square root during normalization.
+    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or (reg_state_s = Snorm_sqrt and fp_ready_s = '1')    else '0';
     accumulators_wr_s   <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc      else '0';
     -- Accummulator registers
     acc_regs: process(clk)

@@ -142,8 +142,9 @@ begin
                 wait for clk_period;
             end loop;
 			report "waiting for normalization";
-            wait until ready = '1';
 
+            wait until ready = '1';
+			wait for clk_period;
             -- loads target and waits for output
             start <= '1';
             op <= '1';
