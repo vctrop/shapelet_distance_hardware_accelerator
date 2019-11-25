@@ -29,51 +29,60 @@ entity fp_sqrt is
 	);   
 end fp_sqrt;
 
+
+-- Asynchronous inputs, Asynchronous outputs
 architecture round_to_nearest_even of fp_sqrt is
     
-    signal pre_norm_sqrt_fracta_o		: std_logic_vector(51 downto 0);
-	signal pre_norm_sqrt_exp_o				: std_logic_vector(7 downto 0);
+    signal pre_norm_sqrt_fracta_o: std_logic_vector(51 downto 0);
+	signal pre_norm_sqrt_exp_o: std_logic_vector(7 downto 0);
 			 
-	signal sqrt_sqr_o			: std_logic_vector(25 downto 0);
-	signal sqrt_ine_o			: std_logic;
+	signal sqrt_sqr_o: std_logic_vector(25 downto 0);
+	signal sqrt_ine_o: std_logic;
 
-	signal post_norm_sqrt_output	: std_logic_vector(31 downto 0);
-    signal post_norm_sqrt_ine_o		: std_logic;
-    signal s_output_o			: std_logic_vector(31 downto 0);	--outputs cannot be read
+	signal post_norm_sqrt_output: std_logic_vector(31 downto 0);
+    signal post_norm_sqrt_ine_o: std_logic;
+    signal s_output_o: std_logic_vector(31 downto 0); -- Outputs cannot be read
     
-    --exception signals
-    signal s_qnan_o, s_snan_o : std_logic;
+    -- Exception signals
+    signal s_qnan_o, s_snan_o: std_logic;
+
 begin
     
     i_pre_norm_sqrt : pre_norm_sqrt
-	port map(
-			 clk_i => clk_i,
-			 opa_i => opa_i,
-			 fracta_52_o => pre_norm_sqrt_fracta_o,
-			 exp_o => pre_norm_sqrt_exp_o);
-		
-	i_sqrt: sqrt 
-	generic map(RD_WIDTH=>52, SQ_WIDTH=>26) 
-	port map(
-			 clk_i => clk_i,
-			 rad_i => pre_norm_sqrt_fracta_o, 
-			 start_i => start_i, 
-	   		 ready_o => open, 
-	  		 sqr_o => sqrt_sqr_o,
-			 ine_o => sqrt_ine_o);
-
-	i_post_norm_sqrt : post_norm_sqrt
-	port map(
+	    port map(
 			clk_i => clk_i,
 			opa_i => opa_i,
-			fract_26_i => sqrt_sqr_o,
-			exp_i => pre_norm_sqrt_exp_o,
-			ine_i => sqrt_ine_o,
-			rmode_i => "00",
-			output_o => s_output_o,
-			ine_o => post_norm_sqrt_ine_o);
+			fracta_52_o => pre_norm_sqrt_fracta_o,
+			exp_o => pre_norm_sqrt_exp_o
+        );
+		
+	i_sqrt: sqrt 
+	    generic map(
+            RD_WIDTH=>52, 
+            SQ_WIDTH=>26
+        ) 
+    	port map(
+    		clk_i => clk_i,
+    		rad_i => pre_norm_sqrt_fracta_o, 
+    		start_i => start_i, 
+    	   	ready_o => open, 
+    	  	sqr_o => sqrt_sqr_o,
+    		ine_o => sqrt_ine_o
+        );
+
+	i_post_norm_sqrt : post_norm_sqrt
+    	port map(
+    		clk_i => clk_i,
+    		opa_i => opa_i,
+    		fract_26_i => sqrt_sqr_o,
+    		exp_i => pre_norm_sqrt_exp_o,
+    		ine_i => sqrt_ine_o,
+    		rmode_i => "00",
+    		output_o => s_output_o,
+    		ine_o => post_norm_sqrt_ine_o
+        );
 	
-        -- Generate Exceptions 
+    -- Generate Exceptions 
 	underflow_o <= '1' when s_output_o(30 downto 23)="00000000" and post_norm_sqrt_ine_o='1' else '0'; 
 	overflow_o <= '1' when s_output_o(30 downto 23)="11111111" and post_norm_sqrt_ine_o='1' else '0';
 	inf_o <= '1' when s_output_o(30 downto 23)="11111111" and (s_qnan_o or s_snan_o)='0' else '0';
@@ -81,9 +90,91 @@ begin
 	s_qnan_o <= '1' when s_output_o(30 downto 0)=QNAN else '0';
     s_snan_o <= '1' when opa_i(30 downto 0)=SNAN else '0';
 
-	-- outputs
+	-- Outputs
     qnan_o <= s_qnan_o;
 	snan_o <= s_snan_o;
 	ine_o <= post_norm_sqrt_ine_o;
 	output_o <= s_output_o;
+
 end architecture round_to_nearest_even;
+
+
+-- Asynchronous inputs, Synchronous outputs
+architecture round_to_nearest_even_syncOut of fp_sqrt is
+    
+    signal pre_norm_sqrt_fracta_o: std_logic_vector(51 downto 0);
+    signal pre_norm_sqrt_exp_o: std_logic_vector(7 downto 0);
+             
+    signal sqrt_sqr_o: std_logic_vector(25 downto 0);
+    signal sqrt_ine_o: std_logic;
+
+    signal post_norm_sqrt_output: std_logic_vector(31 downto 0);
+    signal post_norm_sqrt_ine_o: std_logic;
+    signal s_output_o: std_logic_vector(31 downto 0); -- Outputs cannot be read
+    
+    -- Exception signals
+    signal s_underflow_o, s_overflow_o, s_zero_o, s_inf_o, s_qnan_o, s_snan_o: std_logic;
+
+begin
+    
+    i_pre_norm_sqrt : pre_norm_sqrt
+        port map(
+            clk_i => clk_i,
+            opa_i => opa_i,
+            fracta_52_o => pre_norm_sqrt_fracta_o,
+            exp_o => pre_norm_sqrt_exp_o
+        );
+        
+    i_sqrt: sqrt 
+        generic map(
+            RD_WIDTH=>52, 
+            SQ_WIDTH=>26
+        ) 
+        port map(
+            clk_i => clk_i,
+            rad_i => pre_norm_sqrt_fracta_o, 
+            start_i => start_i, 
+            ready_o => open, 
+            sqr_o => sqrt_sqr_o,
+            ine_o => sqrt_ine_o
+        );
+
+    i_post_norm_sqrt : post_norm_sqrt
+        port map(
+            clk_i => clk_i,
+            opa_i => opa_i,
+            fract_26_i => sqrt_sqr_o,
+            exp_i => pre_norm_sqrt_exp_o,
+            ine_i => sqrt_ine_o,
+            rmode_i => "00",
+            output_o => s_output_o,
+            ine_o => post_norm_sqrt_ine_o
+        );
+    
+    -- Generate Exceptions 
+    s_underflow_o <= '1' when s_output_o(30 downto 23)="00000000" and post_norm_sqrt_ine_o='1' else '0'; 
+    s_overflow_o <= '1' when s_output_o(30 downto 23)="11111111" and post_norm_sqrt_ine_o='1' else '0';
+    s_inf_o <= '1' when s_output_o(30 downto 23)="11111111" and (s_qnan_o or s_snan_o)='0' else '0';
+    s_zero_o <= '1' when or_reduce(s_output_o(30 downto 0))='0' else '0';
+    s_qnan_o <= '1' when s_output_o(30 downto 0)=QNAN else '0';
+    s_snan_o <= '1' when opa_i(30 downto 0)=SNAN else '0';
+
+    -- Output registers
+    process(clk_i) begin
+
+        if rising_edge(clk_i) then
+
+            underflow_o <= s_underflow_o;
+            overflow_o <= s_overflow_o;
+            inf_o <= s_inf_o;
+            zero_o <= s_zero_o;
+            qnan_o <= s_qnan_o;
+            snan_o <= s_snan_o;
+            ine_o <= post_norm_sqrt_ine_o;
+            output_o <= s_output_o;
+
+        end if;
+
+    end process;
+    
+end architecture round_to_nearest_even_syncOut;
