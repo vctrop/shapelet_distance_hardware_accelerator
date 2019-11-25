@@ -49,9 +49,9 @@ architecture behavioral of shapelet_distance is
 
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (Sbegin, Sbuf_rst, Sbuf_load,
-                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_sqrt, Snorm_div, 
+                                                            Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_final_acc, Snorm_sqrt, Snorm_div, 
                                                             Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
-                                                            Swb_pivot, Snorm_ready, Sout_distance);
+                                                            Swb_pivot, Snorm_ready, Sdist_final_acc, Sout_distance);
     -- Register to keep FSM state
     signal reg_state_s                                  : fsm_state_t;
     
@@ -84,6 +84,7 @@ architecture behavioral of shapelet_distance is
     
     -- Array of accumulator registers
     signal reg_accumulators_s                           : pu_operands_t;
+    signal reg_final_accumulator_s                      : std_logic_vector(31 downto 0);    -- holds the sum of every reg_acumulator 
     signal accumulators_wr_s                            : std_logic;
     signal accumulators_rst_s                           : std_logic;
     
@@ -120,6 +121,13 @@ architecture behavioral of shapelet_distance is
     signal sqrt_op_s                                    : std_logic_vector(31 downto 0);
     signal sqrt_out_s                                   : std_logic_vector(31 downto 0);
     
+    -- PU output registers:
+    signal reg_addsub_out_s : pu_operands_t;
+    signal reg_mul_out_s : pu_operands_t;
+    signal reg_div_out_s : pu_operands_t;
+    signal reg_sqrt_out_s : std_logic_vector(31 downto 0);
+    signal reg_acc_sum_out_s : std_logic_vector(31 downto 0);
+
     ---- SHAPELETS POSITIONS MUX
     --
     type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU-1)  of std_logic_vector(31 downto 0);
@@ -204,11 +212,10 @@ begin
     if rising_edge(clk) then
         if rst = '0' then
             reg_state_s <= Sbegin;
-            
+            reg_distance_s <= (others => '0');
         else
             case reg_state_s is
                 when Sbegin         =>
-                    reg_distance_s <= (others => '0');
                     reg_op_s <= op_i;
                     -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num só reg
                     reg_buf_counter_s <= 0;
@@ -260,11 +267,17 @@ begin
                     -- checks if the next iteration will exceed the shapelet length
                     -- this is to offset the fact that we begin the iterations at 0
                     if inc_acc_counter_s >= reg_shapelet_length_s then
-                        reg_state_s <= Snorm_sqrt;
+                        reg_state_s <= Snorm_final_acc;
                     else
                         reg_state_s <= Snorm_square;
                     end if;
                 
+                when Snorm_final_acc =>
+                    -- sums each PU's accumulators 
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Snorm_sqrt;
+                    end if;
+                    
                 when Snorm_sqrt     =>  
                     reg_acc_counter_s <= 0;
                     
@@ -303,7 +316,7 @@ begin
 
                 when Snorm_ready    =>
                     -- activate ready signal for 1 cycle at the end of operation 0
-                    reg_state_s <= Sbegin;    -- end operation 1  
+                    reg_state_s <= Sbegin;    -- end operation 0  
                     
                 when Sdist_sub      =>  
                         
@@ -336,14 +349,19 @@ begin
                     -- checks if the next iteration will exceed the shapelet length
                     -- this is to offset the fact that we begin the iterations at 0
                     if inc_acc_counter_s >= reg_shapelet_length_s then
-                        reg_state_s <= Sout_distance;
+                        reg_state_s <= Sdist_final_acc;
                     else
                         reg_state_s <= Snorm_div;
                     end if;
                     
-                    
+                when Sdist_final_acc =>
+                    -- sums each PU's accumulators
+                    if fp_ready_s = '1' then
+                        reg_state_s <= Sout_distance;
+                    end if;
+
                 when Sout_distance  =>
-                    reg_distance_s <= acc_sum_out_s;
+                    reg_distance_s <= reg_acc_sum_out_s;
                     reg_state_s <= Sbegin;          -- end operation 1
                 
             end case;
@@ -351,27 +369,9 @@ begin
     end if;    
     end process;
     
-    -- ACCUMMULATOR DRIVER
-    -- reset the accumulator at the start of the FSM and after taking the square root during normalization.
-    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or (reg_state_s = Snorm_sqrt and fp_ready_s = '1')    else '0';
-    accumulators_wr_s   <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc      else '0';
-    -- Accummulator registers
-    acc_regs: process(clk)
-    begin
-        if rising_edge(clk) then
-            if rst = '0' or accumulators_rst_s = '1' then
-                reg_accumulators_s <= (others => (others => '0'));
-            else
-                if accumulators_wr_s = '1' then
-                    reg_accumulators_s <= addsub_out_s;
-                end if;
-            end if;
-        end if;
-    end process;
-    
     ---- MUX to present shapelet positions to the right Processing Units
     -- Selects which shapelet is presented to the MUX
-    input_buffer_s <=   buffer_pivot_s  when reg_op_s = '0' else
+    input_buffer_s <=   buffer_pivot_s  when reg_op_s = '0' or (reg_op_s = '1' and reg_state_s = Sdist_sub) else
                         buffer_target_s;
 
     -- GENERATE MUX inputs
@@ -426,28 +426,29 @@ begin
     -- Addsub
     -- add_or_sub_s selcts if a addition='0' or subtraction='1' will be computed
     add_or_sub_s    <=  '1'                     when reg_state_s = Sdist_sub    else '0';
-    addsub_opa_s    <=  div_out_s               when reg_state_s = Sdist_sub    else 
+    addsub_opa_s    <=  reg_div_out_s           when reg_state_s = Sdist_sub    else 
                         reg_accumulators_s; 
     addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Sdist_sub    else
-                        mul_out_s;
-    addsub_start_s <= '0'                       when reg_state_s = Snorm_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sdist_sum_acc else '1';
+                        reg_mul_out_s;
+    addsub_start_s <= '0'                       when reg_state_s = Snorm_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sdist_sum_acc
+                                                or reg_state_s = Snorm_final_acc or reg_state_s = Sdist_final_acc else '1';     -- final accumulator states
 
     -- Multiplier 
     mul_start_s     <= '0'                      when reg_state_s = Snorm_square or reg_state_s = Sdist_square   else '1';
     -- Square shapelet elements in normalization and the difference in euclidean distance calculation
     -- the multiplier unit always computes A*A (A^2)
     mul_operator_s  <=  shapelet_elements_mux_s when reg_state_s = Snorm_square     else 
-                        addsub_out_s;
+                        reg_addsub_out_s;
     
     -- Divider
     div_start_s  <= '0'                         when reg_state_s = Snorm_div        else '1';
     div_opa_s    <= shapelet_elements_mux_s;
-    --operand b always recieves the signal sqrt_out_s!
+    --operand b always recieves the signal reg_sqrt_out_s!
 
     -- Start cycle counter when an operation start is set down
     counter_start_s <= '1'  when addsub_start_s = '0' or mul_start_s = '0' or div_start_s = '0' or sqrt_start_s = '0' else '0';
     -- Counter mode
-    counter_mode_s  <=  "00" when reg_state_s = Snorm_sum_acc                           else        -- Addition
+    counter_mode_s  <=  "00" when reg_state_s = Snorm_sum_acc or reg_state_s = Snorm_final_acc or reg_state_s = Sdist_final_acc else        -- Addition
                         "01" when reg_state_s = Snorm_div   or reg_state_s = Snorm_sqrt else        -- Division and square root
                         "10"; -- when reg_state_s = Snorm_square or reg_state_s = Sdist_square      -- Multiplication
     
@@ -512,7 +513,7 @@ begin
             clk_i 			=> clk,
             start_i         => div_start_s,
             opa_i        	=> div_opa_s(i),                    -- Input Operands A & B
-            opb_i           => sqrt_out_s,
+            opb_i           => reg_sqrt_out_s,
             output_o        => div_out_s(i),
             
             -- Exceptions
@@ -538,7 +539,8 @@ begin
     port map(
         clk_i 			=> clk,      
         op_type         => '0',                    -- 0 = add, 1 = sub
-        opa_i        	=> acc_sum_opa_s,
+        start_i => 	addsub_start_s,
+	opa_i        	=> acc_sum_opa_s,
         opb_i           => acc_sum_opb_s,
         output_o        => acc_sum_out_s,
         -- Exceptions
@@ -552,7 +554,7 @@ begin
     );
     
     -- Single SQRT unit
-    sqrt_op_s <= acc_sum_out_s;
+    sqrt_op_s <= reg_acc_sum_out_s;
     sqrt_start_s <= '0'         when reg_state_s = Snorm_sqrt   else '1';
     
     -- Sqrt computes in 33 cycles
@@ -572,5 +574,55 @@ begin
         snan_o			=> open                             -- signaling Not-a-Number
     );
         
-    
+    -- registers that save the PU's results
+    process(clk, rst)
+    begin
+        if rising_edge(clk) then
+            if rst = '0' then
+                reg_addsub_out_s <= (others => (others => '0'));
+                reg_mul_out_s <= (others => (others => '0'));
+                reg_div_out_s <= (others => (others => '0'));
+                reg_sqrt_out_s <= (others => '0');
+                reg_acc_sum_out_s <= (others => '0');
+            elsif fp_ready_s = '1' then
+                if reg_state_s = Snorm_square or reg_state_s = Sdist_square then
+                    reg_mul_out_s <= mul_out_s;
+                end if;
+                -- the accumulation operations are registered on a separate register (see acc_regs process)
+                if reg_state_s = Sdist_sub then
+                    reg_addsub_out_s <= addsub_out_s;
+                end if;
+                -- the write back stage during operation 0 writes directly to pivot_buffer
+                if reg_state_s = Snorm_div then
+                    reg_div_out_s <= div_out_s;
+                end if;
+                if reg_state_s = Snorm_sqrt then
+                    reg_sqrt_out_s <= sqrt_out_s;
+                end if;
+                if reg_state_s = Snorm_final_acc or reg_state_s = Sdist_finaL_acc then
+                    reg_acc_sum_out_s <= acc_sum_out_s;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- ACCUMMULATOR DRIVER
+    -- reset the accumulator at the start of the FSM and after taking the square root during normalization.
+    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or (reg_state_s = Snorm_sqrt and fp_ready_s = '1')    else '0';
+    accumulators_wr_s   <= '1' when reg_state_s = Snorm_reg_acc or reg_state_s = Sdist_reg_acc      else '0';
+    -- Accummulator registers
+    acc_regs: process(clk)
+    begin
+        if rising_edge(clk) then
+            if rst = '0' or accumulators_rst_s = '1' then
+                reg_accumulators_s <= (others => (others => '0'));
+            else
+                if accumulators_wr_s = '1' then
+                    reg_accumulators_s <= addsub_out_s;
+                end if;
+            end if;
+        end if;
+    end process;
+
+
 end behavioral;
