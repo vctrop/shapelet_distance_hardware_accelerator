@@ -25,7 +25,7 @@ entity shapelet_distance is
         
         -- Data input is a single precision float shapelet datapoint
         data_i      : in std_logic_vector(31 downto 0);
-        length_i    : in natural range 0 to MAX_LEN-1;
+        length_i    : in std_logic_vector(6 downto 0);
 
         -- begins opeartions
         start_i     : in std_logic;        
@@ -225,7 +225,7 @@ begin
                     if start_i = '1' then
                         -- Operation is set pivot and change length
                         if op_i = '0' then
-                            reg_shapelet_length_s <= length_i;
+                            reg_shapelet_length_s <= to_integer(unsigned(length_i));
                         end if;
                         reg_state_s <= Sbuf_load;
                     end if;

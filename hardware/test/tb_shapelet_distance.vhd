@@ -12,7 +12,7 @@ end tb_shapelet_distance;
 architecture behavioral of tb_shapelet_distance is
 
     component shapelet_distance is
-        generic(
+   	generic(
             -- Number of processig units (each PU is composed of square, accumulate, sub and div)
             NUM_PU      : natural;
             -- Maximum shapelet length (must be multiple of NUM_PU)
@@ -29,7 +29,7 @@ architecture behavioral of tb_shapelet_distance is
             
             -- Data input is a single precision float shapelet datapoint
             data_i      : in std_logic_vector(31 downto 0);
-            length_i    : in natural range 0 to MAX_LEN-1;
+            length_i    : in std_logic_vector(6 downto 0);
     
             -- begins opeartions
             start_i     : in std_logic;        
@@ -40,12 +40,12 @@ architecture behavioral of tb_shapelet_distance is
         );
     end component;
     
-    constant half_clk_period : time := 5 ns;
+    constant half_clk_period : time := 3 ns;
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
-    constant NUM_PU : natural := 2;
-    constant MAX_LEN : natural := 128;
+    constant NUM_PU : integer := 2;
+    constant MAX_LEN : integer := 128;
 
     file testFile : TEXT open READ_MODE is "vetor.txt"; -- testFile containts:
 	-- 1 line for integer length 
@@ -58,7 +58,7 @@ architecture behavioral of tb_shapelet_distance is
     signal rst : std_logic := '0';
     signal start, ready, op : std_logic;
     signal data, distance, expected_output : std_logic_vector(31 downto 0);
-    signal length : natural;
+    signal length_slv : std_logic_vector(6 downto 0);
     signal index : natural;
 
 begin
@@ -84,7 +84,7 @@ begin
             
             -- Data input is a single precision float shapelet datapoint
             data_i      => data,
-            length_i    => length,
+            length_i    => length_slv,
     
             -- begins opeartions
             start_i     => start,      
@@ -100,7 +100,8 @@ begin
         variable char		: character;		-- Stores a single character
         variable bool		: boolean;	
 		variable row        : line;				-- Output file line
- 
+ 		variable length	: integer;
+		variable l_v : std_logic_vector(31 downto 0);
     begin
         index <= 0;
         wait until rst = '1'; -- wait for the circuit to be reset
@@ -116,11 +117,11 @@ begin
                 read(fileLine, char, bool);
                 str(i) := char;
             end loop;
-
-            length <= to_integer(unsigned(StringToStdLogicVector(str)));
-            --read(fileLine, char, bool); -- read the space separating the values
-
-            --assert length > 0 report "Incompatible length < 0 !" severity warning;
+			l_v := StringToStdLogicVector(str);
+            length_slv <= l_v(6 downto 0);
+			length := to_integer(unsigned(length_slv));
+			report "length: " & integer'image(length);
+            assert length > 0 report "Incompatible length < 0 !" severity warning;
 
 
             -- Start normalization
