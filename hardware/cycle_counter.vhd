@@ -9,7 +9,7 @@ entity cycle_counter is
         -- mode defines the number of cycles to count down
         -- 00 = 6   ( add / sub)
         -- 01 = 33  ( division or sqrt)
-        -- 10 = 11  ( multiplication )
+        -- 10 = 12  ( multiplication )
         -- 11 = 0     
         mode_i : in std_logic_vector(1 downto 0); 
 

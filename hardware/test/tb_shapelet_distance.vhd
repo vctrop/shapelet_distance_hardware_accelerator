@@ -45,10 +45,15 @@ architecture behavioral of tb_shapelet_distance is
 
     -- generic constants
     constant NUM_PU : natural := 2;
-    constant MAX_LEN : natural := 150;
+    constant MAX_LEN : natural := 128;
 
-    file testFile : TEXT open READ_MODE is "vetor.txt";
-
+    file testFile : TEXT open READ_MODE is "vetor.txt"; -- testFile containts:
+	-- 1 line for integer length 
+	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
+	-- 1 line for target shapelet 32-bit float values, separated by 1 character
+	-- 1 line for expected output 32-bit float distance
+	-- all values must be in hexadecimal, each with 8 characters of length. eg.: 00000004
+	file outFile : text open write_mode is "output_file.txt"; --output file contains the number of the test and the distance found for each input followed by the expected output, one per line.
     signal clk : std_logic := '0';
     signal rst : std_logic := '0';
     signal start, ready, op : std_logic;
@@ -94,6 +99,7 @@ begin
         variable str 		: string(1 to 8);	-- Stores an 8 characters string
         variable char		: character;		-- Stores a single character
         variable bool		: boolean;	
+		variable row        : line;				-- Output file line
  
     begin
         index <= 0;
@@ -112,7 +118,7 @@ begin
             end loop;
 
             length <= to_integer(unsigned(StringToStdLogicVector(str)));
-            read(fileLine, char, bool); -- read the space separating the values
+            --read(fileLine, char, bool); -- read the space separating the values
 
             --assert length > 0 report "Incompatible length < 0 !" severity warning;
 
@@ -175,7 +181,13 @@ begin
             expected_output <= StringToStdLogicVector(str);
 
             report "shapelet " & natural'image(index) & " has output " & integer'image(to_integer(unsigned(distance))) & "expected " & integer'image(to_integer(unsigned(expected_output)));
-            
+
+			-- write to output file:
+            write(row, index, right, 9);
+			write(row, slv_to_hexstr(distance), right, 9); -- transform distance to string
+			write(row, str, right, 9);	-- expected output in string format
+			writeLine(outFile, row);
+
             index <= index + 1;
 			wait for clk_period;
         end loop;
