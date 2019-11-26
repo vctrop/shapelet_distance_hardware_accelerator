@@ -135,7 +135,7 @@ int main(int argc, char *argv[]){
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     //k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 10, k, 38);
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 15, k);
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 128, k);
 
     free(k_best);
     /*
