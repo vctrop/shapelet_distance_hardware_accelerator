@@ -2,11 +2,11 @@
 #include "shapelet_transform.h"
 #include <stdio.h>
 
-// #define TS_LEN 152
-// #define NUM_SERIES 1000
+#define TS_LEN 152
+#define NUM_SERIES 1000
 
-#define TS_LEN      8
-#define NUM_SERIES  8
+// #define TS_LEN      8
+// #define NUM_SERIES  8
 
 
 
@@ -90,56 +90,52 @@ int main(int argc, char *argv[]){
     unsigned int i,  k;
     
     
-    double time_series_values[NUM_SERIES][TS_LEN] = {   {2.0, 0.0, 3.0, 4.0, 7.1, 4.2, 4.8, 8.9},
-                                                        {0.5, 3.5, 5.0, 3.0, 1.3, 2.5, 8.9, 8.5},
-                                                        {5.0, 3.5, 5.0, 5.0, 5.6, 5.2, 6.2, 6.0},
-                                                        {6.7, 2.2, 1.4, 4.1, 3.1, 2.3, 4.2, 4.4},
-                                                        {1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9},
-                                                        {7.3, 7.2, 7.0, 6.9, 6.6, 6.3, 6.5, 5.3},
-                                                        {2.3, 2.1, 2.0, 3.0, 4.0, 3.5, 3.3, 3.4},
-                                                        {5.1, 5.6, 5.7, 5.1, 5.0, 4.2, 4.2, 0.0}};
+    // double time_series_values[NUM_SERIES][TS_LEN] = {   {2.0, 0.0, 3.0, 4.0, 7.1, 4.2, 4.8, 8.9},
+                                                        // {0.5, 3.5, 5.0, 3.0, 1.3, 2.5, 8.9, 8.5},
+                                                        // {5.0, 3.5, 5.0, 5.0, 5.6, 5.2, 6.2, 6.0},
+                                                        // {6.7, 2.2, 1.4, 4.1, 3.1, 2.3, 4.2, 4.4},
+                                                        // {1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9},
+                                                        // {7.3, 7.2, 7.0, 6.9, 6.6, 6.3, 6.5, 5.3},
+                                                        // {2.3, 2.1, 2.0, 3.0, 4.0, 3.5, 3.3, 3.4},
+                                                        // {5.1, 5.6, 5.7, 5.1, 5.0, 4.2, 4.2, 0.0}};
     
-    fixedpt time_series_values_fx[][4] = 
-    {{fixedpt_rconst(2.0), fixedpt_rconst(0.0), fixedpt_rconst(3.0), fixedpt_rconst(4.0)},
-    {fixedpt_rconst(0.5), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(3.0)},
-    {fixedpt_rconst(5.0), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(5.0)},
-    {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
+    // fixedpt time_series_values_fx[][4] = 
+    // {{fixedpt_rconst(2.0), fixedpt_rconst(0.0), fixedpt_rconst(3.0), fixedpt_rconst(4.0)},
+    // {fixedpt_rconst(0.5), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(3.0)},
+    // {fixedpt_rconst(5.0), fixedpt_rconst(3.5), fixedpt_rconst(5.0), fixedpt_rconst(5.0)},
+    // {fixedpt_rconst(6.7), fixedpt_rconst(2.2), fixedpt_rconst(1.4), fixedpt_rconst(4.1)}};
     
-
+    // Timeseries T[NUM_SERIES];
+    // for(int i =0; i < NUM_SERIES; i++)
+    // {
+        // T[i] = init_timeseries(time_series_values[i], i%2, TS_LEN);
+        // // printf("[TS %d]:\t", i);
+        // // for(int j = 0; j < TS_LEN; j++)
+        // // {
+            // // printf("%g ", T[i].values[j]);
+        // // }
+        // //printf("\n");
+    // }
     
  
     
-     // Real-life dataset
-    /*
+    // Real-life dataset
     Timeseries T[NUM_SERIES];
     read_wafer_train(T, NUM_SERIES);
-    for(i = 0; i < NUM_SERIES; i++){
-        #ifdef USE_FLOAT
-        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
-        #else
-        printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
-        fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
-        #endif
-    } */
-    
-       
-    Timeseries T[NUM_SERIES];
-    for(int i =0; i < NUM_SERIES; i++)
-    {
-        T[i] = init_timeseries(time_series_values[i], i%2, TS_LEN);
-        // printf("[TS %d]:\t", i);
-        // for(int j = 0; j < TS_LEN; j++)
-        // {
-            // printf("%g ", T[i].values[j]);
-        // }
-        //printf("\n");
-    }
+    // for(i = 0; i < NUM_SERIES; i++){
+        // #ifdef USE_FLOAT
+        // printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+        // #else
+        // printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
+        // fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
+        // #endif
+    // }
 
-    k=5;
+    k=10;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     //k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 10, k, 38);
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 5, k);
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 15, k);
 
     free(k_best);
     /*

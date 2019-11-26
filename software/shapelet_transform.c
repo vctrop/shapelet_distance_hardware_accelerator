@@ -2,7 +2,6 @@
 // september, 2019
 
 // TODO:
-// - create csv format to keep shapelets in non-volatile memory after search
 // - function to read shapelet set and transform data based on its
 
 #include "shapelet_transform.h"
@@ -118,7 +117,8 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
 numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series){
     numeric_type shapelet_distance, minimum_distance;
     numeric_type *pivot_values, *target_values;   // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
-    const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series
+    const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;   // number of shapelets of length "shapelet_len" in time_series    uint8_t print_flag;
+    
     //printf("Time series %p\n", time_series);
     #ifdef USE_FLOAT
     minimum_distance = INFINITY;
@@ -130,14 +130,20 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
     
-    
-    // if (pivot_shapelet->length == 4){
-        // printf("Length: %08x\n", pivot_shapelet->length);
-        // printf("Pivot shapelet\n");
+    // Test vectors extraction. Refer to readme_vectors.txt for more information.
+    // if (pivot_shapelet->length % 5 == 0){
+        // printf("%08x\n", pivot_shapelet->length);
+        // //printf("Pivot shapelet\n");
         // print_shapelet_elements(pivot_values, pivot_shapelet->length);
     // }
    
     vector_normalization(pivot_values, pivot_shapelet->length);
+    
+    // Test vectors extraction. Refer to readme_vectors.txt for more information.
+    // if (pivot_shapelet->length % 5 == 0){
+        // //printf("Normalized pivot shapelet\n");
+        // print_shapelet_elements(pivot_values, pivot_shapelet->length);
+    // }
     
     // Allocate memory for target values 
     // Pivot shapelet and ts shapelets must always have equal length
@@ -145,22 +151,32 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 
     // Loops over shapelets in the time-series
     for (uint32_t i=0; i<num_shapelets; i++){
+    //uint32_t i=0;                                   // Consider only pivot shapelets at the series begin
         //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
-        // if (pivot_shapelet->length == 4 && i == 0){
-            // printf("Target shapelet\n");
+        // Test vectors extraction. Refer to readme_vectors.txt for more information.
+        // if (pivot_shapelet->length % 5 == 0 && i == 0){
+            // //printf("Target shapelet\n");
             // print_shapelet_elements(target_values, pivot_shapelet->length);
         // }
+        
         // Normalize target shapelet values
         vector_normalization(target_values, pivot_shapelet->length);
+        
+        // Test vectors extraction. Refer to readme_vectors.txt for more information.
+        // if (pivot_shapelet->length % 5 == 0 && i == 0){
+            // //printf("Normalized target shapelet\n");
+            // print_shapelet_elements(target_values, pivot_shapelet->length);
+        // }
         
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         
-        // if (pivot_shapelet->length == 4 && i == 0){
-            // printf("Distance\n");
+        // Test vector extraction. Refer to readme_vectors.txt for more information.
+        // if (pivot_shapelet->length % 5 == 0){
+            // //printf("Distance\n");
             // // Union to represent float as unsigned without type prunning
             // union {
                 // float f;
@@ -460,6 +476,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     
     // For each time-series T[i] in T
     for (i = 0; i < num_of_ts; i++){
+    //i = 0;
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
         printf("[TS %u]\n", i);
@@ -467,14 +484,15 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = T->length - l + 1;    
-            // For each shapelet of the given length
+            // For each shapelet of ther given length
             for (position = 0; position < num_shapelets; position++){
-                
+            //position = 0;                                                       // Fix starting position at 0 to extract test vectors    
                 shapelet_candidate = init_shapelet(&T[i], position, l);                                      // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
                 //printf("(Pivot shapelet %d)\n", shapelets_index);
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_of_ts; j++)
+                //j = 1;                                                          // Fix target shapelet origin at series 1 to extract test vectors        
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
 
                 // F-Statistic as shapelet quality measure
@@ -776,10 +794,10 @@ void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shap
             uint32_t u;
     } f2u;
     
-    for (i = 0; i < shapelet_len; i++){
-        printf("%g ", shapelet_values[i]);
-    }    
-    printf("\n");
+    // for (i = 0; i < shapelet_len; i++){
+        // printf("%g ", shapelet_values[i]);
+    // }    
+    // printf("\n");
     
     for (i = 0; i < shapelet_len; i++){
         f2u.f = shapelet_values[i]  ;
@@ -842,8 +860,6 @@ void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeserie
         }
         fprintf(file_descriptor, "\n");
     }
-        
-    
 }
 
 // 

@@ -14,8 +14,6 @@
 #include <pthread.h>                        // multi thread implementation
 #include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-//#define USE_FLOAT 0
-
 #ifdef USE_FLOAT
     typedef float numeric_type;
 #else
@@ -91,5 +89,8 @@ void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shap
 
 // Print all shapelets in a shapelet array
 void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T);
+
+// Print a shapelet set into a csv file
+void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T);
 
 #endif
