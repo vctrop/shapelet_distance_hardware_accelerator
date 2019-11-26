@@ -12,7 +12,7 @@ entity shapelet_distance is
         -- Number of processig units (each PU is composed of square, accumulate, sub and div)
         NUM_PU      : natural := 2;
         -- Maximum shapelet length (must be multiple of NUM_PU)
-        MAX_LEN     : natural := 12
+        MAX_LEN     : natural := 128
     );
     port (
         clk         : in std_logic;
@@ -48,7 +48,7 @@ architecture behavioral of shapelet_distance is
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
 
     -- Shapelet distance FSM states definition
-    type fsm_state_t                                    is (Sbegin, Sbuf_rst, Sbuf_load,
+    type fsm_state_t                                    is (Sbegin, Sbuf_load,
                                                             Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_final_acc, Snorm_sqrt, Snorm_div, 
                                                             Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
                                                             Swb_pivot, Snorm_ready, Sdist_final_acc, Sout_distance);
@@ -194,7 +194,7 @@ begin
             end if;
         end if;
     end process;
-    
+
     -- Entity outputs
     distance_o  <= reg_distance_s;
     ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Snorm_ready else '0';
@@ -203,8 +203,9 @@ begin
     inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
     
     -- Buffers control signals
-    pivot_buf_rst_s     <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '0' else '0';
-    target_buf_rst_s    <= '1' when reg_state_s = Sbuf_rst              and reg_op_s = '1' else '0';
+	-- reset pivot at the beggining of operation 0 and target during operation 0
+    pivot_buf_rst_s     <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '0' else '0';
+    target_buf_rst_s    <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '1' else '0';
     target_buf_wr_s     <= '1' when reg_state_s = Sbuf_load             and reg_op_s = '1' else '0';
     
     CONTROL_FSM: process(clk)
@@ -225,14 +226,9 @@ begin
                         -- Operation is set pivot and change length
                         if op_i = '0' then
                             reg_shapelet_length_s <= length_i;
-                            reg_state_s <= Sbuf_rst;
                         end if;
-                        reg_state_s <= Sbuf_rst;
+                        reg_state_s <= Sbuf_load;
                     end if;
-                
-                when Sbuf_rst       =>
-                    -- Next state
-                    reg_state_s <= Sbuf_load;
                 
                 when Sbuf_load      => 
                     reg_buf_counter_s <= reg_buf_counter_s + 1;
@@ -358,10 +354,10 @@ begin
                     -- sums each PU's accumulators
                     if fp_ready_s = '1' then
                         reg_state_s <= Sout_distance;
+						reg_distance_s <= acc_sum_out_s;	 -- write the distance calculation to distance output register
                     end if;
 
                 when Sout_distance  =>
-                    reg_distance_s <= reg_acc_sum_out_s;
                     reg_state_s <= Sbegin;          -- end operation 1
                 
             end case;

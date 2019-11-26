@@ -15,6 +15,9 @@ package test_pkg is
 	-- The vector length depends on the number of string characteres (string length * 4).
 	function StringToStdLogicVector(value: string) return std_logic_vector;
 	    
+	function StdLogicVectorToChar(slv : std_Logic_vector(3 downto 0)) return character;
+	
+	function slv_to_hexstr(value : std_logic_vector(31 downto 0)) return string;
 	     
 end test_pkg;
 
@@ -86,6 +89,49 @@ package body test_pkg is
   		return binaryValue;
   	
   	end StringToStdLogicVector;
+
+	function StdLogicVectorToChar(slv : std_Logic_vector(3 downto 0)) return character is         
+    	
+		variable char : character;
+    	
+   	begin
+    	
+    	case (slv) is  
+        	when "0000" 		=> char := '0';
+            when "0001" 		=> char := '1';
+            when "0010" 		=> char := '2';
+            when "0011" 		=> char := '3';
+            when "0100" 		=> char := '4';
+            when "0101" 		=> char := '5';
+            when "0110" 		=> char := '6';
+            when "0111" 		=> char := '7';
+            when "1000" 		=> char := '8';
+            when "1001" 		=> char := '9';
+            when "1010"			=> char := 'a';
+            when "1011" 		=> char := 'b';
+            when "1100" 		=> char := 'c';
+            when "1101" 		=> char := 'd';
+            when "1110" 		=> char := 'e';
+            when "1111" 		=> char := 'f';
+            when others =>  char := 'Z';  
+      	end case;
+      
+     	return char;
+  
+	end StdLogicVectorToChar;
   	
+	function slv_to_hexstr(value : std_logic_vector(31 downto 0)) return string is
+		variable hexstr : string(1 to 8);
+	begin
+		hexstr(8) := StdLogicVectorToChar(value(3 downto 0));
+		hexstr(7) := StdLogicVectorToChar(value(7 downto 4));
+		hexstr(6) := StdLogicVectorToChar(value(11 downto 8));
+		hexstr(5) := StdLogicVectorToChar(value(15 downto 12));
+		hexstr(4) := StdLogicVectorToChar(value(19 downto 16));
+		hexstr(3) := StdLogicVectorToChar(value(23 downto 20));
+		hexstr(2) := StdLogicVectorToChar(value(27 downto 24));
+		hexstr(1) := StdLogicVectorToChar(value(31 downto 28));
+		return hexstr;
+	end slv_to_hexstr;
 
 end test_pkg;
