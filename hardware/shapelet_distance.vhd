@@ -539,7 +539,6 @@ begin
     port map(
         clk_i 			=> clk,      
         op_type         => '0',                    -- 0 = add, 1 = sub
-        start_i => 	addsub_start_s,
 	opa_i        	=> acc_sum_opa_s,
         opb_i           => acc_sum_opb_s,
         output_o        => acc_sum_out_s,
