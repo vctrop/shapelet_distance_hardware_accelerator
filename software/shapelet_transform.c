@@ -121,8 +121,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     
     // Timing analysis takes into account all the function calls from pivot normalization to distance calculation
     // Here we consider both pivot and target as the first shapelet of Wafer time-series 0
-    clock_t begin_clk, end_clk;
-    double time_spent;
+    //clock_t begin_clk, end_clk;
+    //double time_spent;
     
     
     //printf("Time series %p\n", time_series);
@@ -133,7 +133,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     #endif
     
     
-    begin_clk = clock();
+    //begin_clk = clock();
     // Normalize pivot 
     pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
@@ -158,8 +158,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
 
     // Loops over shapelets in the time-series
-    //for (uint32_t i=0; i<num_shapelets; i++){
-    uint32_t i = 0;                                                        // (test vector) (timing analysis)
+    for (uint32_t i=0; i<num_shapelets; i++){
+    // uint32_t i = 0;                                                        // (test vector) (timing analysis)
         //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
@@ -182,10 +182,9 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         
-        end_clk = clock();
-        time_spent = (double)(end_clk - begin_clk) / CLOCKS_PER_SEC;
-        printf("Time spent: %g\n", time_spent);
-        exit(1);
+        //end_clk = clock();
+        //time_spent = (double)(end_clk - begin_clk) / CLOCKS_PER_SEC;
+        //printf("Time spent: %g\n", time_spent);
         
         // Test vector extraction. Refer to readme_vectors.txt for more information.
         // if (pivot_shapelet->length % 32 == 0){
@@ -204,7 +203,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
             minimum_distance = shapelet_distance;
         
         //printf("Shapelet minimum distance: "); fixedpt_print(minimum_distance);
-    //}
+    }
 
     free(pivot_values);
     free(target_values);
@@ -488,26 +487,26 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
     
     // For each time-series T[i] in T
-    //for (i = 0; i < num_of_ts; i++){
-    i = 0;                                                                               // (test vector) (timing analysis)
+    for (i = 0; i < num_of_ts; i++){
+    //i = 0;                                                                               // (test vector) (timing analysis)
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
         printf("[TS %u]\n", i);
         //printf("Shapelet #\tquality\n");
         // For each length between min and max
-        //for (l = min; l <= max; l++){ 
-        l = 32;											// (timing analysis)
+        for (l = min; l <= max; l++){ 
+        //l = 32;											// (timing analysis)
             num_shapelets = T->length - l + 1;    
             // For each shapelet of ther given length
-            //for (position = 0; position < num_shapelets; position++){
-            position = 0;                                                                          // (test vector) Fix starting position at 0 to extract test vectors    
+            for (position = 0; position < num_shapelets; position++){
+            //position = 0;                                                                          // (test vector) Fix starting position at 0 to extract test vectors    
                 shapelet_candidate = init_shapelet(&T[i], position, l);                                         // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_of_ts * sizeof(*shapelet_distances));
                 //printf("(Pivot shapelet %d)\n", shapelets_index);
                 // Calculate distances from current shapelet candidate to each time series in T, 
-                //for (j = 0; j < num_of_ts; j++)
+                for (j = 0; j < num_of_ts; j++)
                 //for (j = 0; j < 5; j++)                                                           // (test vector) Extract target shapelets from the first 5 time-series         
-                j = 0;											// (timing analysis)
+                //j = 0;											// (timing analysis)
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
 
                 // F-Statistic as shapelet quality measure
@@ -518,8 +517,8 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
                 shapelets_index++;
-            //}         
-        //}  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
+            }         
+        }  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
         
         // Sort shapelets by quality
         qsort(ts_shapelets, (size_t) total_num_shapelets, sizeof(*ts_shapelets), compare_shapelets);
@@ -532,7 +531,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         printf("After merging\n");
         print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
-    //}
+    }
     
     shapelet_set_to_csv(k_shapelets, k, T);
     
