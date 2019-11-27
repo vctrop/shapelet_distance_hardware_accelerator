@@ -8,12 +8,6 @@ use work.comppack.all;
 -- 
 
 entity shapelet_distance is
-    generic(
-        -- Number of processig units (each PU is composed of square, accumulate, sub and div)
-        NUM_PU      : natural := 2;
-        -- Maximum shapelet length (must be multiple of NUM_PU)
-        MAX_LEN     : natural := 128
-    );
     port (
         clk         : in std_logic;
         rst         : in std_logic;
@@ -38,6 +32,8 @@ end shapelet_distance;
 
 architecture behavioral of shapelet_distance is
     
+	constant NUM_PU      : natural := 2;
+	constant         MAX_LEN     : natural := 128;
     -- Flip-flop to keep the desired operation constant during the entire processing
     signal reg_op_s                                     : std_logic;
     

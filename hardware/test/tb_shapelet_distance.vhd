@@ -12,12 +12,6 @@ end tb_shapelet_distance;
 architecture behavioral of tb_shapelet_distance is
 
     component shapelet_distance is
-   	generic(
-            -- Number of processig units (each PU is composed of square, accumulate, sub and div)
-            NUM_PU      : natural;
-            -- Maximum shapelet length (must be multiple of NUM_PU)
-            MAX_LEN     : natural
-        );
         port (
             clk         : in std_logic;
             rst         : in std_logic;
@@ -63,16 +57,10 @@ architecture behavioral of tb_shapelet_distance is
 
 begin
     clk <= not clk after half_clk_period;
-    rst <= '1' after clk_period;  -- wait 2 clk cycles before starting simulation
+    rst <= '1' after clk_period;  -- wait 1 clk cycles before starting simulation
 
     
     DUV: shapelet_distance
-        generic map(
-            -- Number of processig units (each PU is composed of square, accumulate, sub and div)
-            NUM_PU      => NUM_PU,
-            -- Maximum shapelet length (must be multiple of NUM_PU)
-            MAX_LEN     => MAX_LEN
-        )
         port map(
             clk         => clk,
             rst         => rst,
@@ -119,9 +107,9 @@ begin
             end loop;
 			l_v := StringToStdLogicVector(str);
             length_slv <= l_v(6 downto 0);
-			length := to_integer(unsigned(length_slv));
+			length := to_integer(unsigned(l_v));
 			report "length: " & integer'image(length);
-            assert length > 0 report "Incompatible length < 0 !" severity warning;
+            --assert length > 0 report "Incompatible length < 0 !" severity warning;
 
 
             -- Start normalization
