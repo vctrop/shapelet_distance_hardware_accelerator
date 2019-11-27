@@ -34,20 +34,20 @@ architecture behavioral of tb_shapelet_distance is
         );
     end component;
     
-    constant half_clk_period : time := 3 ns;
+    constant half_clk_period : time := 10 ns;
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
     constant NUM_PU : integer := 2;
     constant MAX_LEN : integer := 128;
 
-    file testFile : TEXT open READ_MODE is "vetor.txt"; -- testFile containts:
+    file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile contains:
 	-- 1 line for integer length 
 	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
 	-- 1 line for target shapelet 32-bit float values, separated by 1 character
 	-- 1 line for expected output 32-bit float distance
 	-- all values must be in hexadecimal, each with 8 characters of length. eg.: 00000004
-	file outFile : text open write_mode is "output_file.txt"; --output file contains the number of the test and the distance found for each input followed by the expected output, one per line.
+	file outFile : text open write_mode is "../output_file.txt"; --output file contains the number of the test and the distance found for each input followed by the expected output, one per line.
     signal clk : std_logic := '0';
     signal rst : std_logic := '0';
     signal start, ready, op : std_logic;
@@ -57,7 +57,7 @@ architecture behavioral of tb_shapelet_distance is
 
 begin
     clk <= not clk after half_clk_period;
-    rst <= '1' after clk_period;  -- wait 1 clk cycles before starting simulation
+    rst <= '1' after 5*clk_period;  -- wait 1 clk cycles before starting simulation
 
     
     DUV: shapelet_distance
@@ -91,6 +91,8 @@ begin
  		variable length	: integer;
 		variable l_v : std_logic_vector(31 downto 0);
     begin
+		op <= '0';
+		start <= '0';
         index <= 0;
         wait until rst = '1'; -- wait for the circuit to be reset
 		--wait until clk = '0'; -- synchronize with clk
