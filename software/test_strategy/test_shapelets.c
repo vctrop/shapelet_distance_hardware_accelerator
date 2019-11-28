@@ -5,15 +5,21 @@
 #define TS_LEN 152
 #define NUM_SERIES 1000
 
+// #define TS_LEN      8
+// #define NUM_SERIES  8
+
+
+
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
 // Free all float arrays from ts_array
 void read_wafer_train(Timeseries *ts_array, uint16_t length){
-    char filename[] = "data/Wafer/Wafer_TRAIN.csv";
+    char filename[] = "../data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
     uint8_t ts_class;
     const uint16_t TS_BSIZE = 2000;
     char time_series_buffer[TS_BSIZE];
+    // float ts_values[TS_LEN];
     numeric_type *ts_values;
     
     // Reads csv file and keeps its address at file_descriptor
@@ -74,7 +80,7 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 int main(int argc, char *argv[]){
 
     unsigned int i,  k;
- 
+    
     // Real-life dataset
     Timeseries T[NUM_SERIES];
     read_wafer_train(T, NUM_SERIES);
@@ -94,6 +100,6 @@ int main(int argc, char *argv[]){
     k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 128, k);
 
     free(k_best);
-
+    
     return 0;
 }
