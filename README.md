@@ -2,19 +2,26 @@
 
 <p align="center">
   
+  
+Entity Interface
+<img src="images/entity_interface.png">
 ![Alt text](images/entity_interface.png?raw=true "block diagram")
 
 
-![Alt text](images/block_diagram.png?raw=true "block diagram")
+Data path block diagram
+<img src="images/block_diagram.png">
 
 
-![Alt text](images/fsm.png?raw=true "fsm")
+Control Finite-State Machine
+<img src="images/fsm.png">
 
 
-![Alt text](images/sw_hw_results.png?raw=true "results")
+Software vs Hardware shapelet-shapelet distances
+<img src="images/sw_hw_results.png">
 
 
-![Alt text](images/layout.png?raw=true "layout")
+Final circuit layout
+<img src="images/layout.png">
 
 
 </p>
