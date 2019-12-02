@@ -3,24 +3,24 @@
 <p align="center">
   
   
-Entity Interface
+Entity Interface\
 <img src="images/entity_interface.png">
 ![Alt text](images/entity_interface.png?raw=true "block diagram")
 
 
-Data path block diagram
+Data path block diagram\
 <img src="images/block_diagram.png">
 
 
-Control Finite-State Machine
+Control Finite-State Machine\
 <img src="images/fsm.png">
 
 
-Software vs Hardware shapelet-shapelet distances
+Software vs Hardware shapelet-shapelet distances\
 <img src="images/sw_hw_results.png">
 
 
-Final circuit layout
+Final circuit layout\
 <img src="images/layout.png">
 
 
