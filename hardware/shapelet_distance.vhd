@@ -2,12 +2,22 @@ library IEEE;
 use IEEE.numeric_std.all;
 use ieee.std_logic_1164.all;
 
-use work.comppack.all;
--- 
--- 
--- 
+use IEEE.math_real."ceil";
+use IEEE.math_real."log2";      -- used to calculate the number of bits used by the input length
+
+use work.comppack.all; -- FPU package
+
+-- Shapelet distance calculator hardware
+-- NUM_PU: specificies the level of paralelism. Must be a power of 2. (WARNING: CURRENTLY ONLY THE DEFAULT VALUE OF 2 IS IN WORKING CONDITION)
+-- MAX_LEN: specifies the maximun shapelet length possible. Must be a multiple of NUM_PU.
+
+-- TODO: make use of an adder tree for PUs greater than 2.
 
 entity shapelet_distance is
+    generic(
+        NUM_PU      : natural := 2;
+        MAX_LEN     : natural := 128;
+    )
     port (
         clk         : in std_logic;
         rst         : in std_logic;
@@ -19,7 +29,6 @@ entity shapelet_distance is
         
         -- Data input is a single precision float shapelet datapoint
         data_i      : in std_logic_vector(31 downto 0);
-        length_i    : in std_logic_vector(6 downto 0);
 
         -- begins opeartions
         start_i     : in std_logic;        
@@ -32,13 +41,11 @@ end shapelet_distance;
 
 architecture behavioral of shapelet_distance is
     
-	constant NUM_PU      : natural := 2;
-	constant         MAX_LEN     : natural := 128;
     -- Flip-flop to keep the desired operation constant during the entire processing
     signal reg_op_s                                     : std_logic;
     
     -- Register to keep the shapelet length
-    signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
+    signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
    
     -- Register to keep output result
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
@@ -52,16 +59,16 @@ architecture behavioral of shapelet_distance is
     signal reg_state_s                                  : fsm_state_t;
     
      
-    -- Buffer filling counter and its incremented by 1 version
-    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
-    -- Operation counter and its incremented by NUM_PU version
-    signal reg_acc_counter_s                            : natural range 0 to MAX_LEN;
-    signal inc_acc_counter_s                            : natural range 0 to MAX_LEN;
+    -- Buffer filling counter used to load the buffer. incremented by 1 each time.
+    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN-1;
+    -- Operation counter used to select buffer elements to write back from the processing units. Incremented by NUM_PU. 
+    signal reg_acc_counter_s                            : natural range 0 to MAX_LEN-1;
+    signal inc_acc_counter_s                            : natural range 0 to 2*MAX_LEN; -- The range is double so that we avoid overflow
     ---- SHAPELET BUFFERING DEFINITIONS 
-    -- Define shapelet buffer and buffer fsm state types 
-    type shapelet_buffer_t                              is array (0 to MAX_LEN - 1) of std_logic_vector(31 downto 0);
+    -- Define shapelet buffer 
+    type shapelet_buffer_t                              is array (0 to MAX_LEN-1) of std_logic_vector(31 downto 0);
     -- Defines the en signal for each element of pivot buffer
-    type pivot_en_t                                           is array (0 to MAX_LEN - 1) of std_logic;
+    type pivot_en_t                                           is array (0 to MAX_LEN-1) of std_logic;
 
     -- Shapelet pivot buffer
     signal buffer_pivot_s                               : shapelet_buffer_t;
@@ -137,77 +144,16 @@ architecture behavioral of shapelet_distance is
     signal block_sel_rst_s                              : std_logic;
     signal block_sel_inc_s                              : std_logic;
     -- Matrix with processing units as rows and shapelet positions for each PU as columns
-    signal matrix_representation_s                              : pu_matrix_t;
+    signal matrix_representation_s                      : pu_matrix_t;
     -- The shapelet positions presented to each of the NUM_PU processing elements
     signal shapelet_elements_mux_s                      : pu_operands_t;
     
 begin
-    -- PIVOT BUFFER 
-    -- enables writing to pivot buffer when loading values from data_i during operation 0
-    ADDS: for i in buffer_pivot_s'range generate 
-        en_pivot_load_s(i) <= '1' when reg_buf_counter_s = i and reg_state_s = Sbuf_load and reg_op_s = '0' else '0';
-    end generate;
-
-    -- 
-    GEN_WB_INPUT_J: for j in 0 to MAX_LEN/NUM_PU-1 generate
-        GEN_WB_INPUT_I: for i in 0 to NUM_PU-1 generate
-            -- enables writing to corresponding pivot buffer elements when writing back after normalization
-            en_pivot_wb_s(i + j*NUM_PU) <= '1' when reg_block_sel_s = j and reg_state_s = Swb_pivot else '0'; 
-            -- selects if the pivot buffer will receive data from data_i or data from PU's
-            pivot_input_s(i + j*NUM_PU) <= data_i when reg_state_s = Sbuf_load else div_out_s(i);
-        end generate;
-    end generate;
-
-    -- the pivot buffer receives data from PU's or data_i
-    -- the elements that will be loaded from data_i are enabled by en_pivot_load_s
-    -- the elements that will be written back are enabled by en_pivot_wb_s
-    GEN_PIVOT_BUFFER: for i in buffer_pivot_s'range generate
-        process(clk)
-        begin 
-            if rising_edge(clk) then
-                if rst = '0' or pivot_buf_rst_s = '1' then
-                    buffer_pivot_s(i) <= (others => '0');
-                elsif en_pivot_load_s(i) = '1' or en_pivot_wb_s(i) = '1' then
-                    buffer_pivot_s(i) <= pivot_input_s(i);
-                end if;
-            end if;
-        end process;
-    end generate;
-    
-    
-    -- TARGET BUFFER
-    TARGET_BUFFER: process(clk) 
-    begin
-        if rising_edge(clk) then
-            if rst = '0' or target_buf_rst_s = '1' then
-                buffer_target_s <= (others => (others => '0'));
-            else
-                if target_buf_rst_s = '1' then
-                    buffer_target_s <= (others => (others => '0'));
-                elsif target_buf_wr_s = '1' then
-                    buffer_target_s(reg_buf_counter_s) <= data_i;
-                end if;
-            end if;
-        end if;
-    end process;
-
-    -- Entity outputs
-    distance_o  <= reg_distance_s;
-    ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Snorm_ready else '0';
-    
-    -- Increment reg_acc_counter_s out of process to create a single adder
-    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
-    
-    -- Buffers control signals
-	-- reset pivot at the beggining of operation 0 and target during operation 0
-    pivot_buf_rst_s     <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '0' else '0';
-    target_buf_rst_s    <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '1' else '0';
-    target_buf_wr_s     <= '1' when reg_state_s = Sbuf_load             and reg_op_s = '1' else '0';
     
     CONTROL_FSM: process(clk)
     begin
     if rising_edge(clk) then
-        if rst = '0' then
+        if rst = '1' then
             reg_state_s <= Sbegin;
             reg_distance_s <= (others => '0');
         else
@@ -221,7 +167,9 @@ begin
                     if start_i = '1' then
                         -- Operation is set pivot and change length
                         if op_i = '0' then
-                            reg_shapelet_length_s <= to_integer(unsigned(length_i));
+                            -- the number of bits used the length must be based on the log2 of the parameter MAX_LEN
+                            -- for the default MAX_LEN=128 it shoudl result in 7
+                            reg_shapelet_length_s <= to_integer(unsigned(data_i(ceil(log2(real(MAX_LEN)))-1 downto 0)));
                         end if;
                         reg_state_s <= Sbuf_load;
                     end if;
@@ -360,6 +308,68 @@ begin
         end if;
     end if;    
     end process;
+
+    -- PIVOT BUFFER 
+    -- enables writing to pivot buffer when loading values from data_i during operation 0
+    ADDS: for i in buffer_pivot_s'range generate 
+        en_pivot_load_s(i) <= '1' when reg_buf_counter_s = i and reg_state_s = Sbuf_load and reg_op_s = '0' else '0';
+    end generate;
+
+    -- 
+    GEN_WB_INPUT_J: for j in 0 to MAX_LEN/NUM_PU-1 generate
+        GEN_WB_INPUT_I: for i in 0 to NUM_PU-1 generate
+            -- enables writing to corresponding pivot buffer elements when writing back after normalization
+            en_pivot_wb_s(i + j*NUM_PU) <= '1' when reg_block_sel_s = j and reg_state_s = Swb_pivot else '0'; 
+            -- selects if the pivot buffer will receive data from data_i or data from PU's
+            pivot_input_s(i + j*NUM_PU) <= data_i when reg_state_s = Sbuf_load else div_out_s(i);
+        end generate;
+    end generate;
+
+    -- the pivot buffer receives data from PU's or data_i
+    -- the elements that will be loaded from data_i are enabled by en_pivot_load_s
+    -- the elements that will be written back are enabled by en_pivot_wb_s
+    GEN_PIVOT_BUFFER: for i in buffer_pivot_s'range generate
+        process(clk)
+        begin 
+            if rising_edge(clk) then
+                if rst = '1' or pivot_buf_rst_s = '1' then
+                    buffer_pivot_s(i) <= (others => '0');
+                elsif en_pivot_load_s(i) = '1' or en_pivot_wb_s(i) = '1' then
+                    buffer_pivot_s(i) <= pivot_input_s(i);
+                end if;
+            end if;
+        end process;
+    end generate;
+    
+    
+    -- TARGET BUFFER
+    TARGET_BUFFER: process(clk) 
+    begin
+        if rising_edge(clk) then
+            if rst = '1' or target_buf_rst_s = '1' then
+                buffer_target_s <= (others => (others => '0'));
+            else
+                if target_buf_rst_s = '1' then
+                    buffer_target_s <= (others => (others => '0'));
+                elsif target_buf_wr_s = '1' then
+                    buffer_target_s(reg_buf_counter_s) <= data_i;
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- Entity outputs
+    distance_o  <= reg_distance_s;
+    ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Snorm_ready else '0';
+    
+    -- Increment reg_acc_counter_s out of process to create a single adder
+    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
+    
+    -- Buffers control signals
+	-- reset pivot at the beggining of operation 0 and target during operation 0
+    pivot_buf_rst_s     <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '0' else '0';
+    target_buf_rst_s    <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '1' else '0';
+    target_buf_wr_s     <= '1' when reg_state_s = Sbuf_load             and reg_op_s = '1' else '0';
     
     ---- MUX to present shapelet positions to the right Processing Units
     -- Selects which shapelet is presented to the MUX
@@ -451,7 +461,7 @@ begin
         -- mode defines the number of cycles to count down
         -- 00 = 6   ( add / sub)
         -- 01 = 33  ( division or sqrt)
-        -- 10 = 11  ( multiplication )
+        -- 10 = 12  ( multiplication )
         -- 11 = 0     
         mode_i  => counter_mode_s,
 
@@ -569,7 +579,7 @@ begin
     process(clk, rst)
     begin
         if rising_edge(clk) then
-            if rst = '0' then
+            if rst = '1' then
                 reg_addsub_out_s <= (others => (others => '0'));
                 reg_mul_out_s <= (others => (others => '0'));
                 reg_div_out_s <= (others => (others => '0'));
@@ -605,7 +615,7 @@ begin
     acc_regs: process(clk)
     begin
         if rising_edge(clk) then
-            if rst = '0' or accumulators_rst_s = '1' then
+            if rst = '1' or accumulators_rst_s = '1' then
                 reg_accumulators_s <= (others => (others => '0'));
             else
                 if accumulators_wr_s = '1' then
