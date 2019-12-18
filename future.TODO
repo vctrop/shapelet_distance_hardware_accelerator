@@ -4,13 +4,10 @@
 // HARDWARE
 - parameterizable adder tree to sum accumulators 
 
-- length_i input pins are not necessary
-
-- remove remove unecessary states
+- remove unecessary states
 
 - consider the case when length_i is inadequate (0 or larger than MAX_LEN)
 
-- request FPUs
 
 
 // SOFTWARE
@@ -19,8 +16,6 @@
 - function to transform datasets based on an array of Shapelets
 
 - formalization of differences between normalization to unit vector and normalization to zero mean and unit variance
-
-- select univariate time-series binary classification datasets to compare normalization schemes
 
 
 // MIXED
