@@ -81,24 +81,27 @@ void print_array(numeric_type * vec, size_t size){
 int main(int argc, char *argv[]){
     unsigned int k;
     Timeseries T[NUM_SERIES];
-    char * filename;
+    char * infilename, *outfilename;
     // get file name passed in argv
-    if(argc < 3){
-        printf("Please use: %s {path_to_csv} {k_best}\n", argv[0]);
+    if(argc < 4){
+        printf("Please use: %s {path_to_csv} {output_csv} {k_best}\n", argv[0]);
         exit(-1);
     }
-    filename = argv[1];
-    k=atoi(argv[2]);
+    infilename = argv[1];
+    outfilename = argv[2];
+    k=atoi(argv[3]);
     if(k < 0){          //maybe check for a upper bound? 
         printf("Invalid K!\n");
         exit(-1);
     }
     // Real-life dataset
-    read_wafer_train(filename, T, NUM_SERIES);
+    read_wafer_train(infilename, T, NUM_SERIES);
 
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 152, k);
+    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 152, k, 16);
+
+    shapelet_set_to_csv(k_best, k, T, outfilename);
 
     free(k_best);
 

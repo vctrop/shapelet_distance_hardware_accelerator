@@ -497,8 +497,6 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         free(ts_shapelets);
     }
     
-    shapelet_set_to_csv(k_shapelets, k, T);
-    
     return k_shapelets;
 }
 
@@ -628,6 +626,7 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
             args[tid].T = T;
             args[tid].i = i;
             args[tid].mutex = &mutex;
+            // alocates a load to each thread, based on min and max length that the thread will compute
             args[tid].min = min + tid*(lengths_per_thread);
             if(tid == num_threads -1 ){
                 args[tid].max = max;        // last thread calculates all remaining lengths
@@ -635,8 +634,7 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
             else{
                 args[tid].max = args[tid].min + lengths_per_thread - 1;     //else calculate lenghts_per_thread lengths
             }
-            
-            //printf("Creating thread %d with min: %d max: %d\n", tid, args[tid].min, args[tid].max);
+
             if( pthread_create(&threads[tid], NULL, task_shapelet_candidates, (void *) &args[tid]) ){
                 perror("Error creating thread\n");
                 exit(errno);
@@ -810,12 +808,11 @@ void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T){
 // Given a set of shapelets and the base address of the time-series set they were extracted,
 // write both shapelet description and values to a csv file 
 // Floating-point only
-void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T){
+void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, const char * filename){
     uint64_t ts_i;
-    const char file_name[] = "shapelet_archive.csv";
     FILE *file_descriptor;
     
-    file_descriptor = fopen(file_name, "w");
+    file_descriptor = fopen(filename, "w");
     if (file_descriptor == NULL){
         perror("Error at shapelet archive file opening");
         exit(errno);
