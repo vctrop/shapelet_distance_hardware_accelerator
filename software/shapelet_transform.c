@@ -86,19 +86,59 @@ void vector_normalization(numeric_type *values, uint16_t length){
     #endif
 }
 
+// Z score vector normalization
+// this is the original normalization used for shapelet discovery algorithm
+// z score a.k.a. standardizing or normalizing (using sameple std_deviation)
+// each element of input values vector will be changed to:
+// values[i] = (values[i] - mean)/std_deviation
+void vector_zscore(numeric_type *values, uint16_t length){
+    numeric_type mean, std_dev, differrence_sum;
+
+    // calculate arithmetic mean 
+    mean = 0;
+    for(int i=0; i < length; i++){
+        mean += values[i];
+    }
+    mean /= length;
+
+    // calculate sum (xi - mean)^2
+    differrence_sum = 0;
+    for(int i=0; i < length; i++){
+        differrence_sum += pow(values[i] - mean, 2);
+    }
+    // divide sum by N - 1 
+    differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
+    // take the sqrt
+    std_dev = sqrt(differrence_sum);
+    
+    // special case, when the vector is a straight line and has no variance
+    // the std_dev results in zero, all values in the vector are set to zero
+    if(std_dev == 0){   
+        memset(values, 0, length * sizeof(*values));
+    }
+    else{
+        // calculate the z score for each element
+        for(int i=0; i < length; i++){
+            values[i] = (values[i] - mean) / std_dev;
+        }
+    }
+}
 
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
     
     #ifdef USE_FLOAT
     for (uint16_t i = 0; i < length; i++){
-        //printf("Values %d\n", i);
-        //printf("%g\n%g\n", pivot_values[i], target_values[i]);
+    #ifdef USE_ABS
+        //uses the absolute value of differences instead of power. Experimental.
+        total_distance += fabs((double) (pivot_values[i] - target_values[i]) );
+    #else
+        // the default calculation
         total_distance += pow(pivot_values[i] - target_values[i], 2);
+    #endif
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
-    
     #else
     for(uint16_t i = 0; i < length; i++){
         //printf("values %d\n",i);       fixedpt_print(pivot_values[i]);        fixedpt_print(target_values[i]);
@@ -142,8 +182,12 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
+        #ifdef USE_ZSCORE
+        vector_zscore(target_values, pivot_shapelet->length);
+        #else
         // Normalize target shapelet values
         vector_normalization(target_values, pivot_shapelet->length);
+        #endif
         
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
@@ -162,34 +206,9 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 }
 
 
-// [HARDWARE-friendly, reducing memory transfer] Floating-point distances from all the "shapelet_len"-sized shapelets in a time series to another time series (FREE RETURNED POINTER AFTER USAGE)
-/*
-numeric_type *length_wise_distances(Timeseries *pivot_ts, Timeseries *target_ts, uint16_t shapelet_len){
-    uint16_t i, num_shapelets;
-    Shapelet pivot_shapelet; 
-    numeric_type *shapelets_target_distances, distance;
-    
-    if (shapelet_len > target_ts->length){
-        perror("Shapelet length greater than time series length");
-        exit(-1);
-    }
-    
-    num_shapelets = (target_ts->length - shapelet_len + 1);
-    shapelets_target_distances = safe_alloc(num_shapelets * sizeof(shapelets_target_distances));   // Array of all "shapelet_len"-sized distances to a given time series
-
-    for(i = 0; i < num_shapelets; i++){
-        pivot_shapelet = init_shapelet(pivot_ts, i, shapelet_len);
-        distance = shapelet_ts_distance(&pivot_shapelet, target_ts);
-        shapelets_target_distances[i] = distance;
-    }
-    
-    return shapelets_target_distances;
-}
-*/
-
 // F-Statistic based on distance measures and associated binary classes
 numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_set, uint16_t num_of_ts){
-    numeric_type f_stat, temp_difference;
+    numeric_type f_stat;
     numeric_type total_dists_sum = 0.0, class_zero_sum = 0.0, class_one_sum = 0.0;
     numeric_type total_dists_avg, class_zero_avg, class_one_avg;
     numeric_type numerator_sum = 0.0, denominator_sum = 0.0;
@@ -493,7 +512,6 @@ typedef struct{
     pthread_mutex_t * mutex;
     uint16_t max;
     uint16_t min;
-    uint32_t thread_id;
 } Thread_args;  // thread containing the argument for each thread function
 
 
@@ -508,7 +526,6 @@ static void *task_shapelet_candidates(void * arg)
     uint16_t num_of_ts = ((Thread_args *) arg)->num_of_ts;
     Timeseries *T = ((Thread_args *) arg)->T;
     uint16_t i = ((Thread_args *) arg)->i;
-    uint32_t thread_id = ((Thread_args *) arg)->thread_id;
     pthread_mutex_t * mutex = ((Thread_args *) arg)->mutex;
     uint16_t max = ((Thread_args *) arg)->max;
     uint16_t min = ((Thread_args *) arg)->min;
@@ -618,7 +635,6 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
             else{
                 args[tid].max = args[tid].min + lengths_per_thread - 1;     //else calculate lenghts_per_thread lengths
             }
-            args[tid].thread_id = tid;    // thread id for debbuging purposes
             
             //printf("Creating thread %d with min: %d max: %d\n", tid, args[tid].min, args[tid].max);
             if( pthread_create(&threads[tid], NULL, task_shapelet_candidates, (void *) &args[tid]) ){
@@ -820,5 +836,3 @@ void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeserie
         fprintf(file_descriptor, "\n");
     }
 }
-
-// 

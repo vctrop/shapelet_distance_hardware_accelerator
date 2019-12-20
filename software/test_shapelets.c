@@ -7,8 +7,8 @@
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
 // Free all float arrays from ts_array
-void read_wafer_train(Timeseries *ts_array, uint16_t length){
-    char filename[] = "data/Wafer/Wafer_TRAIN.csv";
+void read_wafer_train(char * filename, Timeseries *ts_array, uint16_t length){
+    //char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
     uint8_t ts_class;
@@ -71,27 +71,34 @@ void read_wafer_train(Timeseries *ts_array, uint16_t length){
 }
 
 
+void print_array(numeric_type * vec, size_t size){
+    for(int i=0; i < size; i++)
+        printf("%g ", vec[i]);
+    printf("\n");
+}
+
+
 int main(int argc, char *argv[]){
-
-    unsigned int i,  k;
- 
-    // Real-life dataset
+    unsigned int k;
     Timeseries T[NUM_SERIES];
-    read_wafer_train(T, NUM_SERIES);
-    // for(i = 0; i < NUM_SERIES; i++){
-        // #ifdef USE_FLOAT
-        // printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
-        // #else
-        // printf("[TS: %u, class: %u] (first, last, class)\n", i, T[i].class);
-        // fixedpt_print(T[i].values[0]);  fixedpt_print(T[i].values[TS_LEN-1]);
-        // #endif
-    // }
+    char * filename;
+    // get file name passed in argv
+    if(argc < 3){
+        printf("Please use: %s {path_to_csv} {k_best}\n", argv[0]);
+        exit(-1);
+    }
+    filename = argv[1];
+    k=atoi(argv[2]);
+    if(k < 0){          //maybe check for a upper bound? 
+        printf("Invalid K!\n");
+        exit(-1);
+    }
+    // Real-life dataset
+    read_wafer_train(filename, T, NUM_SERIES);
 
-    k=10;
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    //k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 10, k, 38);
-    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 128, k);
+    k_best = shapelet_cached_selection(T, NUM_SERIES, 3, 152, k);
 
     free(k_best);
 
