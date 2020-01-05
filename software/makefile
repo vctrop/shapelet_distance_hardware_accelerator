@@ -4,6 +4,7 @@ ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c test_shapelets.c
 
 all: test_shapelets_algebric_norm test_shapelets_zscore_norm test_shapelets_abs
+
 #uses algebric normalization
 test_shapelets_algebric_norm: $(OBJS)
 	$(CC) $(ARITH) -o $@ $^  $(CFLAGS) 
@@ -20,4 +21,4 @@ test_shapelets_abs: $(OBJS)
 clean:
 	$(RM) *.o test_shapelets_algebric_norm test_shapelets_zscore_norm test_shapelets_abs
 clean_win: 
-	del *.o test_shapelets.exe
+	del *.o test_shapelets_algebric_norm.exe test_shapelets_zscore_norm.exe test_shapelets_abs.exe

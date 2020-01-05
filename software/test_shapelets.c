@@ -7,7 +7,7 @@
 
 // Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
 // Free all float arrays from ts_array
-void read_wafer_train(char * filename, Timeseries *ts_array, uint16_t length){
+void read_train_dataset(char * filename, Timeseries *ts_array, uint16_t length){
     //char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
@@ -24,10 +24,18 @@ void read_wafer_train(char * filename, Timeseries *ts_array, uint16_t length){
     }
     
     for(uint16_t i = 0; i < length; i++){
+        // Load TS_BSIZE chars from file to buffer
         if(!fgets(time_series_buffer, TS_BSIZE, file_descriptor)){
             perror("Error reading time series buffer: ");
             exit(errno);
         }
+        
+        // If TS_BSIZE is enought to read a line of the dataset, the '\n' will be found in time_series_buffer 
+        if (!strchr(time_series_buffer, '\n')) {
+            printf("\\n not found, TS_BSIZE is not larger than number of characters in a line\n");
+            exit(-1);
+        }
+
         else{
             // The first "TS_LEN" values are from the time series, and the next one is the ts class
             field = strtok(time_series_buffer, ",");
@@ -59,8 +67,8 @@ void read_wafer_train(char * filename, Timeseries *ts_array, uint16_t length){
                 perror("\nError in class field: ");
                 exit(errno);
             }
-            // Treats class -1 as 0
-            ts_class = (uint8_t) (atoi(field) != -1);
+            // Treats classes -1 and 2 (-1 in wafer, 2 in all the rest) as 0
+            ts_class = (uint8_t) (atoi(field) == 1);
             //printf("Class = %u\n", ts_class);
             
             ts_array[i] = init_timeseries(ts_values, ts_class, TS_LEN);
@@ -84,7 +92,7 @@ int main(int argc, char *argv[]){
     char * infilename, *outfilename;
     // get file name passed in argv
     if(argc < 4){
-        printf("Please use: %s {path_to_csv} {output_csv} {k_best}\n", argv[0]);
+        printf("Please use: %s {path_to_dataset} {output_csv} {k_best}\n", argv[0]);
         exit(-1);
     }
     infilename = argv[1];
@@ -94,9 +102,14 @@ int main(int argc, char *argv[]){
         printf("Invalid K!\n");
         exit(-1);
     }
-    // Real-life dataset
-    read_wafer_train(infilename, T, NUM_SERIES);
-
+    
+    // Load dataset
+    read_train_dataset(infilename, T, NUM_SERIES);
+    
+    // Check dataset loading
+    for(unsigned int i = 0; i < NUM_SERIES; i++)
+        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+    
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 152, k, 16);
