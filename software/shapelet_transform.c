@@ -808,30 +808,49 @@ void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T){
 // Given a set of shapelets and the base address of the time-series set they were extracted,
 // write both shapelet description and values to a csv file 
 // Floating-point only
-void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, const char * filename){
+void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, const char * base_filename){
     uint64_t ts_i;
-    FILE *file_descriptor;
+    FILE *data_file_descriptor;
+    FILE *info_file_descriptor;
+    char data_filename[50];
+    char info_filename[50];
     
-    file_descriptor = fopen(filename, "w");
-    if (file_descriptor == NULL){
-        perror("Error at shapelet archive file opening");
+    // Get data and info filenames from the basic one passed as argument
+    strcpy(data_filename, base_filename);
+    strcat(data_filename, "_data.csv");
+    strcpy(info_filename, base_filename);
+    strcat(info_filename, "_info.txt");
+    
+    // Open file streams for both data and info
+    data_file_descriptor = fopen(data_filename, "w");
+    if (data_file_descriptor == NULL){
+        perror("Error: cannot open data csv file descriptor");
+        exit(errno);
+    }
+    info_file_descriptor = fopen(info_filename, "w");
+    if (info_file_descriptor == NULL){
+        perror("Error: cannot open info txt file descriptor");
         exit(errno);
     }
     
+    // Fulfill files with the shapelet set and its info
     for (int i = 0; i < num_shapelets; i++){
         ts_i = (uint64_t)(shapelet_set[i].Ti - T);
         // Write shapelet description
-        fprintf(file_descriptor, "Shapelet %d is from TS %I64d,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
+        fprintf(info_file_descriptor, "Shapelet %d is from TS %I64d,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
         // Write shapelet elements
         for(int j = 0; j < shapelet_set[i].length; j++){
-            fprintf(file_descriptor, "%g", get_value(&shapelet_set[i], j));
+            fprintf(data_file_descriptor, "%g", get_value(&shapelet_set[i], j));
             // Unless its the last element, write comma
             if (j != shapelet_set[i].length - 1){
-                fprintf(file_descriptor, ",");
+                fprintf(data_file_descriptor, ",");
             }
         }
-        fprintf(file_descriptor, "\n");
+        fprintf(data_file_descriptor, "\n");
     }
+    
+    fclose(data_file_descriptor);
+    fclose(info_file_descriptor);
 }
 
 // Read datasets into ts_array, loading number of time-series and time-series length from file header

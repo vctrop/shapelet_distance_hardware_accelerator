@@ -26,18 +26,18 @@ int main(int argc, char *argv[]){
     for(unsigned int i = 0; i < num_ts; i++)
         printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[T[i].length - 1], T[i].class);
     
-    // Shapelet *k_best = malloc(k * sizeof(*k_best));
+    Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    // k_best = multi_thread_shapelet_cached_selection(T, num_ts, 3, 152, k, 16);
+    k_best = multi_thread_shapelet_cached_selection(T, num_ts, 3, 7, k, 4);
 
-    // shapelet_set_to_csv(k_best, k, T, outfilename);
+    shapelet_set_to_files(k_best, k, T, outfilename);
     
     for (unsigned int i = 0; i < num_ts; i++){
         free(T[i].values);
     }
     free(T);
     
-    // free(k_best);
+    free(k_best);
 
     return 0;
 }
