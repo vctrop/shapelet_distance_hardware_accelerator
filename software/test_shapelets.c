@@ -1,122 +1,43 @@
-// 
 #include "shapelet_transform.h"
 #include <stdio.h>
 
-#define TS_LEN 152
-#define NUM_SERIES 1000
-
-// Read the wafer train data into ts_array, with 1000 time-series and 152 data points per time series
-// Free all float arrays from ts_array
-void read_train_dataset(char * filename, Timeseries *ts_array, uint16_t length){
-    //char filename[] = "data/Wafer/Wafer_TRAIN.csv";
-    FILE *file_descriptor;
-    char *field;
-    uint8_t ts_class;
-    const uint16_t TS_BSIZE = 2000;
-    char time_series_buffer[TS_BSIZE];
-    numeric_type *ts_values;
-    
-    // Reads csv file and keeps its address at file_descriptor
-    file_descriptor = fopen(filename, "r");
-    if (file_descriptor == NULL){
-        perror("Error opening csv: ");
-        exit(errno);
-    }
-    
-    for(uint16_t i = 0; i < length; i++){
-        // Load TS_BSIZE chars from file to buffer
-        if(!fgets(time_series_buffer, TS_BSIZE, file_descriptor)){
-            perror("Error reading time series buffer: ");
-            exit(errno);
-        }
-        
-        // If TS_BSIZE is enought to read a line of the dataset, the '\n' will be found in time_series_buffer 
-        if (!strchr(time_series_buffer, '\n')) {
-            printf("\\n not found, TS_BSIZE is not larger than number of characters in a line\n");
-            exit(-1);
-        }
-
-        else{
-            // The first "TS_LEN" values are from the time series, and the next one is the ts class
-            field = strtok(time_series_buffer, ",");
-            //printf("TIME-SERIES %u\n %s\t",i, field);
-            
-            ts_values = (numeric_type *) malloc (TS_LEN * sizeof(*ts_values));
-            
-            #ifdef USE_FLOAT
-            ts_values[0] = atof(field);
-            
-            for(uint16_t j = 1; j < TS_LEN; j++){
-                field = strtok(NULL, ",");
-                //printf("%s\t", field);
-                ts_values[j] = atof(field);
-            }
-            
-            #else
-            ts_values[0] = fixedpt_fromfloat(atof(field));
-            
-            for(uint16_t j = 1; j < TS_LEN; j++){
-                field = strtok(NULL, ",");
-                //printf("%s\t", field);
-                ts_values[j] = fixedpt_fromfloat(atof(field));
-            }
-            #endif    
-            
-            field = strtok(NULL, ",");
-            if (field == NULL){
-                perror("\nError in class field: ");
-                exit(errno);
-            }
-            // Treats classes -1 and 2 (-1 in wafer, 2 in all the rest) as 0
-            ts_class = (uint8_t) (atoi(field) == 1);
-            //printf("Class = %u\n", ts_class);
-            
-            ts_array[i] = init_timeseries(ts_values, ts_class, TS_LEN);
-            
-        }
-    }
-    
-}
-
-
-void print_array(numeric_type * vec, size_t size){
-    for(int i=0; i < size; i++)
-        printf("%g ", vec[i]);
-    printf("\n");
-}
-
-
 int main(int argc, char *argv[]){
-    unsigned int k;
-    Timeseries T[NUM_SERIES];
+    unsigned int k, num_ts;
+    //Timeseries T[NUM_SERIES];
+    Timeseries *T;
     char * infilename, *outfilename;
-    // get file name passed in argv
+    
+    // Get filenames and k from argv
     if(argc < 4){
         printf("Please use: %s {path_to_dataset} {output_csv} {k_best}\n", argv[0]);
         exit(-1);
     }
     infilename = argv[1];
     outfilename = argv[2];
-    k=atoi(argv[3]);
-    if(k < 0){          //maybe check for a upper bound? 
-        printf("Invalid K!\n");
+    k = atoi(argv[3]);
+    if(k < 0){
+        printf("Error: k must be greater than zero\n");
         exit(-1);
     }
-    
-    // Load dataset
-    read_train_dataset(infilename, T, NUM_SERIES);
+    // Load dataset and hold number of time-series loaded
+    num_ts = read_train_dataset(infilename, &T);
     
     // Check dataset loading
-    for(unsigned int i = 0; i < NUM_SERIES; i++)
-        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[TS_LEN-1], T[i].class);
+    for(unsigned int i = 0; i < num_ts; i++)
+        printf("[ TS: %u]\nfirst: %g, last: %g, class: %u\n", i,  T[i].values[0], T[i].values[T[i].length - 1], T[i].class);
     
-    Shapelet *k_best = malloc(k * sizeof(*k_best));
+    // Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    k_best = multi_thread_shapelet_cached_selection(T, NUM_SERIES, 3, 152, k, 16);
+    // k_best = multi_thread_shapelet_cached_selection(T, num_ts, 3, 152, k, 16);
 
-    shapelet_set_to_csv(k_best, k, T, outfilename);
-
-    free(k_best);
+    // shapelet_set_to_csv(k_best, k, T, outfilename);
+    
+    for (unsigned int i = 0; i < num_ts; i++){
+        free(T[i].values);
+    }
+    free(T);
+    
+    // free(k_best);
 
     return 0;
 }

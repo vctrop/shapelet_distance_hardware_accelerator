@@ -787,7 +787,7 @@ void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T){
     {   
         #ifdef USE_FLOAT 
         ts_i = (uint64_t)(S[i].Ti - T);
-        printf("%dth Shapelet is from TS %ld,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, S[i].length, S[i].start_position ,S[i].quality); 
+        printf("%dth Shapelet is from TS %I64d,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, S[i].length, S[i].start_position ,S[i].quality); 
         /*for(int j = 0; j < S[i].length; j++)
             printf("%g ", get_value(&S[i], j));
         printf("\n\n");*/
@@ -821,7 +821,7 @@ void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeserie
     for (int i = 0; i < num_shapelets; i++){
         ts_i = (uint64_t)(shapelet_set[i].Ti - T);
         // Write shapelet description
-        fprintf(file_descriptor, "Shapelet %d is from TS %ld,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
+        fprintf(file_descriptor, "Shapelet %d is from TS %I64d,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
         // Write shapelet elements
         for(int j = 0; j < shapelet_set[i].length; j++){
             fprintf(file_descriptor, "%g", get_value(&shapelet_set[i], j));
@@ -832,4 +832,92 @@ void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeserie
         }
         fprintf(file_descriptor, "\n");
     }
+}
+
+// Read datasets into ts_array, loading number of time-series and time-series length from file header
+// Free all float arrays from ts_array and the ts_array itself 
+uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
+    //char filename[] = "data/Wafer/Wafer_TRAIN.csv";
+    FILE *file_descriptor;
+    char *field;
+    uint16_t num_ts, ts_len;
+    const uint16_t HEADER_BSIZE = 20;
+    char header_buffer[HEADER_BSIZE];
+    uint16_t TS_BSIZE;
+    char *time_series_buffer;
+    uint8_t ts_class;
+    numeric_type *ts_values;
+    
+    // Reads csv file and keeps its address at file_descriptor
+    file_descriptor = fopen(filename, "r");
+    if (file_descriptor == NULL){
+        perror("Error opening csv: ");
+        exit(errno);
+    }
+    
+    // Read header containing number of time-series and time-series length
+    if(!fgets(header_buffer, HEADER_BSIZE, file_descriptor)){
+        perror("Error reading dataset header: ");
+        exit(errno);
+    }
+    num_ts = (uint16_t) atoi(strtok(header_buffer, " "));
+    ts_len = (uint16_t) atoi(strtok(NULL, " "));
+    
+    // Allocate memory for time-series buffer using estimative of characters per time-series value
+    TS_BSIZE = 15 * ts_len;
+    time_series_buffer = (char*) malloc (TS_BSIZE * sizeof(char));
+        
+    // Allocate memory for the time-series array that will hold the dataset
+    *ts_array = (Timeseries *) malloc (num_ts * sizeof(Timeseries));
+    // Read all num_ts time-series from the dataset
+    for(uint16_t i = 0; i < num_ts; i++){
+        // Load TS_BSIZE chars from file to buffer
+        if(!fgets(time_series_buffer, TS_BSIZE, file_descriptor)){
+            perror("Error reading time series buffer: ");
+            exit(errno);
+        }
+        
+        // If TS_BSIZE is enought to read a line of the dataset, the '\n' will be found in time_series_buffer, else exit
+        if (!strchr(time_series_buffer, '\n')) {
+            printf("\nTS_BSIZE is not larger than number of characters in a line\n");
+            exit(-1);
+        }
+        
+        // Allocate memory for each time-series in the dataset
+        ts_values = (numeric_type *) malloc (ts_len * sizeof(*ts_values));
+        
+        // The first ts_len values are from the time-series, and the last one is the time-series class
+        field = strtok(time_series_buffer, ",");
+        //printf("TIME-SERIES %u\n %s\t",i, field);
+        
+        #ifdef USE_FLOAT
+        ts_values[0] = atof(field);
+        
+        for(uint16_t j = 1; j < ts_len; j++){
+            field = strtok(NULL, ",");
+            //printf("%s\t", field);
+            ts_values[j] = atof(field);
+        }
+        
+        #else
+        ts_values[0] = fixedpt_fromfloat(atof(field));
+        for(uint16_t j = 1; j < ts_len; j++){
+            field = strtok(NULL, ",");
+            //printf("%s\t", field);
+            ts_values[j] = fixedpt_fromfloat(atof(field));
+        }
+        #endif
+        
+        field = strtok(NULL, ",");
+        if (field == NULL){
+            perror("\nError in class field: ");
+            exit(errno);
+        }
+        // Treats classes -1 and 2 (-1 in Wafer dataset, 2 in all the others) as 0
+        ts_class = (uint8_t) (atoi(field) == 1);
+        
+        (*ts_array)[i] = init_timeseries(ts_values, ts_class, ts_len);
+    }
+    
+    return num_ts;
 }

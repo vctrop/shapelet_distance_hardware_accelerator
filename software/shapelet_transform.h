@@ -96,4 +96,8 @@ void print_shapelets_ids(Shapelet * S, size_t num_shapelets, Timeseries *T);
 // Print a shapelet set into a csv file
 void shapelet_set_to_csv(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, const char * filename);
 
+// Read datasets into ts_array, loading number of time-series and time-series length from file header
+// Free all float arrays from ts_array and the ts_array itself 
+uint16_t read_train_dataset(char * filename, Timeseries **ts_array);
+
 #endif
