@@ -43,7 +43,7 @@ Shapelet init_shapelet(Timeseries *time_series, uint16_t shapelet_position, uint
 
 
 // Generic vector normalization
-void vector_normalization(numeric_type *values, uint16_t length){
+void algebric_normalization(numeric_type *values, uint16_t length){
     numeric_type squares_sum, absolute_value;
     
     squares_sum = 0;
@@ -91,14 +91,16 @@ void vector_normalization(numeric_type *values, uint16_t length){
 // z score a.k.a. standardizing or normalizing (using sameple std_deviation)
 // each element of input values vector will be changed to:
 // values[i] = (values[i] - mean)/std_deviation
-void vector_zscore(numeric_type *values, uint16_t length){
+void zscore_normalization(numeric_type *values, uint16_t length){
     numeric_type mean, std_dev, differrence_sum;
-
+    
     // calculate arithmetic mean 
     mean = 0;
     for(int i=0; i < length; i++){
         mean += values[i];
     }
+    
+    #ifdef USE_FLOAT 
     mean /= length;
 
     // calculate sum (xi - mean)^2
@@ -122,7 +124,13 @@ void vector_zscore(numeric_type *values, uint16_t length){
             values[i] = (values[i] - mean) / std_dev;
         }
     }
+    
+    #else
+    printf("Error, z-score isn't yet  defined in fixed point representation");
+    exit(-1);
+    #endif
 }
+
 
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
@@ -139,6 +147,12 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
+    
+    #else
+        
+    #ifdef USE_ABS
+    printf("Error, euclidean distance using ABS isn't yet defined in fixed point representation");
+    exit(-1);
     #else
     for(uint16_t i = 0; i < length; i++){
         //printf("values %d\n",i);       fixedpt_print(pivot_values[i]);        fixedpt_print(target_values[i]);
@@ -146,6 +160,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         // printf("ED %d: ",i); fixedpt_print(total_distance);
         if(total_distance >= current_minimum_distance) return MAX_FIXEDPT;
     }  
+    #endif 
     
     #endif
     
@@ -169,9 +184,13 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     // Normalize pivot 
     pivot_values = safe_alloc(pivot_shapelet->length * sizeof(*pivot_values));
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
-   
-    vector_normalization(pivot_values, pivot_shapelet->length);
     
+    #ifdef USE_ZSCORE
+    zscore_normalization(pivot_values, pivot_shapelet->length);
+    #else
+    algebric_normalization(pivot_values, pivot_shapelet->length);
+    #endif
+        
     // Allocate memory for target values 
     // Pivot shapelet and ts shapelets must always have equal length
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
@@ -182,11 +201,11 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
-        #ifdef USE_ZSCORE
-        vector_zscore(target_values, pivot_shapelet->length);
-        #else
         // Normalize target shapelet values
-        vector_normalization(target_values, pivot_shapelet->length);
+        #ifdef USE_ZSCORE
+        zscore_normalization(target_values, pivot_shapelet->length);
+        #else
+        algebric_normalization(target_values, pivot_shapelet->length);
         #endif
         
         // Compute shapelet-shapelet distance
@@ -491,8 +510,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        
-        printf("After merging\n");
+        //printf("After merging\n");
         print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
@@ -824,12 +842,12 @@ void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeser
     // Open file streams for both data and info
     data_file_descriptor = fopen(data_filename, "w");
     if (data_file_descriptor == NULL){
-        perror("Error: cannot open data csv file descriptor");
+        perror("Error, cannot open data csv file descriptor");
         exit(errno);
     }
     info_file_descriptor = fopen(info_filename, "w");
     if (info_file_descriptor == NULL){
-        perror("Error: cannot open info txt file descriptor");
+        perror("Error, cannot open info txt file descriptor");
         exit(errno);
     }
     
@@ -884,10 +902,11 @@ uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
     
     // Allocate memory for time-series buffer using estimative of characters per time-series value
     TS_BSIZE = 15 * ts_len;
-    time_series_buffer = (char*) malloc (TS_BSIZE * sizeof(char));
+    time_series_buffer = safe_alloc(TS_BSIZE * sizeof(char));
         
     // Allocate memory for the time-series array that will hold the dataset
-    *ts_array = (Timeseries *) malloc (num_ts * sizeof(Timeseries));
+    *ts_array = safe_alloc(num_ts * sizeof(Timeseries));
+    
     // Read all num_ts time-series from the dataset
     for(uint16_t i = 0; i < num_ts; i++){
         // Load TS_BSIZE chars from file to buffer

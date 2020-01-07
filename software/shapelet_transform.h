@@ -51,10 +51,10 @@ Timeseries init_timeseries(numeric_type * values, uint8_t class, uint16_t length
 Shapelet init_shapelet(Timeseries *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
 
 // Generic vector normalization based on vector absolute value
-void vector_normalization(numeric_type *values, uint16_t length);
+void algebric_normalization(numeric_type *values, uint16_t length);
 
 // Z score vector normalization
-void vector_zscore(numeric_type *values, uint16_t length);
+void zscore_normalization(numeric_type *values, uint16_t length);
 
 // Generic euclidean distance
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance);
