@@ -1,5 +1,5 @@
 CC= gcc
-CFLAGS= -lm -Wall -pthread -O2 #add -g for debugging
+CFLAGS= -lm -Wall -pthread -O2 -std=gnu99 #add -g for debugging
 ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c test_shapelets.c
 
