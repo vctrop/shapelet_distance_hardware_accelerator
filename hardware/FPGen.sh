@@ -18,12 +18,16 @@ flopoco FPAddSinglePath wE=8 wF=23 TestBench n=20 file=false
 mv flopoco.vhdl flopocoCores/FPSinglePathAdderAlt.vhd
 
 # Dual-Path FP Adder
-flopoco FPAdd wE=8 wF=23 dualPath=false TestBench n=20 file=false
+flopoco FPAdd wE=8 wF=23 dualPath=true TestBench n=20 file=false
 mv flopoco.vhdl flopocoCores/FPDualPathAdder.vhd
 
 # FP Multiplier
 flopoco FPMult wE=8 wF=23 TestBench n=20 file=false
-mv flopoco.vhdl flopocoCores/flopocoCores/FPMult.vhd
+mv flopoco.vhdl flopocoCores/FPMult.vhd
+
+# FP Squarer
+flopoco FPSquare wE=8 wF_in=23 wF_out=23 TestBench n=20 file=false
+mv flopoco.vhdl flopocoCores/FPSquare.vhd
 
 # FP Divider
 flopoco FPDiv wE=8 wF=23 TestBench n=20 file=false
