@@ -478,7 +478,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
     for (i = 0; i < num_of_ts; i++){
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
-        printf("[TS %u]\n", i);
+        // printf("[TS %u]\n", i);
         //printf("Shapelet #\tquality\n");
         // For each length between min and max
         for (l = min; l <= max; l++){ 
@@ -511,7 +511,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
         //printf("After merging\n");
-        print_shapelets_ids(k_shapelets, k, T);
+        //print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
     
@@ -633,7 +633,7 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
     for (i = 0; i < num_of_ts; i++){
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
-        printf("[TS %u]\n", i);
+        //printf("[TS %u]\n", i);
 
         // For each length between min and max
         for (int tid = 0; tid < num_threads; tid++){
@@ -674,7 +674,7 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        print_shapelets_ids(k_shapelets, k, T);
+        //print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
 
