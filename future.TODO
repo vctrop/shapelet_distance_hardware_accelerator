@@ -1,22 +1,13 @@
-// 
-// TO-DO LIST OF THE PROJECT
+// TO*DO LIST OF THE PROJECT
 
-// HARDWARE
-- parameterizable adder tree to sum accumulators 
+# HARDWARE
+* parameterizable adder tree to sum accumulators 
+* remove unecessary states
+* consider the case when length_i is inadequate (0 or larger than MAX_LEN)
 
-- remove unecessary states
+# SOFTWARE
+* function that reads shapelet archive csv to an array of Shapelets (files_to_shapelets())
+* investigate class error in ItalyPowerDemand
 
-- consider the case when length_i is inadequate (0 or larger than MAX_LEN)
-
-
-
-// SOFTWARE
-- function that reads shapelet archive csv to an array of Shapelets
-
-- function to transform datasets based on an array of Shapelets
-
-- formalization of differences between normalization to unit vector and normalization to zero mean and unit variance
-
-
-// MIXED
-- use hardware to extract distances and use them in the software implementation, comparing with pure software results
+# MIXED
+* use hardware to extract distances and use them in the software implementation, comparing with pure software results

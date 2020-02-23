@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     
     // Get filenames and k from argv
     if(argc != 6){
-        printf("Please use: %s {path_to_dataset} {output_csv} {min_len} {max_len} {k_best}\n", argv[0]);
+        printf("Please use: %s {path_to_dataset} {output_basename} {min_len} {max_len} {k_best}\n", argv[0]);
         exit(-1);
     }
     infilename = argv[1];
@@ -42,9 +42,10 @@ int main(int argc, char *argv[]){
     
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
-    k_best = multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 2);
+    //k_best = multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 2);
+    k_best = shapelet_cached_selection(T, num_ts, min_len, max_len, k);
 
-    shapelet_set_to_files(k_best, k, T, outfilename);
+    shapelets_to_files(k_best, k, T, outfilename);
     
     for (unsigned int i = 0; i < num_ts; i++){
         free(T[i].values);
