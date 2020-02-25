@@ -90,36 +90,54 @@ void algebric_normalization(numeric_type *values, uint16_t length){
 // each element of input values vector will be changed to:
 // values[i] = (values[i] - mean)/std_deviation
 void zscore_normalization(numeric_type *values, uint16_t length){
-    numeric_type mean, std_dev, differrence_sum;
+    numeric_type mean, std;
+    #ifdef USE_FLOAT 
+    #ifdef USE_EXPECTED_VALUE
+    // Computation of standard deviation by population formula (based on the properties of expected values)
+    numeric_type s = 0, s2 = 0;
+    for (uint16_t i = 0; i < length; i++){
+        s += values[i];
+        s2 += pow((double) values[i], 2);
+    }
+    
+    mean = s / length;
+    std = sqrt((s2 - pow((double) mean, 2)) / length);
+    printf("Mi = %g, sigma = %g\n", mean, std);
+    
+    #else  
+    // Computation of standard deviation by sample formula
+    
+    numeric_type differrence_sum;
     
     // calculate arithmetic mean 
     mean = 0;
-    for(int i=0; i < length; i++){
+    for(uint16_t i=0; i < length; i++){
         mean += values[i];
     }
-    
-    #ifdef USE_FLOAT 
     mean /= length;
 
     // calculate sum (xi - mean)^2
     differrence_sum = 0;
-    for(int i=0; i < length; i++){
+    for(uint16_t i=0; i < length; i++){
         differrence_sum += pow(values[i] - mean, 2);
     }
     // divide sum by N - 1 
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
     // take the sqrt
-    std_dev = sqrt(differrence_sum);
+    std = sqrt(differrence_sum);
+    printf("avg = %g, std = %g\n", mean, std);
+    
+    #endif
     
     // special case, when the vector is a straight line and has no variance
-    // the std_dev results in zero, all values in the vector are set to zero
-    if(std_dev == 0){   
+    // the std results in zero, all values in the vector are set to zero
+    if(std == 0){   
         memset(values, 0, length * sizeof(*values));
     }
     else{
         // calculate the z score for each element
-        for(int i=0; i < length; i++){
-            values[i] = (values[i] - mean) / std_dev;
+        for(uint16_t i=0; i < length; i++){
+            values[i] = (values[i] - mean) / std;
         }
     }
     

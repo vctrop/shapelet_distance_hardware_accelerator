@@ -13,7 +13,7 @@
 ./test_shapelets_zscore_abs data/TwoLeadECG/TwoLeadECG_TRAIN.csv ecg_z_abs 3 82 20
 ./test_shapelets_zscore_pow data/TwoLeadECG/TwoLeadECG_TRAIN.csv ecg_z_pow 3 82 20
 
-./test_shapelets_algebric_abs data/Wafer/Wafer_TRAIN.csv out_algebric_abs 3 152 20
-./test_shapelets_algebric_pow data/Wafer/Wafer_TRAIN.csv out_algebric_pow 3 152 20
-./test_shapelets_zscore_abs data/Wafer/Wafer_TRAIN.csv out_zscore_abs 3 152 20
-./test_shapelets_zscore_pow data/Wafer/Wafer_TRAIN.csv out_zscore_pow 3 152 20
+./test_shapelets_algebric_abs data/Wafer/Wafer_TRAIN.csv wafer_algebric_abs 3 152 20
+./test_shapelets_algebric_pow data/Wafer/Wafer_TRAIN.csv wafer_algebric_pow 3 152 20
+./test_shapelets_zscore_abs data/Wafer/Wafer_TRAIN.csv wafer_zscore_abs 3 152 20
+./test_shapelets_zscore_pow data/Wafer/Wafer_TRAIN.csv wafer_zscore_pow 3 152 20

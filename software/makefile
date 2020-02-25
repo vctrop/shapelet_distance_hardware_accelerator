@@ -4,7 +4,7 @@ ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
 
 #all: extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs
-all: extract_shapelets_zscore_abs
+all: extract_shapelets_zscore_abs extract_shapelets_zscore_abs_exp
 
 # uses algebric normalization and power of two in distance computation
 extract_shapelets_algebric_pow: $(OBJS)
@@ -14,7 +14,6 @@ extract_shapelets_algebric_pow: $(OBJS)
 extract_shapelets_algebric_abs: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ABS -o $@ $^   $(CFLAGS)
     
-    
 # uses zscore normaliztion and power of two in distance computation
 extract_shapelets_zscore_pow: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -o $@ $^   $(CFLAGS)
@@ -23,10 +22,12 @@ extract_shapelets_zscore_pow: $(OBJS)
 extract_shapelets_zscore_abs: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -DUSE_ABS -o $@ $^   $(CFLAGS)
     
+extract_shapelets_zscore_abs_exp: $(OBJS)
+	$(CC) $(ARITH) -DUSE_ZSCORE -DUSE_ABS -DUSE_EXPECTED_VALUE  -o  $@  $^  $(CFLAGS)
 
 .PHONY: clean
 clean:
-	$(RM) *.o extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs
+	$(RM) *.o extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs extract_shapelets_zscore_abs_exp
 .PHONY: clean_win
 clean_win: 
-	del *.o extract_shapelets_algebric_pow.exe extract_shapelets_algebric_abs.exe extract_shapelets_zscore_pow.exe extract_shapelets_zscore_abs.exe
+	del *.o extract_shapelets_algebric_pow.exe extract_shapelets_algebric_abs.exe extract_shapelets_zscore_pow.exe extract_shapelets_zscore_abs.exe extract_shapelets_zscore_abs_exp.exe
