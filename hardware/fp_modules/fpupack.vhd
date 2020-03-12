@@ -41,10 +41,13 @@
 --	OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE         
 --	POSSIBILITY OF SUCH DAMAGE. 
 --
+-- last modified: Julio:
+-- Added unsigned to floting point conersion function.
 
 library  ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
 package fpupack is
 
@@ -75,6 +78,10 @@ package fpupack is
     
     -- count the zeros starting from right
 	function count_r_zeros (signal s_vector: std_logic_vector) return std_logic_vector;
+
+	-- converts unsigned integer to floating point.
+	-- int must be in range of 0 <= <= 2 ^ 24 - 1 
+	function uint_to_fp(int_i : std_logic_vector(31 downto 0)) return std_logic_vector;
     
 end fpupack;
 
@@ -109,6 +116,56 @@ package body fpupack is
 		return v_count;	
 	end count_r_zeros;
 
+
+	function uint_to_fp(int_i : std_logic_vector(31 downto 0)) return std_logic_vector is
+            -- the position of the first '1' bit is also the value we must add to the exponent
+            variable shift_num_s : natural range 0 to 23;
+            variable mantissa_s, fp_o :  std_logic_vector(31 downto 0);
+        begin
+            fp_o(31) := '0';        -- sign bit '0': all integers must be positive
+        
+            -- priority decoder to find the position of the first '1' bit
+            if    int_i(23) = '1' then shift_num_s := 23;
+            elsif int_i(22) = '1' then shift_num_s := 22;
+            elsif int_i(21) = '1' then shift_num_s := 21;
+            elsif int_i(20) = '1' then shift_num_s := 20;
+            elsif int_i(19) = '1' then shift_num_s := 19;
+            elsif int_i(18) = '1' then shift_num_s := 18;
+            elsif int_i(17) = '1' then shift_num_s := 17;
+            elsif int_i(16) = '1' then shift_num_s := 16;
+            elsif int_i(15) = '1' then shift_num_s := 15;
+            elsif int_i(14) = '1' then shift_num_s := 14;
+            elsif int_i(13) = '1' then shift_num_s := 13;
+            elsif int_i(12) = '1' then shift_num_s := 12;
+            elsif int_i(11) = '1' then shift_num_s := 11;
+            elsif int_i(10) = '1' then shift_num_s := 10;
+            elsif int_i(9)  = '1' then shift_num_s := 9;
+            elsif int_i(8)  = '1' then shift_num_s := 8;
+            elsif int_i(7)  = '1' then shift_num_s := 7;
+            elsif int_i(6)  = '1' then shift_num_s := 6;
+            elsif int_i(5)  = '1' then shift_num_s := 5;
+            elsif int_i(4)  = '1' then shift_num_s := 4;
+            elsif int_i(3)  = '1' then shift_num_s := 3;
+            elsif int_i(2)  = '1' then shift_num_s := 2;
+            elsif int_i(1)  = '1' then shift_num_s := 1;
+            else                       shift_num_s := 0;
+            end if;
+        
+            -- add bias to the exponent
+            if int_i /= x"00000000" then
+                fp_o(30 downto 23) := std_logic_vector(to_unsigned(shift_num_s + 127, 8));
+            else
+                fp_o(30 downto 23) := x"00";  --if the input is zero, we have all zeroes
+            end if;
+
+            -- mantissa contains all bits except the first
+            -- we first zero the first '1' in the input number
+            -- and then we rotate it shift_num_s times to the right
+            mantissa_s := std_logic_vector(unsigned(int_i) ror shift_num_s); -- we cannot slice this due to conversion
+            fp_o(22 downto 0) := mantissa_s(31 downto 9);    -- slice to get the actual mantissa value
+
+            return fp_o;
+        end function;
 
 		
 end fpupack;
