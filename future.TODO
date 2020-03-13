@@ -2,12 +2,8 @@
 
 # HARDWARE
 * parameterizable adder tree to sum accumulators 
-* remove unecessary states
-* consider the case when length_i is inadequate (0 or larger than MAX_LEN)
+* consider the case when length_i is inadequate (0, 1 or larger than MAX_LEN)
 
 # SOFTWARE
 * function that reads shapelet archive csv to an array of Shapelets (files_to_shapelets())
 * investigate class error in ItalyPowerDemand
-
-# MIXED
-* use hardware to extract distances and use them in the software implementation, comparing with pure software results
