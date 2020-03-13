@@ -42,7 +42,7 @@ architecture behavioral of tb_shapelet_distance is
     constant MAX_LEN : integer := 128;
 
     --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vector.txt"; -- testFile contains:
-	file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelets\shapelet_distance_hardware_accelerator\hardware\test\vector.txt"; -- testFile contains: (CANT READ WITH RELATIVE PATH)
+	file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelets\shapelet_distance_hardware_accelerator\hardware\test\debug_vector.txt"; -- testFile contains: (CANT READ WITH RELATIVE PATH)
     -- 1 line for integer length 
 	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
 	-- 1 line for target shapelet 32-bit float values, separated by 1 character
@@ -58,7 +58,7 @@ architecture behavioral of tb_shapelet_distance is
 
 begin
     clk <= not clk after half_clk_period;
-    rst <= '1' after 5*clk_period;  -- wait 1 clk cycles before starting simulation
+    rst <= '1', '0' after 4*clk_period;                         -- wait 4 clk cycles before starting simulation
 
     
     DUV: shapelet_distance
@@ -95,15 +95,15 @@ begin
 		op <= '0';
 		start <= '0';
         index <= 0;
-        wait until rst = '1'; -- wait for the circuit to be reset
-		--wait until clk = '0'; -- synchronize with clk
+        wait until rst = '0';                   -- wait for reset end
+		--wait until clk = '0';                 -- synchronize with clk
 		wait for half_clk_period;
         -- read all lines in the test file
         while not (endfile(testFile)) loop
             
             -- pivot normalization 
             
-            readline(testFile, fileLine);   -- read the line containing length
+            readline(testFile, fileLine);       -- read the line containing length
             for i in str'range loop
                 read(fileLine, char, bool);
                 str(i) := char;

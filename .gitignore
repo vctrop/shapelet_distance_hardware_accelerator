@@ -58,4 +58,29 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-software/test_shapelets
+
+# MODELSIM
+# ignore ModelSim generated files and directories (temp files and so on)
+[_@]*
+
+# ignore compilation output of ModelSim
+*.mti
+*.dat
+*.dbs
+*.psm
+*.bak
+*.cmp
+*.jpg
+*.html
+*.bsf
+
+# ignore simulation output of ModelSim
+wlf*
+*.wlf
+*.vstf
+*.ucdb
+cov*/
+transcript*
+sc_dpiheader.h
+vsim.dbg
+
