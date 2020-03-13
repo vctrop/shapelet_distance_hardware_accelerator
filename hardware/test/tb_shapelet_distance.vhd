@@ -23,7 +23,7 @@ architecture behavioral of tb_shapelet_distance is
             
             -- Data input is a single precision float shapelet datapoint
             data_i      : in std_logic_vector(31 downto 0);
-            length_i    : in std_logic_vector(6 downto 0);
+            --length_i    : in std_logic_vector(6 downto 0);
     
             -- begins opeartions
             start_i     : in std_logic;        
@@ -41,8 +41,9 @@ architecture behavioral of tb_shapelet_distance is
     constant NUM_PU : integer := 2;
     constant MAX_LEN : integer := 128;
 
-    file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile contains:
-	-- 1 line for integer length 
+    --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vector.txt"; -- testFile contains:
+	file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelets\shapelet_distance_hardware_accelerator\hardware\test\vector.txt"; -- testFile contains: (CANT READ WITH RELATIVE PATH)
+    -- 1 line for integer length 
 	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
 	-- 1 line for target shapelet 32-bit float values, separated by 1 character
 	-- 1 line for expected output 32-bit float distance
@@ -52,7 +53,7 @@ architecture behavioral of tb_shapelet_distance is
     signal rst : std_logic := '0';
     signal start, ready, op : std_logic;
     signal data, distance, expected_output : std_logic_vector(31 downto 0);
-    signal length_slv : std_logic_vector(6 downto 0);
+    -- signal length_slv : std_logic_vector(6 downto 0);
     signal index : natural;
 
 begin
@@ -72,7 +73,7 @@ begin
             
             -- Data input is a single precision float shapelet datapoint
             data_i      => data,
-            length_i    => length_slv,
+            --length_i    => length_slv,
     
             -- begins opeartions
             start_i     => start,      
@@ -89,7 +90,7 @@ begin
         variable bool		: boolean;	
 		variable row        : line;				-- Output file line
  		variable length	: integer;
-		variable l_v : std_logic_vector(31 downto 0);
+		-- variable l_v : std_logic_vector(31 downto 0);
     begin
 		op <= '0';
 		start <= '0';
@@ -107,9 +108,10 @@ begin
                 read(fileLine, char, bool);
                 str(i) := char;
             end loop;
-			l_v := StringToStdLogicVector(str);
-            length_slv <= l_v(6 downto 0);
-			length := to_integer(unsigned(l_v));
+			-- l_v := StringToStdLogicVector(str);
+            -- length_slv <= l_v(6 downto 0);
+			data <= StringToStdLogicVector(str);
+            length := to_integer(unsigned(data));
 			report "length: " & integer'image(length);
             --assert length > 0 report "Incompatible length < 0 !" severity warning;
 

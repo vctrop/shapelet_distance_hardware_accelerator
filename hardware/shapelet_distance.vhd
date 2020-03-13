@@ -5,7 +5,8 @@ use ieee.std_logic_1164.all;
 use IEEE.math_real."ceil";
 use IEEE.math_real."log2";      -- used to calculate the number of bits used by the input length
 
-use work.comppack.all;          -- FPU package
+use work.comppack.all;          -- FPU components package
+use work.fpupack.all;          -- FPU functions package
 
 -- Shapelet distance calculator hardware
 -- NUM_PU: specificies the level of paralelism. Must be a power of 2. (WARNING: CURRENTLY ONLY THE DEFAULT VALUE OF 2 IS IN WORKING CONDITION)
@@ -178,7 +179,8 @@ begin
                         if op_i = '0' then
                             -- the number of bits used by the length must be based on the log2 of the parameter MAX_LEN
                             -- for the default MAX_LEN=128 it should result in 7
-                            reg_shapelet_length_s <= to_integer(unsigned(data_i(ceil(log2(real(MAX_LEN)))-1 downto 0)));
+                            reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) - 1 downto 0)));
+
                         end if;
                         reg_state_s <= Sbuf_load;
                     end if;
@@ -189,7 +191,7 @@ begin
                     -- Next state
                     -- Reapeat until current buffer length = shapelet length - 1
                     if reg_buf_counter_s = reg_shapelet_length_s - 1 then
-                        reg_state_s <= Snorm_square;
+                        reg_state_s <= Savg_sum_acc;
                     end if;
                     
                 -- Z-SCORE NORMALIZATION STATES
@@ -284,7 +286,8 @@ begin
                         else
                             reg_state_s <= Sdist_sub;
                         end if;
-                        
+                    end if;
+                    
                 -- EUCLIDEAN DISTANCE STATES
                 when Sdist_sub      =>  
                         
@@ -319,7 +322,7 @@ begin
                     if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Sdist_final_acc;
                     else
-                        reg_state_s <= Snorm_div;
+                        reg_state_s <= Szscore_div;
                     end if;
                     
                 -- FINISHING STATES
@@ -332,7 +335,7 @@ begin
                     if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Spivot_norm_ready;
                     else
-                        reg_state_s <= Snorm_div;
+                        reg_state_s <= Szscore_div;
                     end if; 
 
                 when Spivot_norm_ready    =>
@@ -391,7 +394,7 @@ begin
                 if rst = '1' or pivot_buf_rst_s = '1' then
                     buffer_pivot_s(i) <= (others => '0');
                 --NEW: consider en_pivot_wb_sub_s when writing on pivot
-                elsif en_pivot_load_s(i) = '1' or en_pivot_wb_norm_s(i) = '1' or en_pivot_wb_sub_s(i) then
+                elsif en_pivot_load_s(i) = '1' or en_pivot_wb_norm_s(i) = '1' or en_pivot_wb_sub_s(i) = '1' then
                     buffer_pivot_s(i) <= pivot_input_s(i);
                 end if;
             end if;
@@ -406,7 +409,7 @@ begin
                 if rst = '1' or target_buf_rst_s = '1' then
                     buffer_target_s(i) <= (others => '0');
                 --NEW: consider en_pivot_wb_sub_s when writing on pivot
-                elsif en_target_load_s(i) = '1' or en_target_wb_sub_s(i) then
+                elsif en_target_load_s(i) = '1' or en_target_wb_sub_s(i) = '1' then
                     buffer_target_s(i) <= target_input_s(i);
                 end if;
             end if;
@@ -501,8 +504,8 @@ begin
     div_opa_s(0)    <=  shapelet_elements_mux_s(0)  when reg_state_s = Szscore_div   else
                         reg_final_accumulator_s;
     div_opb_s(0)    <=  sqrt_out_s                  when reg_state_s = Szscore_div  else
-                        reg_shapelet_length_s - 1   when reg_state_s = Sstd_div     else -- HERE: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to float
-                        reg_shapelet_length_s;
+                        uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s - 1, div_opb_s(0)'length)))   when reg_state_s = Sstd_div     else -- NEW: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to float
+                        uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, div_opb_s(0)'length)));
                         
     DIV_OP_GEN: for i in NUM_PU - 1 downto 1 generate
         div_opa_s(i)    <= shapelet_elements_mux_s(i);    
