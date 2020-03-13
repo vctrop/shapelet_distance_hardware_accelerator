@@ -14,7 +14,7 @@
 #include <pthread.h>                        // multi thread implementation
 #include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-#ifdef USE_FLOAT
+#ifndef USE_FIXED
     typedef float numeric_type;
 #else
     #define MAX_FIXEDPT 0x7fffff00
