@@ -102,7 +102,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     mean = s / length;
     std = sqrt((s2 - pow((double) mean, 2)) / length);
-    printf("Mi = %g, sigma = %g\n", mean, std);
+    // printf("Mi = %g, sigma = %g\n", mean, std);
     
     #else  
     // Computation of standard deviation by sample formula
@@ -125,7 +125,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
     // take the sqrt
     std = sqrt(differrence_sum);
-    printf("avg = %g, std = %g\n", mean, std);
+    // printf("avg = %g, std = %g\n", mean, std);
     
     #endif
     
@@ -894,7 +894,7 @@ numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shape
 
 // Print all positions of a certain shapelet as HEX
 void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len){
-    // Union to represent float as unsigned without type prunning
+    // Union to represent float as unsigned without type punning
     union {
             float f;
             uint32_t u;
