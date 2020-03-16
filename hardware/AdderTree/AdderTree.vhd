@@ -58,7 +58,7 @@ architecture RTL of AdderTree is
     signal initialized: std_logic;                                            
     
 	-- Amount of clock cycles in an iteration
-	signal cycleCounter: integer range 0 to AdderAmountOfCycles - 1;
+	signal cycleCounter: integer range 0 to AdderAmountOfCycles;
 
 	-- Amount of iterations (amount of times adder outputs will be fed back into inputs - 1 first iteration, where there is no feedback)
 	constant AmountOfIterations: integer := integer(ceil(log2(real(AmountOfInputs))));
