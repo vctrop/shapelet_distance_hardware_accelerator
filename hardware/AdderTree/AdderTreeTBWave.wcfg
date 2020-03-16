@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="AdderTreeTB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="AdderTreeTB" />
+            <top_module name="addertreepkg" />
+            <top_module name="comppack" />
+            <top_module name="fpupack" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1230002fs"></ZoomEndTime>
+      <Cursor1Time time="105000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="118"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="32" />
+   <wvobject fp_name="/AdderTreeTB/Clock" type="logic">
+      <obj_property name="ElementShortName">Clock</obj_property>
+      <obj_property name="ObjectShortName">Clock</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/Reset" type="logic">
+      <obj_property name="ElementShortName">Reset</obj_property>
+      <obj_property name="ObjectShortName">Reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/Start" type="logic">
+      <obj_property name="ElementShortName">Start</obj_property>
+      <obj_property name="ObjectShortName">Start</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/Ready" type="logic">
+      <obj_property name="ElementShortName">Ready</obj_property>
+      <obj_property name="ObjectShortName">Ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/Inputs" type="array">
+      <obj_property name="ElementShortName">Inputs[0:7][31:0]</obj_property>
+      <obj_property name="ObjectShortName">Inputs[0:7][31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/Output" type="array">
+      <obj_property name="ElementShortName">Output[31:0]</obj_property>
+      <obj_property name="ObjectShortName">Output[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/AmountOfInputs" type="other">
+      <obj_property name="ElementShortName">AmountOfInputs</obj_property>
+      <obj_property name="ObjectShortName">AmountOfInputs</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/AdderAmountOfCycles" type="other">
+      <obj_property name="ElementShortName">AdderAmountOfCycles</obj_property>
+      <obj_property name="ObjectShortName">AdderAmountOfCycles</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/initialized" type="logic">
+      <obj_property name="ElementShortName">initialized</obj_property>
+      <obj_property name="ObjectShortName">initialized</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/cycleCounter" type="other">
+      <obj_property name="ElementShortName">cycleCounter</obj_property>
+      <obj_property name="ObjectShortName">cycleCounter</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/iterationsCounter" type="other">
+      <obj_property name="ElementShortName">iterationsCounter</obj_property>
+      <obj_property name="ObjectShortName">iterationsCounter</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters" type="array">
+      <obj_property name="ElementShortName">inputRegisters[0:7][31:0]</obj_property>
+      <obj_property name="ObjectShortName">inputRegisters[0:7][31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[0]" type="array">
+         <obj_property name="ElementShortName">[0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[1]" type="array">
+         <obj_property name="ElementShortName">[1][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[2]" type="array">
+         <obj_property name="ElementShortName">[2][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[3]" type="array">
+         <obj_property name="ElementShortName">[3][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[4]" type="array">
+         <obj_property name="ElementShortName">[4][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[5]" type="array">
+         <obj_property name="ElementShortName">[5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[6]" type="array">
+         <obj_property name="ElementShortName">[6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[7]" type="array">
+         <obj_property name="ElementShortName">[7][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][31:0]</obj_property>
+         <obj_property name="Radix">REALRADIX</obj_property>
+         <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+         <obj_property name="radix_fractionWidth">24</obj_property>
+         <obj_property name="radix_otherWidth">8</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[0]" type="array">
+         <obj_property name="ElementShortName">[0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[1]" type="array">
+         <obj_property name="ElementShortName">[1][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[2]" type="array">
+         <obj_property name="ElementShortName">[2][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[3]" type="array">
+         <obj_property name="ElementShortName">[3][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[4]" type="array">
+         <obj_property name="ElementShortName">[4][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[5]" type="array">
+         <obj_property name="ElementShortName">[5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[6]" type="array">
+         <obj_property name="ElementShortName">[6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/AdderTreeTB/DUV/inputRegisters[7]" type="array">
+         <obj_property name="ElementShortName">[7][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider149">
+      <obj_property name="label">ADDER 0</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(0)\/ADDER/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(0)\/ADDER/opa_i" type="array">
+      <obj_property name="ElementShortName">opa_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opa_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(0)\/ADDER/opb_i" type="array">
+      <obj_property name="ElementShortName">opb_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opb_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(0)\/ADDER/output_o" type="array">
+      <obj_property name="ElementShortName">output_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">output_o[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider491">
+      <obj_property name="label">ADDER 1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(1)\/ADDER/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(1)\/ADDER/opa_i" type="array">
+      <obj_property name="ElementShortName">opa_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opa_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(1)\/ADDER/opb_i" type="array">
+      <obj_property name="ElementShortName">opb_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opb_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(1)\/ADDER/output_o" type="array">
+      <obj_property name="ElementShortName">output_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">output_o[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider497">
+      <obj_property name="label">ADDER 2</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(2)\/ADDER/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(2)\/ADDER/opa_i" type="array">
+      <obj_property name="ElementShortName">opa_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opa_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(2)\/ADDER/opb_i" type="array">
+      <obj_property name="ElementShortName">opb_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opb_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(2)\/ADDER/output_o" type="array">
+      <obj_property name="ElementShortName">output_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">output_o[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject type="divider" fp_name="divider507">
+      <obj_property name="label">ADDER 3</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(3)\/ADDER/clk_i" type="logic">
+      <obj_property name="ElementShortName">clk_i</obj_property>
+      <obj_property name="ObjectShortName">clk_i</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(3)\/ADDER/opa_i" type="array">
+      <obj_property name="ElementShortName">opa_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opa_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(3)\/ADDER/opb_i" type="array">
+      <obj_property name="ElementShortName">opb_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">opb_i[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+   <wvobject fp_name="/AdderTreeTB/DUV/\AdderGen(3)\/ADDER/output_o" type="array">
+      <obj_property name="ElementShortName">output_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">output_o[31:0]</obj_property>
+      <obj_property name="Radix">REALRADIX</obj_property>
+      <obj_property name="radix_realType">FLOATINGPOINTRADIX</obj_property>
+      <obj_property name="radix_fractionWidth">24</obj_property>
+      <obj_property name="radix_otherWidth">8</obj_property>
+   </wvobject>
+</wave_config>
