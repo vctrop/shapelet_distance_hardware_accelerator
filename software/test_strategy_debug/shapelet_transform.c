@@ -161,6 +161,10 @@ void zscore_normalization(numeric_type *values, uint16_t length){
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
     
+    if (length % 32 == 0){
+        printf("Pointwise distance\n");
+    }    
+
     #ifndef USE_FIXED
     for (uint16_t i = 0; i < length; i++){
     #ifdef USE_ABS
@@ -169,10 +173,25 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     #else
         // the default calculation
         total_distance += sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
+    
+        if (length % 32 == 0){
+            // Union to represent float as unsigned without type punning
+            union {
+                float f;
+                uint32_t u;
+            } f2u;
+            f2u.f = sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
+            printf("%08x ", f2u.u);
+        }
+    
     #endif
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
+    
+    if (length % 32 == 0){
+        printf("\n");
+    }    
     
     #else
     #ifdef USE_ABS
@@ -276,10 +295,10 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         }
         
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
-        if (shapelet_distance < minimum_distance){
-            minimum_distance = shapelet_distance;
-            closer_shapelet = i;
-        }
+        // if (shapelet_distance < minimum_distance){
+        //    minimum_distance = shapelet_distance;
+        //    closer_shapelet = i;
+        //}
         
         //printf("Shapelet minimum distance: "); fixedpt_print(minimum_distance);
     // }

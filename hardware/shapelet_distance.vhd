@@ -489,6 +489,7 @@ begin
     addsub_opa_s    <=  reg_div_out_s           when reg_state_s = Sdist_sub    else
                         shapelet_elements_mux_s when reg_state_s = Sstd_sub     else
                         reg_accumulators_s;
+
     addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Savg_sum_acc or reg_state_s = Sdist_sub else
                         div_out_mean_s          when reg_state_s = Sstd_sub     else
                         reg_mul_out_s;
@@ -512,7 +513,7 @@ begin
     --NEW: To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate
     div_opa_s(0)    <=  shapelet_elements_mux_s(0)      when reg_state_s = Szscore_div   else
                         reg_acc_sum_out_s;
-    div_opb_s(0)    <=  sqrt_out_s                      when reg_state_s = Szscore_div  else
+    div_opb_s(0)    <=  reg_sqrt_out_s                  when reg_state_s = Szscore_div  else
                         dec_shapelet_length_float_s     when reg_state_s = Sstd_div     else
                         shapelet_length_float_s;
                         
@@ -696,7 +697,7 @@ begin
     -- ACCUMULATOR DRIVER
     -- NEW: Update to new acc writing/reseting states
     -- Reset the accumulator at the start of the FSM and after summing all accumulators to a single value.
-    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or ((reg_state_s = Savg_final_acc   or reg_state_s = Savg_final_acc) and fp_ready_s = '1')  else '0';
+    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or ((reg_state_s = Savg_final_acc   or reg_state_s = Sstd_final_acc) and fp_ready_s = '1')  else '0';
     accumulators_wr_s   <= '1' when reg_state_s = Savg_reg_acc  or reg_state_s = Sstd_reg_acc       or reg_state_s = Sdist_reg_acc                          else '0';
     -- Accummulator registers
     acc_regs: process(clk)

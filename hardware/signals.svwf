@@ -68,6 +68,7 @@ waveform hierarchy collapse $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:buffer_target_s}]}
 	} ]]
+waveform hierarchy collapse $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:block_sel_inc_s}]}
 	} ]]
@@ -96,27 +97,45 @@ set id [waveform add -signals [subst  {
 	{[format {:DUV:fp_ready_s}]}
 	} ]]
 set id [waveform add -cdivider divider]
+set id [waveform add -label {Cycle counter} -comment {}]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:cycle_counter:start_i}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:cycle_counter:rst}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:cycle_counter:mode_i}]}
+	} ]]
+waveform format $id -radix %b
+waveform hierarchy expand $id
+set id [waveform add -cdivider divider]
 set id [waveform add -signals [subst  {
 	{[format {:DUV:addsub_opa_s}]}
 	} ]]
+waveform hierarchy expand $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:addsub_opb_s}]}
 	} ]]
+waveform hierarchy expand $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:addsub_out_s}]}
 	} ]]
+waveform hierarchy expand $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:div_opa_s}]}
 	} ]]
-waveform hierarchy expand $id
+waveform hierarchy collapse $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:div_opb_s}]}
 	} ]]
-waveform hierarchy expand $id
+waveform hierarchy collapse $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:div_out_s}]}
 	} ]]
 waveform hierarchy expand $id
+set id2 [lindex [waveform hierarchy content $id] 1]
+waveform hierarchy collapse $id2
 set id [waveform add -signals [subst  {
 	{[format {:DUV:sqrt_op_s}]}
 	} ]]
@@ -126,9 +145,11 @@ set id [waveform add -signals [subst  {
 set id [waveform add -signals [subst  {
 	{[format {:DUV:mul_operator_s}]}
 	} ]]
+waveform hierarchy expand $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:mul_out_s}]}
 	} ]]
+waveform hierarchy collapse $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:acc_sum_opa_s}]}
 	} ]]
@@ -142,6 +163,7 @@ set id [waveform add -cdivider divider]
 set id [waveform add -signals [subst  {
 	{[format {:DUV:reg_accumulators_s}]}
 	} ]]
+waveform hierarchy expand $id
 set id [waveform add -signals [subst  {
 	{[format {:DUV:reg_acc_counter_s}]}
 	} ]]
@@ -158,4 +180,4 @@ set id [waveform add -signals [subst  {
 	{[format {:DUV:reg_op_s}]}
 	} ]]
 
-waveform xview limits 2802736086fs 3152650850fs
+waveform xview limits 0 1100000000000fs
