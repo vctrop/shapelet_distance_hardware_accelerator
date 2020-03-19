@@ -2,8 +2,8 @@ library IEEE;
 use IEEE.numeric_std.all;
 use ieee.std_logic_1164.all;
 
-use IEEE.math_real."ceil";
-use IEEE.math_real."log2";      -- used to calculate the number of bits used by the input length
+use IEEE.math_real.ceil;
+use IEEE.math_real.log2;      -- used to calculate the number of bits used by the input length
 
 use work.comppack.all;          -- FPU components package
 use work.fpupack.all;          -- FPU functions package
@@ -44,6 +44,9 @@ architecture behavioral of shapelet_distance is
     
     -- Register to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
+    signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
+    signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
+    signal dec_shapelet_length_float_s                  : std_logic_vector(31 downto 0);
    
     -- Register to keep output result
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
@@ -96,7 +99,7 @@ architecture behavioral of shapelet_distance is
     
     -- Array of accumulator registers
     signal reg_accumulators_s                           : pu_operands_t;
-    signal reg_final_accumulator_s                      : std_logic_vector(31 downto 0);    -- holds the sum of every reg_acumulator 
+    --signal reg_final_accumulator_s                      : std_logic_vector(31 downto 0);    -- holds the sum of every reg_acumulator 
     signal accumulators_wr_s                            : std_logic;
     signal accumulators_rst_s                           : std_logic;
     
@@ -122,6 +125,7 @@ architecture behavioral of shapelet_distance is
     signal div_opa_s                                    : pu_operands_t;
     signal div_opb_s                                    : pu_operands_t;
     signal div_out_s                                    : pu_operands_t;
+    signal div_out_mean_s                               : pu_operands_t;
     
     -- sum of accumulators
     signal acc_sum_opa_s                                : std_logic_vector(31 downto 0);
@@ -486,7 +490,7 @@ begin
                         shapelet_elements_mux_s when reg_state_s = Sstd_sub     else
                         reg_accumulators_s;
     addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Savg_sum_acc or reg_state_s = Sdist_sub else
-                        reg_div_out_s           when reg_state_s = Sstd_sub     else
+                        div_out_mean_s          when reg_state_s = Sstd_sub     else
                         reg_mul_out_s;
     addsub_start_s  <=  '0'                     when reg_state_s = Savg_sum_acc or reg_state_s = Savg_final_acc or reg_state_s = Sstd_sub   or reg_state_s = Sstd_sum_acc  or reg_state_s = Sstd_final_acc    or 
                                                      reg_state_s = Sdist_sub    or reg_state_s = Sdist_sum_acc  or reg_state_s = Sdist_final_acc
@@ -498,20 +502,26 @@ begin
     -- the multiplier unit always computes A*A (A^2)
     mul_operator_s  <= reg_addsub_out_s;
     
-    -- Divider
-    div_start_s     <= '0'  when reg_state_s = Savg_div or reg_state_s = Sstd_div  or reg_state_s = Szscore_div     else '1';
-    --NEW: To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for .. generate
-    div_opa_s(0)    <=  shapelet_elements_mux_s(0)  when reg_state_s = Szscore_div   else
-                        reg_final_accumulator_s;
-    div_opb_s(0)    <=  sqrt_out_s                  when reg_state_s = Szscore_div  else
-                        uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s - 1, div_opb_s(0)'length)))   when reg_state_s = Sstd_div     else -- NEW: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to float
-                        uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, div_opb_s(0)'length)));
+    -- Divisor
+    -- NEW: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation
+    dec_shapelet_length_s <= 0  when reg_state_s = Sbegin   else reg_shapelet_length_s - 1;
+    shapelet_length_float_s     <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, shapelet_length_float_s'length)));
+    dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(dec_shapelet_length_s, dec_shapelet_length_float_s'length)));
+    
+    div_start_s    <= '0'                               when reg_state_s = Savg_div or reg_state_s = Sstd_div  or reg_state_s = Szscore_div     else '1';
+    --NEW: To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate
+    div_opa_s(0)    <=  shapelet_elements_mux_s(0)      when reg_state_s = Szscore_div   else
+                        reg_acc_sum_out_s;
+    div_opb_s(0)    <=  sqrt_out_s                      when reg_state_s = Szscore_div  else
+                        dec_shapelet_length_float_s     when reg_state_s = Sstd_div     else
+                        shapelet_length_float_s;
                         
     DIV_OP_GEN: for i in NUM_PU - 1 downto 1 generate
         div_opa_s(i)    <= shapelet_elements_mux_s(i);    
         div_opb_s(i)    <= reg_sqrt_out_s;
     end generate DIV_OP_GEN;
-
+    
+    
     -- Single SQRT
     sqrt_op_s       <= reg_div_out_s(0);
     sqrt_start_s    <= '0'  when reg_state_s = Sstd_sqrt   else '1';
@@ -579,6 +589,8 @@ begin
         );
         
         -- Div computes in 33 cycles (says fpu code)
+        -- div_out_s(0) is opb of all subtractors in x - mi
+        div_out_mean_s(i) <= reg_div_out_s(0);    
         div: fp_div
         port map(
             clk_i 			=> clk,
@@ -660,7 +672,7 @@ begin
                 -- Subtractor
                 --HERE: Por que estados de add tambem nao fazem o reg_addsub_out_s ser escrito?
                 -- The x - avg write back during normalization writes directly to shapelet buffers
-                if reg_state_s = Sdist_sub then
+                if reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
                     reg_addsub_out_s <= addsub_out_s;
                 end if;
                 -- The norm write back during operation 0 writes directly to the pivot buffer

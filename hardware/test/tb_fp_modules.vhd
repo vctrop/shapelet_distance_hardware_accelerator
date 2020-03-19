@@ -1,263 +1,290 @@
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-use ieee.std_logic_misc.all;
 
+library ieee;
+    use ieee.std_logic_1164.all;
+    use ieee.std_logic_unsigned.all;
+    use ieee.numeric_std.all;
+    use ieee.std_logic_misc.all;
+    use ieee.math_real.all;
+    use ieee.float_pkg.all;
+
+--library ieee_proposed;
+--    use ieee_proposed.float_pkg.all;
+--    use ieee_proposed.math_real.all;
+
+library std;
+    use std.textio.all;
+   
+--library work;
+--    use work.float_pkg.all;
+    
 entity tb_fp_modules is 
 end tb_fp_modules;
 
-architecture adder of tb_fp_modules is
-    signal clk  : std_logic := '0';
-    signal op_type, ine, overflow, underflow, inf, zero, qnan, snan : std_logic;
-    signal opa, opb, addsub_out : std_logic_vector(31 downto 0);
-    constant clk_half_period : time := 5 ns;
-    constant clk_period : time := 2* clk_half_period;
+architecture testbench of tb_fp_modules is
+
+    -- Core to be instantiated
+    constant coreType: string(1 to 3) := "ADD"; -- "ADD", "MUL", "DIV", "SQR", "ROO"
+    constant adderType: string(1 to 3) := "SGL"; -- "SGL", "DUA"
+    
+    -- Stimulus file
+    file stimulusFile: text open read_mode is "stimulus.txt";
+
+    -- Clock signals
+    signal clock: std_logic := '0';
+    constant clockPeriod: time := 10 ns ;
+    constant clockHalfPeriod: time := clockPeriod/2;
+    
+    -- Operands and flags
+    signal start, opType, ine, overflow, underflow, inf, zero, qnan, snan, div_zero: std_logic;
+    signal opa, opb, result: std_logic_vector(31 downto 0);
     signal time_to_compute: integer;
 
+    -- IEEE to flopoco
+    signal IEEEToFlopocoInA, IEEEToFlopocoInB: std_logic_vector(31 downto 0);
+    signal IEEEToFlopocoOutA, IEEEToFlopocoOutB: std_logic_vector(33 downto 0);
+
+    -- Flopoco to IEEE
+    signal FlopocoToIEEEIn: std_logic_vector(33 downto 0);
+    signal FlopocoToIEEEOut: std_logic_vector(31 downto 0); 
+
+    -- Clock Counter
+    signal clockCounter: integer := 0;
+
 begin
 
-    clk <= not clk after clk_half_period;
+    -- Generates clock square wave
+    ClockProcess: process begin
 
-    DUV:  entity work.fp_addsub
+        wait for clockHalfPeriod;
+        Clock <= '1';
+        wait for clockHalfPeriod;
+        Clock <= '0';
+
+    end process ClockProcess;
+
+
+    -- Generates flopoco to IEEE 754 single precision format converter
+    FlopocoToIEEE: entity work.OutputIEEE_8_23_to_8_23
         port map(
-            clk_i 			=> clk,
+            clk => open,
+            rst => open,
+            X => FlopocoToIEEEIn,
+            R => FlopocoToIEEEOut
+        ); 
 
-            -- opeartion:
-            -- ==========
-            -- 0 = add,
-            -- 1 = sub
-            op_type         => op_type,
 
-            -- Input Operands A & B
-            opa_i        	=> opa,
-            opb_i           => opb,
-            
-            -- Output port
-            output_o        => addsub_out,
-            
-            -- Exceptions
-            ine_o 			=> ine,
-            overflow_o  	=> overflow,
-            underflow_o 	=> underflow,
-            inf_o			=> inf,
-            zero_o			=> zero,
-            qnan_o			=> qnan,
-            snan_o			=> snan
-        );
-    
-    op_type <= '0'; -- add=0 sub=1
-    process
-    begin
-        opa <= x"3e800000";
-        opb <= x"3f000000";
-        wait for 7*clk_period;
-        op_type <= '1';
-	    wait;
-    end process;
-end architecture adder;
-    
-architecture multiplier of tb_fp_modules is
-    signal clk  : std_logic := '0';
-    signal start, ine, overflow, underflow, inf, zero, qnan, snan : std_logic;
-    signal opa, opb, result : std_logic_vector(31 downto 0);
-	constant clk_half_period : time := 5 ns;
-    constant clk_period : time := 2* clk_half_period;
-    constant numer_of_cycles : integer := 35;
-begin
-
-    clk <= not clk after clk_half_period;
-
-    start <= '1', '0' after 3*clk_period;
-    DUV: entity work.fp_mul
+    -- Generates IEEE 754 single precision to flopoco format converter
+    IEEEToFlopocoA: entity work.InputIEEE_8_23_to_8_23
         port map(
-            clk_i 			=> clk,
-            start_i         => start,
-    
-            -- Input Operands A & B
-            opa_i        	=> opa,
-            opb_i           => opb,
-            
-            -- Output port
-            output_o       => result,
-            
-            -- Exceptions
-            ine_o 			=> ine,
-            overflow_o  	=> overflow,
-            underflow_o 	=> underflow,
-            inf_o			=> inf,
-            zero_o			=> zero,
-            qnan_o			=> qnan,
-            snan_o			=> snan
-        );   
-
-    process
-    begin
-        opa <= x"3e800000";
-        opb <= x"3f000000";
-	wait for 10*clk_period;
-        wait;
-    end process;
-end architecture multiplier;
-
-
-architecture divider of tb_fp_modules is
-    signal clk  : std_logic := '0';
-    signal start, ine, overflow, underflow, inf, zero, div_zero, qnan, snan : std_logic;
-    signal opa, opb, result : std_logic_vector(31 downto 0);
-	constant clk_half_period : time := 5 ns;
-    constant clk_period : time := 2* clk_half_period;
-begin
-    clk <= not clk after clk_half_period;
-
-    DUV: entity work.fp_div
-        port map (
-            clk_i 			=> clk,
-            start_i         => start,
-    
-            -- Input Operands A & B
-            opa_i        	=> opa,
-            opb_i           => opb,
-            
-            -- Output port
-            output_o       => result,
-            
-            -- Exceptions
-            ine_o 			=> ine,
-            overflow_o  	=> overflow,
-            underflow_o 	=> underflow,
-            div_zero_o      => div_zero,
-            inf_o			=> inf,
-            zero_o			=> zero,
-            qnan_o			=> qnan,
-            snan_o			=> snan
-        );   
-        
-    
-
-    process
-    begin
-        start <= '1';
-        opa <= (others=> '0');
-        opb <= (others=> '0');
-        wait for 5*clk_period;
-        opa <= x"41800000"; --16
-        opb <= x"420e0000"; --35.5
-        wait for clk_period;
-        start <= '0';
-        wait for 40*clk_period;
-        wait;
-        --start <= '1';
-        opa <= x"420e0000"; --35.5
-        opb <= x"bf800000"; -- (-1)
-        wait for clk_period;
-        --start <= '0';
-        wait for 35*clk_period;
-
-        --start <= '1';
-        opa <= x"bf800000"; -- (-1)
-        opb <= x"40551eb8"; -- 3.33
-        wait for clk_period;
-        --start <= '0';
-        wait for 35*clk_period;
-
-        wait;
-    end process;
-end architecture divider;
-
-architecture sqrt of tb_fp_modules is
-    signal clk  : std_logic := '0';
-    signal start, ine, overflow, underflow, inf, zero, qnan, snan : std_logic;
-    signal opa, result : std_logic_vector(31 downto 0);
-	constant clk_half_period : time := 5 ns;
-    constant clk_period : time := 2* clk_half_period;
-    constant numer_of_cycles : integer := 35;
-begin
-    clk <= not clk after clk_half_period;
-    
-
-    DUV: entity work.fp_sqrt
-        port map (
-            clk_i 			=> clk,
-            start_i         => start,
-    
-            -- Input Operand A 
-            opa_i        	=> opa,
-            
-            -- Output port
-            output_o       => result,
-            
-            -- Exceptions
-            ine_o 			=> ine,
-            overflow_o  	=> overflow,
-            underflow_o 	=> underflow,
-            inf_o			=> inf,
-            zero_o			=> zero,
-            qnan_o			=> qnan,
-            snan_o			=> snan
+            clk => open,
+            rst => open,
+            X => IEEEToFlopocoInA,
+            R => IEEEToFlopocoOutA
         );
 
-    process
+
+    -- Generates IEEE 754 single precision to flopoco format converter
+    IEEEToFlopocoB: entity work.InputIEEE_8_23_to_8_23
+        port map(
+            clk => open,
+            rst => open,
+            X => IEEEToFlopocoInB,
+            R => IEEEToFlopocoOutB
+        );
+
+
+    -- Generate adder
+    ADDERGEN: if coreType = "ADD" generate
+
+
+        -- Generates single path adder (Less area, more latency)
+        SINGLEPATHGEN: if adderType = "SGL" generate
+
+            DUV: entity work.FPAddSingle_8_23_F400_uid2
+                port map(
+                    clk => Clock,
+                    rst => Reset,
+                    X => IEEEToFlopocoOutA,
+                    Y => IEEEToFlopocoOutB,
+                    R => FlopocoToIEEEIn
+                );
+
+        end generate SINGLEPATHGEN;
+
+
+        -- Generates dual path adder (More area, less latency)
+        DUALPATHGEN: if adderType = "DUA" generate
+
+            DUV: entity work.FPAddDual_8_23_F400_uid2
+                port map(
+                    clk => Clock,
+                    rst => Reset,
+                    X => IEEEToFlopocoOutA,
+                    Y => IEEEToFlopocoOutB,
+                    R => FlopocoToIEEEIn
+                );
+
+        end generate DUALPATHGEN;
+
+    end generate ADDERGEN;
+
+
+    -- Generate multiplier
+    MULGEN: if coreType = "MUL" generate
+
+        DUV: entity work.FPMult_8_23_8_23_8_23_F400_uid2
+            port map(
+                clk => Clock,
+                rst => Reset,
+                X => IEEEToFlopocoOutA,
+                Y => IEEEToFlopocoOutB,
+                R => FlopocoToIEEEIn
+            );
+
+    end generate MULGEN;
+
+
+    -- Generate squarer
+    SQUAREGEN: if coreType = "SQR" generate
+
+        DUV: entity work.FPSquare_8_23_23_F400_uid2
+            port map(
+                clk => Clock,
+                rst => Reset,
+                X => IEEEToFlopocoOutA,
+                R => FlopocoToIEEEIn
+            );
+
+    end generate SQUAREGEN;
+
+
+    -- Generate divider
+    DIVGEN: if coreType = "DIV" generate
+
+        DUV: entity work.FPDiv_8_23_F400_uid2
+            port map(
+                clk => Clock,
+                rst => Reset,
+                X => IEEEToFlopocoOutA,
+                Y => IEEEToFlopocoOutB,
+                R => FlopocoToIEEEIn
+            );
+
+    end generate DIVGEN;
+
+
+    -- Generate square root
+    SQRTGEN: if coreType = "ROO" generate
+
+        DUV: entity work.FPSqrt_8_23
+            port map(
+                clk => Clock,
+                rst => Reset,
+                X => IEEEToFlopocoOutA,
+                R => FlopocoToIEEEIn
+            );
+
+
+    end generate SQRTGEN;
+
+
+    -- Reads stimulus from text file and compares the result against expected value
+    StimProc: process 
+        variable textLine: line;
+        variable opATemp, opBTemp: real;
+        variable fileOk: boolean;
+        variable lineCounter: integer := 0;
     begin
-        start <= '1';
-        opa <= x"40800000"; --4
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
 
-        start <= '1';
-        opa <= x"41800000"; --16
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+        TestCaseIteration: while not endfile(stimulusFile) loop
 
-        start <= '1';
-        opa <= x"420e0000"; --35.5
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Skip empty lines and single-line comments
+            --if textLine.all'length = 0 or textLine.all(1) = '#' then
+            --    next;
+            --end if;
 
-        start <= '1';
-        opa <= x"bf800000"; -- (-1)
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Resets flags for new test case
+            clockCounter <= 0;
+            start <= '0';
 
-        start <= '1';
-        opa <= x"40551eb8"; -- 3.33
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Sets inputs at falling edge
+            wait for 2*clockPeriod;
+            wait for clockHalfPeriod;
+    
+            -- Read OP A value from line
+            readline(stimulusFile, textLine);
+            read(textLine, opATemp, fileOk);
+            lineCounter := lineCounter + 1;
+            assert fileOk report "Error reading Operand A value @ line " & integer'image(lineCounter)& ": " & textLine.all severity error; 
+            opA <= to_slv(to_float(opATemp,f));
 
-        start <= '1';
-        opa <= x"49742400"; -- 1000000
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Read OP B value from line
+            readline(stimulusFile, textLine);
+            read(textLine, opBTemp, fileOk);
+            lineCounter := lineCounter + 1;
+            assert fileOk report "Error reading Operand B value @ line " & integer'image(lineCounter)& ": " & textLine.all severity error; 
+            opB <= to_slv(to_float(opBTemp,f));
 
-        start <= '1';
-        opa <= x"49742416"; -- 1000001.4
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Signals operands are ready
+            start <= '1';
 
-        start <= '1';
-        opa <= x"411547ae"; -- 9.33
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
- 
-        start <= '1';
-        opa <= x"41840000"; -- 16.5
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
+            -- Every falling edge increments counter and waits for next falling edge
+            for i in 0 to 39 loop
 
-        start <= '1';
-        opa <= x"41bd47ae"; -- 16.5
-        wait for clk_period;
-        start <= '0';
-        wait for 35*clk_period;
-        
-        wait;
+                clockCounter <= i;
+                wait for clockPeriod;
+
+            end loop;
+
+            -- Compares given result with expected result
+            if coreType = "ADD" then
+
+                if to_real(result) = (opATemp + opBTemp) then
+                    report ( real'image(opATemp) & " + " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " PASS" ) severity note;
+                else
+                    report ( real'image(opATemp) & " + " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " FAIL" ) severity warning;
+                end if;
+
+            elsif coreType = "SUB" then
+
+                if to_real(result) = (opATemp - opBTemp) then
+                    report ( real'image(opATemp) & " - " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " PASS" ) severity note;
+                else
+                    report ( real'image(opATemp) & " - " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " FAIL" ) severity warning;
+                end if;
+
+            elsif coreType = "MUL" then
+
+                if to_real(result) = (opATemp * opBTemp) then
+                    report ( real'image(opATemp) & " * " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " PASS" ) severity note;
+                else
+                    report ( real'image(opATemp) & " * " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " FAIL" ) severity warning;
+                end if;
+
+            elsif coreType = "DIV" then
+
+                if to_real(result) = (opATemp / opBTemp) then
+                    report ( real'image(opATemp) & " / " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " PASS" ) severity note;
+                else
+                    report ( real'image(opATemp) & " / " & real'image(opBTemp) & " = " & real'image(to_real(result)) & " FAIL" ) severity warning;
+                end if;
+
+
+            elsif coreType = "SQR" then
+
+                if to_real(result) = sqrt(tp_real(opATemp)) then
+                    report ( "Square Root of " & real'image(opATemp) & " = " real'image(to_real(result)) & " PASS" ) severity note;
+                else
+                    report ( "Square Root of " & real'image(opATemp) & " = " real'image(to_real(result)) & " PASS" ) severity warning;
+                end if;
+
+            end if;
+            
+            -- Reads empty line
+            readline(stimulusFile, textLine);
+
+        end loop TestCaseIteration;
+
     end process;
-end architecture sqrt;
+
+end architecture testbench;

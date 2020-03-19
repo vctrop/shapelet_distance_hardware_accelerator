@@ -125,8 +125,18 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
     // take the sqrt
     std = sqrt(differrence_sum);
-    // printf("avg = %g, std = %g\n", mean, std);
     
+    if (length % 32 == 0){
+        // Union to represent float as unsigned without type punning
+        union {
+            float f;
+            uint32_t u;
+        } f2u_mean, f2u_std;
+        f2u_mean.f = mean;
+        f2u_std.f = std;
+        printf("mean: %08x, std: %08x\n", f2u_mean.u, f2u_std.u);
+    }
+
     #endif
     
     // special case, when the vector is a straight line and has no variance
@@ -204,7 +214,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
     if (pivot_shapelet->length % 32 == 0){
         printf("%08x\n", pivot_shapelet->length);
-        //printf("Pivot shapelet\n");
+        printf("Pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
     }
     
@@ -214,6 +224,13 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     algebric_normalization(pivot_values, pivot_shapelet->length);
     #endif
         
+    // Test vectors extraction. Refer to readme_vectors.txt for more information.
+    if (pivot_shapelet->length % 32 == 0){
+        printf("%08x\n", pivot_shapelet->length);
+        printf("Normalized pivot shapelet\n");
+        print_shapelet_elements(pivot_values, pivot_shapelet->length);
+    }
+
     // Allocate memory for target values 
     // Pivot shapelet and ts shapelets must always have equal length
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
@@ -227,7 +244,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information.
         if (pivot_shapelet->length % 32 == 0){
-            //printf("Target shapelet\n");
+            printf("Target shapelet\n");
             print_shapelet_elements(target_values, pivot_shapelet->length);
         }
         
@@ -238,6 +255,11 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         algebric_normalization(target_values, pivot_shapelet->length);
         #endif
         
+        if (pivot_shapelet->length % 32 == 0){
+            printf("Normalized target shapelet\n");
+            print_shapelet_elements(target_values, pivot_shapelet->length);
+        }
+
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         

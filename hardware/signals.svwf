@@ -1,0 +1,161 @@
+
+#
+# Mnemonic Maps
+#
+mmap new -reuse -name {Boolean as Logic} -radix %b -contents {{%c=FALSE -edgepriority 1 -shape low}
+{%c=TRUE -edgepriority 1 -shape high}}
+mmap new -reuse -name {Example Map} -radix %x -contents {{%b=11???? -bgcolor orange -label REG:%x -linecolor yellow -shape bus}
+{%x=1F -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=2C -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=* -label %x -linecolor gray -shape bus}}
+
+array unset createdGroup
+array set createdGroup {}
+set id [waveform add -signals [subst  {
+	{[format {:clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:rst}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:start}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:distance}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:expected_output}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:op}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:ready}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:start_i}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:op_i}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:data_i}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:distance_o}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:ready_o}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_state_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_shapelet_length_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:shapelet_length_float_s}]}
+	} ]]
+waveform format $id -radix %x
+set id [waveform add -signals [subst  {
+	{[format {:DUV:buffer_pivot_s}]}
+	} ]]
+waveform hierarchy collapse $id
+set id [waveform add -signals [subst  {
+	{[format {:DUV:buffer_target_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:block_sel_inc_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:accumulators_rst_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:accumulators_wr_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:add_or_sub_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:addsub_start_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:div_start_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:mul_start_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:sqrt_start_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:fp_ready_s}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:addsub_opa_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:addsub_opb_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:addsub_out_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:div_opa_s}]}
+	} ]]
+waveform hierarchy expand $id
+set id [waveform add -signals [subst  {
+	{[format {:DUV:div_opb_s}]}
+	} ]]
+waveform hierarchy expand $id
+set id [waveform add -signals [subst  {
+	{[format {:DUV:div_out_s}]}
+	} ]]
+waveform hierarchy expand $id
+set id [waveform add -signals [subst  {
+	{[format {:DUV:sqrt_op_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:sqrt_out_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:mul_operator_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:mul_out_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:acc_sum_opa_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:acc_sum_opb_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:acc_sum_out_s}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_accumulators_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_acc_counter_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_block_sel_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_buf_counter_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_distance_s}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {:DUV:reg_op_s}]}
+	} ]]
+
+waveform xview limits 2802736086fs 3152650850fs

@@ -5,7 +5,7 @@ ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
 TIMING_OBJS= shapelet_transform.c timing_test.c
 #all: extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs
-all: extract_shapelets_zscore_abs extract_shapelets_zscore_abs_exp
+all: extract_shapelets_zscore_pow
 
 # uses algebric normalization and power of two in distance computation
 extract_shapelets_algebric_pow: $(OBJS)
