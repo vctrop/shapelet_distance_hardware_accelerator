@@ -932,22 +932,26 @@ void print_shapelets_ids(Shapelet * S, uint16_t num_shapelets, Timeseries *T){
     }
 }
 
-
 // Given a set of shapelets and the base address of the time-series set they were extracted,
 // write both shapelet description and values to a csv file 
 // Floating-point only
-void shapelets_to_files(Shapelet *shapelet_set, uint16_t num_shapelets, Timeseries *T, const char * base_filename){
+void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, 
+                            const char * base_filename){
     uint64_t ts_i;
     FILE *data_file_descriptor;
     FILE *info_file_descriptor;
-    char data_filename[50];
-    char info_filename[50];
-    
+    const char *cat_data = "_data.csv"; //data csv filename ending
+    const char *cat_info = "_info.txt"; //info csv filename ending
+    // Alocatte memory for filenames
+    // ps: strlen() returns the number of characters excluding '\0' , thus the addition + 1
+    char *data_filename = malloc((strlen(base_filename) + strlen(cat_data) + 1) * sizeof(char));
+    char *info_filename = malloc((strlen(base_filename) + strlen(cat_info) + 1) * sizeof(char));
+
     // Get data and info filenames from the basic one passed as argument
     strcpy(data_filename, base_filename);
-    strcat(data_filename, "_data.csv");
+    strcat(data_filename, cat_data);
     strcpy(info_filename, base_filename);
-    strcat(info_filename, "_info.txt");
+    strcat(info_filename, cat_info); 
     
     // Open file streams for both data and info
     data_file_descriptor = fopen(data_filename, "w");
@@ -977,10 +981,13 @@ void shapelets_to_files(Shapelet *shapelet_set, uint16_t num_shapelets, Timeseri
         fprintf(data_file_descriptor, "\n");
     }
     
+    free(data_filename);
+    free(info_filename);
+
     fclose(data_file_descriptor);
     fclose(info_file_descriptor);
 }
-
+   
 // Read datasets into ts_array, loading number of time-series and time-series length from file header
 // Free all float arrays from ts_array and the ts_array itself 
 uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
