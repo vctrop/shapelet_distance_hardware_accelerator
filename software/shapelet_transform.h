@@ -101,7 +101,7 @@ void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shap
 void print_shapelets_ids(Shapelet * S, uint16_t num_shapelets, Timeseries *T);
 
 // Print a shapelet set into a csv file
-void shapelets_to_files(Shapelet *shapelet_set, uint16_t num_shapelets, Timeseries *T, const char * filename);
+void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeseries *T, const char * filename);
 
 // Read datasets into ts_array, loading number of time-series and time-series length from file header
 // Free all float arrays from ts_array and the ts_array itself 
