@@ -18,5 +18,6 @@ int main(){
 
     printf("Normalized ts2\n");
 
-    euclidean_distance(ts1, ts2, LENGTH, INFINITY);
+    float dist = euclidean_distance(ts1, ts2, LENGTH, INFINITY);
+    printf("Dist=%g", dist);
 }

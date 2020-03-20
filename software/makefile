@@ -1,6 +1,7 @@
 CC= gcc
 ARMCC = arm-linux-gnueabi-gcc
 CFLAGS= -lm -Wall -pthread -O2 -std=gnu99 #add -g for debugging
+ARMFLAGS= -static -march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp 
 ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
 TIMING_OBJS= shapelet_transform.c timing_test.c
@@ -27,28 +28,26 @@ extract_shapelets_zscore_abs_exp: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -DUSE_ABS -DUSE_EXPECTED_VALUE  -o  $@  $^  $(CFLAGS)
 
 # arm cross compilation used for simulation. Requires arm gcc cross compiler. 
-arm: timing10 timing20 timing30 timing40 timing50 timing80 timing120 timing200
+arm: timing10 timing20 timing30 timing40 timing50 timing80 timing127 
 
 timing10: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=10 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=10 -o $@ $^   $(CFLAGS)
 timing20: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=20 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=20 -o $@ $^   $(CFLAGS)
 timing30: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=30 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=30 -o $@ $^   $(CFLAGS)
 timing40: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=40 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=40 -o $@ $^   $(CFLAGS)
 timing50: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=50 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=50 -o $@ $^   $(CFLAGS)
 timing80: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=80 -o $@ $^   $(CFLAGS)
-timing120: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=120 -o $@ $^   $(CFLAGS)
-timing200: $(TIMING_OBJS)
-	$(ARMCC) $(ARITH) -DUSE_ZSCORE -DLENGTH=200 -o $@ $^   $(CFLAGS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=80 -o $@ $^   $(CFLAGS)
+timing127: $(TIMING_OBJS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=127 -o $@ $^   $(CFLAGS)
 
 .PHONY: clean
 clean:
-	$(RM) *.o extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs extract_shapelets_zscore_abs_exp
+	$(RM) *.o extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs extract_shapelets_zscore_abs_exp 
 .PHONY: clean_win
 clean_win: 
-	del *.o extract_shapelets_algebric_pow.exe extract_shapelets_algebric_abs.exe extract_shapelets_zscore_pow.exe extract_shapelets_zscore_abs.exe extract_shapelets_zscore_abs_exp.exe
+	del *.o *.exe
