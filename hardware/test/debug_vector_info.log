@@ -1,0 +1,280 @@
+00000008
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized pivot shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized target shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+00000008
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized pivot shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 
+mean: 3f8948f6, std: 3c23846a
+Normalized target shapelet
+3f9a92ec 3f9a92ec 3f9a92ec bf397dbb bf397dbb bf397dbb bf397dbb bf397dbb 
+Pointwise distance
+3f925718 3f50a008 3fbbdcfa 3e9a45f4 3e9a45f4 3e37394c 3e37394c 3e37394c 
+Distance: 40921722
+00000008
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized pivot shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 
+mean: 3ebba81b, std: 3c316928
+Normalized target shapelet
+beb504e8 beb504e8 beb504e8 401e6457 beb504e8 beb504e8 beb504e8 beb504e8 
+Pointwise distance
+402d159f 3f3f0844 3dbf72c4 40397b07 3d8ec268 3e44b3d0 3e44b3d0 3e44b3d0 
+Distance: 40e2d30a
+00000008
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized pivot shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 
+mean: bf8c2b70, std: 3a85fda3
+Normalized target shapelet
+3f0a3f93 3f0a3f93 3f0a3f93 bfcf632e 3f0a3f93 bfcf632e 3f0a3f93 3f0a3f93 
+Pointwise distance
+3fe7ca3a 3e16e70a 3f4cd3ae 3f9935ce 3f769a54 3f898b7a 3f8af77e 3f8af77e 
+Distance: 4102a1cc
+00000008
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 
+mean: bfd79fcf, std: 3d0f578c
+Normalized pivot shapelet
+40167502 3ec90ba1 be852837 bed8b582 bed8b582 bf0baf68 bf0baf68 bf0baf68 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a 
+mean: bf8d4809, std: 3408d677
+Normalized target shapelet
+bf6f7751 bf6f7751 bf6f7751 bf6f7751 bf6f7751 bf6f7751 bf6f7751 bf6f7751 
+Pointwise distance
+405252d6 3fa9fe91 3f2ce336 3f031c90 3f031c90 3ec78fd2 3ec78fd2 3ec78fd2 
+Distance: 40ef7791
+00000010
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized pivot shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized target shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+00000010
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized pivot shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 
+mean: 3f89bf6f, std: 3c21dfb2
+Normalized target shapelet
+3f5a9b00 3f5a9b00 3f5a9b00 bf8c8716 bf8c8716 bf8c8716 bf8c8716 bf8c8716 bf8c8716 3f5a9b00 3f5a9b00 3f5a9b00 3f5a9b00 3f5a9b00 3f5a9b00 bf8c8716 
+Pointwise distance
+3fb73df2 3fbe5713 3fc0b4c8 3ee22180 3ee22180 3ee05b3a 3ee05b3a 3ee05b3a 3ee05b3a 3fc1bdc8 3f3aa9ea 3f6cf141 3e74b8e0 3f217130 3f8454a6 40435e78 
+Distance: 4172f44e
+00000010
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized pivot shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 
+mean: 3ebba81b, std: 3c2b6525
+Normalized target shapelet
+bebb5f65 bebb5f65 bebb5f65 4023f384 bebb5f65 bebb5f65 bebb5f65 bebb5f65 bebb5f65 bebb5f65 bebb5f65 bebb5f65 4023f384 bebb5f65 bebb5f65 bebb5f65 
+Pointwise distance
+3e58c4c2 3e88c6e7 3e923dbb 404df2df 3e949b73 3e9661b9 3e9661b9 3e9661b9 3e9661b9 3e9661b9 3efb4191 3e96b2e3 3fbc026c 3fecddf1 40103d00 401486d9 
+Distance: 4166b8b7
+00000010
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized pivot shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 
+mean: bf8c420d, std: 3a944cf3
+Normalized target shapelet
+3f8c8681 3f8c8681 3f8c8681 bf5a9c2d 3f8c8681 bf5a9c2d 3f8c8681 3f8c8681 3f8c8681 bf5a9c2d bf5a9c2d bf5a9c2d bf5a9c2d bf5a9c2d bf5a9c2d bf5a9c2d 
+Pointwise distance
+3fd676f2 3fdd9014 3fdfedc9 3e4a7b04 3fe08537 3e46ee78 3fe0f6c8 3fe0f6c8 3fe0f6c8 3e46ee78 3f7a8d43 3f4845ec 3ff932b2 4015aa17 402f781e 4033c1f8 
+Distance: 41c2ece1
+00000010
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 
+mean: bf637149, std: 3f9e2de8
+Normalized pivot shapelet
+bf13e0e3 bf221326 bf26ce90 bf27fd6c bf27fd6c bf28e08f bf28e08f bf28e08f bf28e08f bf28e08f 3dff88b1 bd92b209 3f8be49c 3fbe0618 3ff1a226 3ffa35d9 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 
+mean: bf8d5543, std: 3a637b4e
+Normalized target shapelet
+3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb 3eee15cb c00100f9 c00100f9 3eee15cb c00100f9 
+Pointwise distance
+3f8575e4 3f8c8f06 3f8eecbb 3f8f8429 3f8f8429 3f8ff5ba 3f8ff5ba 3f8ff5ba 3f8ff5ba 3f8ff5ba 3eae339f 3f096127 4046f347 40600405 3fb61cb3 407e1be6 
+Distance: 41c00472
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized target shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 3e4a4611 3e82c1c4 3e9680eb 
+mean: 3f4f4ecc, std: 3effcd2d
+Normalized target shapelet
+3f0ccdec 3f0ccdec 3f0ccdec 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f02ec66 3f0ccdec 3f0ccdec c033b5fc c0024e4a bfb59045 bf9cdc6c bf8e0a1d bf842893 
+Pointwise distance
+3fc4bd9c 3fca381b 3fcc0b9a 3fc78fb7 3fc78fb7 3fc7e75f 3fc7e75f 3fc7e75f 3fc7e75f 3fccd822 3f7eb14c 3f92bfd3 3e7d9b26 3d5fb7b0 3ebb4c3e 3ee98a04 3ef45d94 3f017cca 4078b5e5 4047e04b 40205a24 4016bd77 400d80d0 4007fdf2 
+Distance: 42108623
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3f5a4bee bece5459 
+mean: 3eb51f75, std: 3e4218d0
+Normalized target shapelet
+3d4108cc 3d4108cc 3d4108cc 3e55b74e 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3e55b74e 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 4028793c c07f82d2 
+Pointwise distance
+3f845eec 3f89d96b 3f8bacea 3fa0d06e 3f8c21ca 3f8c7972 3f8c7972 3f8c7972 3f8c7972 3f8c7972 3efbe7d8 3f24c247 3dbfca78 3f0eb8da 3f5e637e 3f6ba0db 3f7aec29 3f811d15 3f83f78c 3f851bbc 3f851bbc 3f8a963c 3fc3faf6 40a2b63e 
+Distance: 41db5196
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 3f7e0d09 3f4462ce 3f1bae68 
+mean: bf31cce1, std: 3f4db320
+Normalized target shapelet
+befedfe7 befedfe7 befedfe7 bf002411 befedfe7 bf002411 befedfe7 befedfe7 befedfe7 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 3fdf5857 400d3925 40065cfd 3fe8d7f1 3fcf83ac 
+Pointwise distance
+3efa7aaf 3f083256 3f0bd954 3f0c0ef7 3f0cc314 3f0cbe47 3f0d7264 3f0d7264 3f0d7264 3f0cbe47 3d640b18 3dc46d48 3f4d8b34 3f8d76bc 3fb54c0e 3fbbeabc 3fc39064 3fc73764 3fca11da 3f2868aa 3f8f4e48 3f7836f0 3f37c0de 3f0760b4 
+Distance: 41982da3
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+mean: bcb3df33, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 3f468171 3f80bbee 3f3db055 
+mean: bf5c6e83, std: 3f288db2
+Normalized target shapelet
+bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebe6778 bebe6778 bebcbaed bebe6778 bebcbaed bebcbaed bebcbaed bebcbaed bebe6778 401f1233 40357592 401bb92c 
+Pointwise distance
+3f1e4fd4 3f2944d4 3f2cebd2 3f2dd592 3f2dd592 3f2e84e2 3f2e84e2 3f2e84e2 3f2e84e2 3f2e84e2 3d9c2f48 3e69510e 3f2c9ade 3f79fd23 3fa468c1 3fab7292 3fb2ad16 3fb65416 3fb92e8d 3fba52bd 3fbabde0 3fad85e4 3fddf3a2 3fab9f06 
+Distance: 41b74cf4
+00000020
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized pivot shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized target shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+00000020
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized pivot shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 3e4a4611 3e82c1c4 3e9680eb 3eaa4012 3eb41fa6 3ebdff3a 3ec7decd 3ec7decd 3ed1be61 3ed1be61 3f885c00 
+mean: 3f393f3f, std: 3ef10acd
+Normalized target shapelet
+3f444912 3f444912 3f444912 3f39cca9 3f39cca9 3f39cca9 3f39cca9 3f39cca9 3f39cca9 3f444912 3f444912 3f444912 3f444912 3f444912 3f444912 3f39cca9 3f444912 3f444912 c032fff9 bffd23b2 bfa9404c bf8f093d bf7e9d32 bf69a459 bf54ab7f bf4a2f12 bf3fb2a5 bf353639 bf353639 bf2ab9cc bf2ab9cc 3f39cca9 
+Pointwise distance
+4002d7a8 40059f6e 40068cb0 400428e6 400428e6 40045562 40045562 40045562 40045562 4006f47c 3fbf3fb2 3fd2f16e 3f3c55d8 3edb9473 3de76bb0 3ca01a00 390da000 3cee5d40 406761af 403387d8 40099626 3ffe84c9 3feb151c 3fdf701e 3fd441be 3fcf0388 3fc9c552 3fc42e22 3fc4871c 3fbeefec 3fbfa1de 3dd5ea30 
+Distance: 42497778
+00000020
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized pivot shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3f5a4bee bece5459 bece5459 bece5459 bece5459 bede02b2 bede02b2 bece5459 bece5459 bece5459 
+mean: 3e268f36, std: 3ebf6e7b
+Normalized target shapelet
+3f08f615 3f08f615 3f08f615 3f1dee70 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f1dee70 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3f08f615 3fec3de2 bfc1a567 bfc1a567 bfc1a567 bfc1a567 bfcc2194 bfcc2194 bfc1a567 bfc1a567 bfc1a567 
+Pointwise distance
+3fe805d2 3fed955c 3fef6fe0 3ffa62b0 3fefe682 3ff03f7a 3ff03f7a 3ff03f7a 3ff03f7a 3ff03f7a 3fa19634 3fb547f0 3f15fb36 3e49dcf2 3df32c38 3e2f5710 3e6d6f5c 3e858bce 3e912188 3e95c3d2 3e95c3d2 3eac0206 3f80775f 401621ac 4015c8b3 4015c8b3 4015c8b3 401ada4d 401b06ca 40159c36 4015f52f 4015f52f 
+Distance: 4239c204
+00000020
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized pivot shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 3f7e0d09 3f4462ce 3f1bae68 3ee836ed 3eb8b9cb 3e9369c3 3e556abb 3e2167c6 3ddac9a4 3d9ffdf4 3d53702e 
+mean: beef6c35, std: 3f4d4c03
+Normalized target shapelet
+bf481f70 bf481f70 bf481f70 bf48d3e8 bf481f70 bf48d3e8 bf481f70 bf481f70 bf481f70 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 bf48d3e8 3fbb90c8 3ff6c868 3fe90936 3fc51526 3fabb42a 3f9307a7 3f8439be 3f712feb 3f57ceef 3f479815 3f37613b 3f2e3718 3f25c16f 
+Pointwise distance
+3efdec3c 3f0a1534 3f0dca3c 3f0e0308 3f0eb780 3f0eb4f8 3f0f6970 3f0f6970 3f0f6970 3f0eb4f8 3d69d950 3dc62f10 3f50c722 3f8fa960 3fb817c2 3fbecfe0 3fc692ea 3fca47f2 3fcd2d60 3f234992 3f8cdc69 3f731b54 3f329d46 3f022c72 3ea46ea0 3e526df8 3deabf68 3c951c60 3d43fe90 3dde2688 3e194b5c 3e3b2200 
+Distance: 41a25b75
+00000020
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 3fdc84c7 3fdc84c7 
+mean: 3ed389f8, std: 3fc9e9a7
+Normalized pivot shapelet
+bfa38ac7 bfa91a52 bfaaf4d6 bfab6b78 bfab6b78 bfabc470 bfabc470 bfabc470 bfabc470 bfabc470 bf3a3653 bf6199ca 3cfe6750 3eacfdb1 3f275b9c 3f34cbd9 3f4451ec 3f4bbbfc 3f5186d9 3f53d7fe 3f53d7fe 3f5ef718 3f578d06 3f553be2 3f53d7fe 3f53d7fe 3f53d7fe 3f53260c 3f53d7fe 3f53260c 3f5489ef 3f5489ef 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 3f468171 3f80bbee 3f3db055 3f0346fc 3e9ba684 3e3bdd81 3d9fb7d5 3c7efdfa bd0b0a05 bdaae9c4 bded0a16 
+mean: bf1e7036, std: 3f377b5d
+Normalized target shapelet
+bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2df394 bf2df394 bf2d2ebe bf2df394 bf2d2ebe bf2d2ebe bf2d2ebe bf2d2ebe bf2df394 3ff90291 40111257 3ff2dbf8 3fca1c43 3fa4d245 3f8f4b2e 3f78e9f5 3f629e0b 3f50ef14 3f3f401d 3f33b7bd 
+Pointwise distance
+3f19e6d0 3f2505e6 3f28baee 3f29a832 3f29a832 3f2a5a22 3f2a5a22 3f2a5a22 3f2a5a22 3f2a5a22 3d507950 3e51ac30 3f35e6ce 3f823936 3faa452d 3fb15fb6 3fb8c055 3fbc755d 3fbf5acc 3fc0835e 3fc0e5c9 3f898705 3fb65e2b 3f883e07 3f406088 3eeb9918 3e957cbc 3e170fa4 3d6c60d0 3c0dbe00 3daa4e90 3e0348c8 
+Distance: 41c15e94

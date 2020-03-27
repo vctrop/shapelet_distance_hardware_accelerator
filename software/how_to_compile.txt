@@ -1,20 +1,16 @@
 There are 3 different defines that change the compiled program:
 USE_FIXED
     Uses a fixed point library for calculations. The default is floating point arithmetic.
-    WARNING: not all functions are usable in fixed point arithmetic and the use of floating point arithmetic
-    is HIGHLITLY RECOMENDED!
+    WARNING: not all functions are usable in fixed point arithmetic and the use of FLOATING POINT ARITHMETIC IS HIGHLITLY RECOMENDED!
 USE_ZSCORE
-    Changes the normalization function use to be z score normalization (standarization). The default
-    is a albegric normalization (dividing each vector element by the vector norm). The use of zscore normalization
-    is recommend for compliance with the original shapelets algorithm.
+    Changes the normalization function use to be z score normalization (standarization). The default is a albegric normalization (dividing each vector element by the vector norm). The use of ZSCORE NORMALIZATION IS RECOMMENDED for compliance with the original shapelets algorithm.
 USE_ABS
     Changes the calculation of the euclidian distance function to use the absolute values instead of 
     calculation the power of 2. The use of this flag is experimental, and does not follow the original shapelet algorithm
 
-The makefile contained in this repository will always build 3 different versios of the test program:
-test_shapelets_algebric_norm : uses floating point arithmetic, albegric normalization.
-test_shapelets_zscore_norm : uses floating point arithmetic, z score normalization.
-test_shapelets_abs : uses floating point arithmetic, albegric normalization and the USE_ABS flag.
+The makefile contained in this repository will always build the standard shapelet extraction program:
+extract_shapelets_zscore_pow : uses floating point arithmetic, z score normalization.
+
 
 to make the binaries just use:
 $make

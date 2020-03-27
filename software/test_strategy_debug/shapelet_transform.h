@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <fenv.h>                           // change floating point rounding modes
 #include <pthread.h>                        // multi thread implementation
 #include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 

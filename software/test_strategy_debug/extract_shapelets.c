@@ -1,5 +1,7 @@
 #include "shapelet_transform.h"
 #include <stdio.h>
+// used to set the floating point rounding mode
+#include <fenv.h>  // use -lm during compilaton to link this library
 
 void print_float_array(float * vec, size_t size){
     for(int i=0; i < size; i++)
@@ -7,6 +9,24 @@ void print_float_array(float * vec, size_t size){
     printf("\n");
 }
 
+void print_rounding_mode(){
+    switch(fegetround()){
+        case FE_DOWNWARD:
+            printf("Current rounding mode is downward!\n");
+            break;
+        case FE_UPWARD:
+            printf("Current rounding mode is upward!\n");
+            break;
+        case FE_TOWARDZERO:
+            printf("Current rounding mode is toward zero!\n");
+            break;
+        case FE_TONEAREST:
+            printf("Current rounding mode is to nearest!\n");
+            break;
+        default:
+            printf("Could not find rounding mode!\n");
+    }
+}
 
 int main(int argc, char *argv[]){
     uint16_t k, num_ts, min_len, max_len;
@@ -19,6 +39,13 @@ int main(int argc, char *argv[]){
         printf("Please use: %s {path_to_dataset} {output_basename} {min_len} {max_len} {k_best}\n", argv[0]);
         exit(-1);
     }
+    
+    //set floating point rounding mode
+    if(fesetround(FE_TONEAREST)){
+        printf("Could not set rouding to FE_NEAREST!\n");
+    }
+    //print_rounding_mode();
+
     infilename = argv[1];
     outfilename = argv[2];
     min_len = (uint16_t) atoi(argv[3]);
@@ -54,6 +81,7 @@ int main(int argc, char *argv[]){
     
     free(k_best);
    
+    //print_rounding_mode();
     
     return 0;
 }

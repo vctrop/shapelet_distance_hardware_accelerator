@@ -102,11 +102,10 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     mean = s / length;
     std = sqrt((s2 - pow((double) mean, 2)) / length);
-    // printf("Mi = %g, sigma = %g\n", mean, std);
+    //printf("Mi = %g, sigma = %g\n", mean, std);
     
     #else  
     // Computation of standard deviation by sample formula
-    
     numeric_type differrence_sum;
     
     // calculate arithmetic mean 
@@ -126,7 +125,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     // take the sqrt
     std = sqrt(differrence_sum);
     
-    if (length % 32 == 0){
+    if (length % 8 == 0){
         // Union to represent float as unsigned without type punning
         union {
             float f;
@@ -161,7 +160,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
     
-    if (length % 32 == 0){
+    if (length % 8 == 0){
         printf("Pointwise distance\n");
     }    
 
@@ -174,7 +173,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         // the default calculation
         total_distance += sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
     
-        if (length % 32 == 0){
+        if (length % 8 == 0){
             // Union to represent float as unsigned without type punning
             union {
                 float f;
@@ -189,7 +188,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
     
-    if (length % 32 == 0){
+    if (length % 8 == 0){
         printf("\n");
     }    
     
@@ -231,7 +230,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
-    if (pivot_shapelet->length % 32 == 0){
+    if (pivot_shapelet->length % 8 == 0){
         printf("%08x\n", pivot_shapelet->length);
         printf("Pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
@@ -244,8 +243,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     #endif
         
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
-    if (pivot_shapelet->length % 32 == 0){
-        printf("%08x\n", pivot_shapelet->length);
+    if (pivot_shapelet->length % 8 == 0){
         printf("Normalized pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
     }
@@ -262,7 +260,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % 32 == 0){
+        if (pivot_shapelet->length % 8 == 0){
             printf("Target shapelet\n");
             print_shapelet_elements(target_values, pivot_shapelet->length);
         }
@@ -274,7 +272,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         algebric_normalization(target_values, pivot_shapelet->length);
         #endif
         
-        if (pivot_shapelet->length % 32 == 0){
+        if (pivot_shapelet->length % 8 == 0){
             printf("Normalized target shapelet\n");
             print_shapelet_elements(target_values, pivot_shapelet->length);
         }
@@ -283,8 +281,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         
         // Test vector extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % 32 == 0){
-            //printf("Distance\n");
+        if (pivot_shapelet->length % 8 == 0){
+            printf("Distance: ");
             // Union to represent float as unsigned without type punning
             union {
                 float f;
