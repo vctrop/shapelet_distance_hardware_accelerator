@@ -90,7 +90,7 @@ void algebric_normalization(numeric_type *values, uint16_t length){
 // each element of input values vector will be changed to:
 // values[i] = (values[i] - mean)/std_deviation
 void zscore_normalization(numeric_type *values, uint16_t length){
-    numeric_type mean, std;
+    numeric_type mean_sum, mean, std;
     #ifndef USE_FIXED 
     #ifdef USE_EXPECTED_VALUE
     // Computation of standard deviation by population formula (based on the properties of expected values)
@@ -109,19 +109,56 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     numeric_type differrence_sum;
     
     // calculate arithmetic mean 
-    mean = 0;
+    mean_sum = 0;
     for(uint16_t i=0; i < length; i++){
-        mean += values[i];
+        mean_sum += values[i];
     }
-    mean /= length;
+    
+    mean = mean_sum / length;
+    if (length % 8 == 0){
+        // Union to represent float as unsigned without type punning
+        union {
+            float f;
+            uint32_t u;
+        } f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
+        f2u_mean_sum.f = mean_sum;
+        f2u_mean.f = mean;
+        printf("sum: %08x, mean: %08x\n", f2u_mean_sum.u, f2u_mean.u);
+        
+        printf("Shapelet elements - avg\n");
+        for(uint16_t i=0; i < length; i++){    
+            f2u_sub_element.f = values[i] - mean;
+            printf("%08x ", f2u_sub_element.u);
+        }
+        printf("\n");
+        
+        printf("Subtractions squared\n");
+        for(uint16_t i=0; i < length; i++){    
+            f2u_sub_squared.f = pow(values[i] - mean, 2);
+            printf("%08x ", f2u_sub_squared.u);
+        }
+        printf("\n");
+    }
 
     // calculate sum (xi - mean)^2
     differrence_sum = 0;
     for(uint16_t i=0; i < length; i++){
         differrence_sum += pow(values[i] - mean, 2);
     }
+    
+    if (length % 8 == 0){
+        // Union to represent float as unsigned without type punning
+        union {
+            float f;
+            uint32_t u;
+        } f2u_std_acc;
+        f2u_std_acc.f = differrence_sum;
+        printf("std acc: %08x\n", f2u_std_acc.u);
+    }
+    
     // divide sum by N - 1 
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
+    
     // take the sqrt
     std = sqrt(differrence_sum);
     
@@ -130,10 +167,10 @@ void zscore_normalization(numeric_type *values, uint16_t length){
         union {
             float f;
             uint32_t u;
-        } f2u_mean, f2u_std;
-        f2u_mean.f = mean;
+        } f2u_std_div, f2u_std;
+        f2u_std_div.f = differrence_sum;
         f2u_std.f = std;
-        printf("mean: %08x, std: %08x\n", f2u_mean.u, f2u_std.u);
+        printf("std_div: %08x, std: %08x\n", f2u_std_div.u, f2u_std.u);
     }
 
     #endif
@@ -231,7 +268,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
     if (pivot_shapelet->length % 8 == 0){
-        printf("%08x\n", pivot_shapelet->length);
+        printf("\n%08x\n", pivot_shapelet->length);
         printf("Pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
     }
