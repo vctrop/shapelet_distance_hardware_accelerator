@@ -672,7 +672,8 @@ begin
                 -- Subtractor
                 --HERE: Por que estados de add tambem nao fazem o reg_addsub_out_s ser escrito?
                 -- The x - avg write back during normalization writes directly to shapelet buffers
-                if reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
+                --if reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
+                if reg_state_s = Savg_sum_acc or reg_state_s = Sstd_sum_acc or reg_state_s =  Sdist_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
                     reg_addsub_out_s <= addsub_out_s;
                 end if;
                 -- The norm write back during operation 0 writes directly to the pivot buffer
