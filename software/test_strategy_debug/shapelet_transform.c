@@ -5,6 +5,8 @@
 #include "shapelet_transform.h"
 #include <time.h>
 
+#define BASE_SSIZE 3
+
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size)
 {
@@ -102,7 +104,6 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     mean = s / length;
     std = sqrt((s2 - pow((double) mean, 2)) / length);
-    //printf("Mi = %g, sigma = %g\n", mean, std);
     
     #else  
     // Computation of standard deviation by sample formula
@@ -115,46 +116,52 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     }
     
     mean = mean_sum / length;
-    if (length % 8 == 0){
-        // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
-        f2u_mean_sum.f = mean_sum;
-        f2u_mean.f = mean;
-        printf("sum: %08x, mean: %08x\n", f2u_mean_sum.u, f2u_mean.u);
+    
+    // Test vector human log
+    // if (length % BASE_SSIZE == 0){
+        // // Union to represent float as unsigned without type punning
+        // union {
+            // float f;
+            // uint32_t u;
+        // } f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
+        // f2u_mean_sum.f = mean_sum;
+        // f2u_mean.f = mean;
+        // printf("sum: %08x, mean: %08x\n", f2u_mean_sum.u, f2u_mean.u);
         
-        printf("Shapelet elements - avg\n");
-        for(uint16_t i=0; i < length; i++){    
-            f2u_sub_element.f = values[i] - mean;
-            printf("%08x ", f2u_sub_element.u);
-        }
-        printf("\n");
+        // printf("Shapelet elements - avg\n");
+        // for(uint16_t i=0; i < length; i++){    
+            // f2u_sub_element.f = values[i] - mean;
+            // printf("%08x ", f2u_sub_element.u);
+        // }
+        // printf("\n");
         
-        printf("Subtractions squared\n");
-        for(uint16_t i=0; i < length; i++){    
-            f2u_sub_squared.f = pow(values[i] - mean, 2);
-            printf("%08x ", f2u_sub_squared.u);
-        }
-        printf("\n");
-    }
-
+        // printf("Subtractions squared\n");
+        // for(uint16_t i=0; i < length; i++){    
+            // f2u_sub_squared.f = pow(values[i] - mean, 2);
+            // printf("%08x ", f2u_sub_squared.u);
+        // }
+        // printf("\n");
+    // }
+    
+    
     // calculate sum (xi - mean)^2
     differrence_sum = 0;
     for(uint16_t i=0; i < length; i++){
         differrence_sum += pow(values[i] - mean, 2);
     }
     
-    if (length % 8 == 0){
-        // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_std_acc;
-        f2u_std_acc.f = differrence_sum;
-        printf("std acc: %08x\n", f2u_std_acc.u);
-    }
+    
+    // Test vector human log
+    // if (length % BASE_SSIZE == 0){
+        // // Union to represent float as unsigned without type punning
+        // union {
+            // float f;
+            // uint32_t u;
+        // } f2u_std_acc;
+        // f2u_std_acc.f = differrence_sum;
+        // printf("std acc: %08x\n", f2u_std_acc.u);
+    // }
+    
     
     // divide sum by N - 1 
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
@@ -162,17 +169,18 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     // take the sqrt
     std = sqrt(differrence_sum);
     
-    if (length % 8 == 0){
-        // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_std_div, f2u_std;
-        f2u_std_div.f = differrence_sum;
-        f2u_std.f = std;
-        printf("std_div: %08x, std: %08x\n", f2u_std_div.u, f2u_std.u);
-    }
-
+    // Test vector human log
+    // if (length % BASE_SSIZE == 0){
+        // // Union to represent float as unsigned without type punning
+        // union {
+            // float f;
+            // uint32_t u;
+        // } f2u_std_div, f2u_std;
+        // f2u_std_div.f = differrence_sum;
+        // f2u_std.f = std;
+        // printf("std_div: %08x, std: %08x\n", f2u_std_div.u, f2u_std.u);
+    // }
+    
     #endif
     
     // special case, when the vector is a straight line and has no variance
@@ -197,9 +205,10 @@ void zscore_normalization(numeric_type *values, uint16_t length){
 numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
     numeric_type total_distance = 0.0;
     
-    if (length % 8 == 0){
-        printf("Pointwise distance\n");
-    }    
+    // Test vector human log 
+    // if (length % BASE_SSIZE == 0){
+        // printf("Pointwise distance\n");
+    // }    
 
     #ifndef USE_FIXED
     for (uint16_t i = 0; i < length; i++){
@@ -208,26 +217,28 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         total_distance += fabs((double) (pivot_values[i] - target_values[i]) );
     #else
         // the default calculation
-        total_distance += sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
+        total_distance += pow((double)(pivot_values[i] - target_values[i]), 2.0);
     
-        if (length % 8 == 0){
-            // Union to represent float as unsigned without type punning
-            union {
-                float f;
-                uint32_t u;
-            } f2u;
-            f2u.f = sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
-            printf("%08x ", f2u.u);
-        }
+        // Test vector human log
+        // if (length % BASE_SSIZE == 0){
+            // // Union to represent float as unsigned without type punning
+            // union {
+                // float f;
+                // uint32_t u;
+            // } f2u;
+            // f2u.f = sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
+            // printf("%08x ", f2u.u);
+        // }
     
     #endif
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
     }
     
-    if (length % 8 == 0){
-        printf("\n");
-    }    
+    // Test vector human log
+    // if (length % BASE_SSIZE == 0){
+        // printf("\n");
+    // }    
     
     #else
     #ifdef USE_ABS
@@ -267,9 +278,12 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
-    if (pivot_shapelet->length % 8 == 0){
-        printf("\n%08x\n", pivot_shapelet->length);
-        printf("Pivot shapelet\n");
+    if (pivot_shapelet->length % BASE_SSIZE == 0){
+        // printf("\n%08x\n", pivot_shapelet->length);
+        // printf("Pivot shapelet\n");
+        
+        printf("%08x\n", pivot_shapelet->length);
+        
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
     }
     
@@ -279,12 +293,13 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     algebric_normalization(pivot_values, pivot_shapelet->length);
     #endif
         
-    // Test vectors extraction. Refer to readme_vectors.txt for more information.
-    if (pivot_shapelet->length % 8 == 0){
-        printf("Normalized pivot shapelet\n");
-        print_shapelet_elements(pivot_values, pivot_shapelet->length);
-    }
-
+    
+    // Test vector human log
+    // if (pivot_shapelet->length % BASE_SSIZE == 0){
+        // printf("Normalized pivot shapelet\n");
+        // print_shapelet_elements(pivot_values, pivot_shapelet->length);
+    // }
+    
     // Allocate memory for target values 
     // Pivot shapelet and ts shapelets must always have equal length
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
@@ -297,8 +312,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % 8 == 0){
-            printf("Target shapelet\n");
+        if (pivot_shapelet->length % BASE_SSIZE == 0){
+            // printf("Target shapelet\n");
             print_shapelet_elements(target_values, pivot_shapelet->length);
         }
         
@@ -309,17 +324,18 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         algebric_normalization(target_values, pivot_shapelet->length);
         #endif
         
-        if (pivot_shapelet->length % 8 == 0){
-            printf("Normalized target shapelet\n");
-            print_shapelet_elements(target_values, pivot_shapelet->length);
-        }
-
+        // Test vector human log
+        // if (pivot_shapelet->length % BASE_SSIZE == 0){
+            // printf("Normalized target shapelet\n");
+            // print_shapelet_elements(target_values, pivot_shapelet->length);
+        // }
+        
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
         
         // Test vector extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % 8 == 0){
-            printf("Distance: ");
+        if (pivot_shapelet->length % BASE_SSIZE == 0){
+            // printf("Distance: ");
             // Union to represent float as unsigned without type punning
             union {
                 float f;

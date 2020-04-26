@@ -42,12 +42,14 @@ architecture behavioral of shapelet_distance is
     -- Flip-flop to keep the desired operation constant during the entire processing
     signal reg_op_s                                     : std_logic;
     
-    -- Register to keep the shapelet length
+    -- Registers to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
-    signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN-1;
+    signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN;
     signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
     signal dec_shapelet_length_float_s                  : std_logic_vector(31 downto 0);
    
+   -- Register to track used shapelet valid positions when writing back
+   signal reg_position_validity_s                       : std_logic_vector(MAX_LEN-1 downto 0);
     -- Register to keep output result
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
 
@@ -76,7 +78,7 @@ architecture behavioral of shapelet_distance is
     -- Define shapelet buffer 
     type shapelet_buffer_t                              is array (0 to MAX_LEN-1) of std_logic_vector(31 downto 0);
     -- Defines the en signal for each element of pivot buffer
-    type shaplet_en_t                                     is array (0 to MAX_LEN-1) of std_logic;
+    type shaplet_en_t                                   is array (0 to MAX_LEN-1) of std_logic;
 
     -- Shapelet pivot buffer
     signal buffer_pivot_s                               : shapelet_buffer_t;
@@ -177,7 +179,7 @@ begin
                     -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num so reg
                     reg_buf_counter_s <= 0;
                     reg_acc_counter_s <= 0;
-                    
+                    reg_position_validity_s <= (others => '0');
                     if start_i = '1' then
                         -- If operation is set pivot and change length
                         if op_i = '0' then
@@ -190,8 +192,8 @@ begin
                     end if;
                 
                 when Sbuf_load      => 
+                    reg_position_validity_s(reg_buf_counter_s) <= '1';
                     reg_buf_counter_s <= reg_buf_counter_s + 1;
-                    
                     -- Next state
                     -- Reapeat until current buffer length = shapelet length - 1
                     if reg_buf_counter_s = reg_shapelet_length_s - 1 then
@@ -294,7 +296,6 @@ begin
                     
                 -- EUCLIDEAN DISTANCE STATES
                 when Sdist_sub      =>  
-                        
                     -- Next state
                     -- Is subtraction ready?
                     if fp_ready_s = '1' then
@@ -302,7 +303,6 @@ begin
                     end if;
                     
                 when Sdist_square   =>  
-                    
                     -- Next state
                     -- Is multiplication ready?
                     if fp_ready_s = '1' then
@@ -310,7 +310,6 @@ begin
                     end if;
                 
                 when Sdist_sum_acc  =>  
-                    
                     -- Next state
                     -- Is sum ready?
                     if fp_ready_s = '1' then
@@ -319,7 +318,6 @@ begin
                 
                 when Sdist_reg_acc  =>  
                     reg_acc_counter_s <= inc_acc_counter_s;
-                    
                     -- Next state
                     -- Checks if the next iteration will exceed the shapelet length
                     -- This is to offset the fact that we begin the iterations at 0
@@ -329,10 +327,9 @@ begin
                         reg_state_s <= Szscore_div;
                     end if;
                     
-                -- FINISHING STATES
+                -- OPERATION ENDING STATES
                 when Spivot_norm_wb      =>  
                     reg_acc_counter_s <= inc_acc_counter_s;
-                    
                     -- Next state
                     -- Checks if the next iteration will exceed the shapelet length
                     -- This is to offset the fact that we begin the iterations at 0
@@ -344,6 +341,7 @@ begin
 
                 when Spivot_norm_ready    =>
                     -- Activate ready signal for 1 cycle at the end of operation 0
+                    -- Next state
                     reg_state_s <= Sbegin;                  -- End operation 0  
                     
                 when Sdist_final_acc =>
@@ -352,7 +350,7 @@ begin
                         reg_state_s <= Sout_distance;
 						reg_distance_s <= acc_sum_out_s;	 -- Write the distance calculation to distance output register
                     end if;
-
+                -- Net state
                 when Sout_distance  =>
                     reg_state_s <= Sbegin;                  -- End operation 1
                 
@@ -376,15 +374,15 @@ begin
     GEN_WB_INPUT_J: for j in 0 to MAX_LEN/NUM_PU-1 generate
         GEN_WB_INPUT_I: for i in 0 to NUM_PU-1 generate
             --NEW: Enables writing to corresponding pivot and target buffers elements when writing back x - avg during normalization
-            en_pivot_wb_sub_s(i + j*NUM_PU)     <= '1' when reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '0' else '0';
-            en_target_wb_sub_s(i + j*NUM_PU)    <= '1' when reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '1' else '0';
+            en_pivot_wb_sub_s(i + j*NUM_PU)     <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1' and reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '0' else '0';
+            en_target_wb_sub_s(i + j*NUM_PU)    <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1' and reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '1' else '0';
             -- Enables writing to corresponding pivot buffer elements when writing back after normalization
-            en_pivot_wb_norm_s(i + j*NUM_PU)    <= '1' when reg_block_sel_s = j and reg_state_s = Spivot_norm_wb else '0'; 
-            -- Selects which data will the pivot buffer receive
+            en_pivot_wb_norm_s(i + j*NUM_PU)    <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1'  and reg_block_sel_s = j and reg_state_s = Spivot_norm_wb else '0'; 
+            -- Selects which data the pivot buffer will receive
             pivot_input_s(i + j*NUM_PU)  <= data_i          when reg_state_s = Sbuf_load    else
                                             addsub_out_s(i) when reg_state_s = Sstd_wb_sub  else                --NEW: make addsub_out_s be one of the inputs for the pivot shapelet
                                             div_out_s(i);
-            --NEW: Selects which data will the target buffer receive
+            --NEW: Selects which data the target buffer will receive
             target_input_s(i + j*NUM_PU) <= data_i          when reg_state_s = Sbuf_load    else
                                             addsub_out_s(i);
         end generate;
@@ -501,7 +499,8 @@ begin
     mul_start_s     <= '0'  when    reg_state_s = Sstd_square   or reg_state_s = Sdist_square   else '1';
     -- Square subtraction output in normalization and in euclidean distance calculation
     -- the multiplier unit always computes A*A (A^2)
-    mul_operator_s  <= reg_addsub_out_s;
+    mul_operator_s  <= reg_addsub_out_s when reg_state_s = Sdist_square else
+                       shapelet_elements_mux_s;
     
     -- Divisor
     -- NEW: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation

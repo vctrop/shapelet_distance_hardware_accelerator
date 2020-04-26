@@ -158,7 +158,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         total_distance += fabs((double) (pivot_values[i] - target_values[i]) );
     #else
         // the default calculation
-        total_distance += sqrt(pow((double)(pivot_values[i] - target_values[i]), 2.0));
+        total_distance += pow((double)(pivot_values[i] - target_values[i]), 2.0);
     #endif
         //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
         if(total_distance >= current_minimum_distance) return INFINITY;
