@@ -52,6 +52,8 @@ add wave -noupdate /tb_shapelet_distance/DUV/div_opb_s
 add wave -noupdate /tb_shapelet_distance/DUV/div_out_s
 add wave -noupdate /tb_shapelet_distance/DUV/div_out_mean_s
 add wave -noupdate /tb_shapelet_distance/DUV/reg_div_out_s
+add wave -noupdate /tb_shapelet_distance/DUV/div_opb_zero_s
+add wave -noupdate /tb_shapelet_distance/DUV/div_by_zero_s
 add wave -noupdate -divider .sqrt
 add wave -noupdate /tb_shapelet_distance/DUV/sqrt_start_s
 add wave -noupdate /tb_shapelet_distance/DUV/sqrt_op_s
@@ -78,7 +80,7 @@ add wave -noupdate /tb_shapelet_distance/DUV/counter_start_s
 add wave -noupdate /tb_shapelet_distance/DUV/counter_mode_s
 add wave -noupdate /tb_shapelet_distance/DUV/fp_ready_s
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {115736 ns} 0}
+WaveRestoreCursors {{Cursor 1} {94811 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 388
 configure wave -valuecolwidth 100
@@ -94,4 +96,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {56284 ns} {59745 ns}
+WaveRestoreZoom {0 ns} {7599 ns}

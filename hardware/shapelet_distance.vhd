@@ -19,7 +19,6 @@ entity shapelet_distance is
     port (
         clk         : in std_logic;
         rst         : in std_logic;
-        
         -- Operation
         -- '0': set shapelet LENGTH and  change the pivot shapelet and normalize it
         -- '1': change target shapelet and compute distance
@@ -90,10 +89,9 @@ architecture behavioral of shapelet_distance is
     -- Shapelet target buffer
     signal buffer_target_s                              : shapelet_buffer_t;
     signal target_buf_rst_s                             : std_logic;
-    -- signal target_buf_wr_s                              : std_logic;   
-    signal en_target_load_s                              : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when loading elements from data_i
-    signal en_target_wb_sub_s                            : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when writing back subtraction by average results
-    signal target_input_s                                : shapelet_buffer_t;            --NEW: Mux that selects the input of target shapelet between data_i and addsub_out_s
+    signal en_target_load_s                             : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when loading elements from data_i
+    signal en_target_wb_sub_s                           : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when writing back subtraction by average results
+    signal target_input_s                               : shapelet_buffer_t;            --NEW: Mux that selects the input of target shapelet between data_i and addsub_out_s
     
     ---- FLOATING POINT OPERATORS
     -- PU's single precision floating point array types   
@@ -128,6 +126,8 @@ architecture behavioral of shapelet_distance is
     signal div_opb_s                                    : pu_operands_t;
     signal div_out_s                                    : pu_operands_t;
     signal div_out_mean_s                               : pu_operands_t;
+    signal div_opb_zero_s                               : std_logic_vector(NUM_PU-1 downto 0);
+    signal div_by_zero_s                                : std_logic;
     
     -- sum of accumulators
     signal acc_sum_opa_s                                : std_logic_vector(31 downto 0);
@@ -148,7 +148,7 @@ architecture behavioral of shapelet_distance is
 
     ---- SHAPELETS POSITIONS MUX
     --
-    type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU-1)  of std_logic_vector(31 downto 0);
+    type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU-1) of std_logic_vector(31 downto 0);
     -- 
     type pu_matrix_t                                    is array(0 to NUM_PU-1)         of positions_by_pu_t;
     
@@ -609,8 +609,15 @@ begin
             qnan_o			 => open,                       -- queit Not-a-Number
             snan_o			 => open                        -- signaling Not-a-Number
         );
+        
+        -- Compare every opb with 0
+        div_opb_zero_s(i) <= '1' when div_opb_s(i) = (31 downto 0 => '0') else '0';
+        
+        
     end generate PROCESSING_UNITS; 
     
+    -- Check if division by zero is currently occurring
+    div_by_zero_s <= '0' when div_opb_zero_s = (NUM_PU-1 downto 0 => '0') else '1';
     
     -- FUTURE: ADDER TREE
     -- Sum accumulators (NOW: assumes there are only 2 PUs)
@@ -670,17 +677,26 @@ begin
                     reg_mul_out_s <= mul_out_s;
                 end if;
                 -- Subtractor
-                --HERE: Por que estados de add tambem nao fazem o reg_addsub_out_s ser escrito?
                 -- The x - avg write back during normalization writes directly to shapelet buffers
-                --if reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
                 if reg_state_s = Savg_sum_acc or reg_state_s = Sstd_sum_acc or reg_state_s =  Sdist_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
                     reg_addsub_out_s <= addsub_out_s;
                 end if;
+                
                 -- The norm write back during operation 0 writes directly to the pivot buffer
+                
                 -- Divisor
-                if reg_state_s = Savg_div or reg_state_s = Sstd_div or (reg_state_s = Szscore_div and reg_op_s = '1') then
+                -- if reg_state_s = Savg_div or reg_state_s = Sstd_div or (reg_state_s = Szscore_div and reg_op_s = '1') then
+                    -- reg_div_out_s <= div_out_s;
+                -- end if;
+                
+                -- Divisor output registration depends will depend on div_by_zero_s only in Szscore_div because the other states leave NUM_PU - 1 divisors idle
+                if reg_state_s = Savg_div or reg_state_s = Sstd_div or (reg_state_s = Szscore_div and div_by_zero_s = '0') then
                     reg_div_out_s <= div_out_s;
+                
+                elsif reg_state_s = Szscore_div and div_by_zero_s = '1' then
+                    reg_div_out_s <= (others => (others => '0'));
                 end if;
+                
                 -- Square root
                 if reg_state_s = Sstd_sqrt then
                     reg_sqrt_out_s <= sqrt_out_s;
