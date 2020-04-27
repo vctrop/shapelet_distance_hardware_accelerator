@@ -1,0 +1,165 @@
+--------------------------------------------------------------------------------
+-- Project     : Shapelet Distance Hardware Acceletator
+--------------------------------------------------------------------------------
+-- Description : Adder Tree
+--               Adds a given number of inputs in IEEE 754 single precision format
+--               Amount of FP adders instantiated is half of amount of inputs
+--               Used algorithm is iterative, feeding back into the FP adders results from previous iterations 
+--------------------------------------------------------------------------------
+-- File        : AdderTree.vhd
+-- Authors     : Carlos Gewehr (carlos.gewehr@ecomp.ufsm.br)
+--               Julio Vicenzi (julio.vicenzi@ecomp.ufsm.br)
+--               Victor Costa  (victor.costa@ecomp.ufsm.br)
+-- Standard    : VHDL-1993 
+--------------------------------------------------------------------------------
+-- Changelog   : v0.01 - Initial implementation
+--------------------------------------------------------------------------------
+-- TODO        : Check for uneven number of input and any implications
+--               Break math_real dependence (ceil() and log2())
+--               Make sure waiting for start_i falling edge is compatible with shapelet_distance control block
+--------------------------------------------------------------------------------
+
+
+library ieee;
+	use ieee.std_logic_1164.all;
+	use ieee.numeric_std.all;
+	use ieee.math_real.all;
+
+use work.adder_tree_pkg.all;
+    
+entity adder_tree is
+
+	generic (
+		NUM_INPUTS : integer;                   -- Number of single precision floating point values to sum
+		ADDER_NUM_CYCLES: integer := 6          -- Number of cycles the base adder takes to complete a single sum
+	);
+
+	port(
+		clk         : in std_logic;
+		rst         : in std_logic;
+
+		operands_i  : in slv_vector_t(0 to NUM_INPUTS - 1);
+		start_i     : in std_logic;
+        
+		sum_o       : out std_logic_vector(31 downto 0);  -- IEEE 754 Single Precision
+		ready_o     : out std_logic
+	);
+	
+end entity adder_tree;
+
+
+architecture RTL of adder_tree is
+    
+	-- Amount of adders to be instantiated. Half as many inputs, accounting for an uneven number of inputs
+	constant num_adders         : integer := integer(ceil(real(NUM_INPUTS)/real(2)));
+    
+    signal reg_initialized_s        : std_logic;                                            
+	signal reg_inputs_s             : slv_vector_t(0 to NUM_INPUTS - 1);               -- Array of registers. Receives Input values when start_i is set to '1'
+	signal adder_outputs_s          : slv_vector_t(0 to num_adders - 1);                 -- Combinational output of adders, input to sum_o registers            
+    
+	-- Amount of clock cycles in an iteration
+	signal reg_cycle_counter_s      : integer range 0 to ADDER_NUM_CYCLES;
+
+	-- Amount of iterations (amount of times adder outputs will be fed back into inputs - 1 first iteration, where there is no feedback)
+	constant num_iterations     : integer := integer(ceil(log2(real(NUM_INPUTS))));
+	constant LastIteration          : integer := num_iterations - 1;
+	signal reg_iterations_counter_s : integer range 0 to num_iterations - 1;
+
+	-- Simple increment and wrap around. Used to increment amount of cycles in iteration and total number of iterations
+    function incr(value: integer ; maxValue: integer ; minValue: integer) return integer is
+
+    begin
+
+        if value = maxValue then
+            return minValue;
+
+        else
+            return value + 1;
+
+        end if;
+
+    end function incr;
+
+begin
+	-- Generates IEEE 754 single precision adders
+	AdderGen: for i in 0 to num_adders - 1 generate
+
+		-- FPU100 adder
+		ADDER: entity work.fp_addsub
+
+			port map(
+				clk_i       => clk,
+		        op_type     => '0',       -- 0 => Addition
+
+		        -- Input Operands A & B
+		        opa_i       => reg_inputs_s(2*i),
+		        opb_i       => reg_inputs_s(2*i + 1),
+		        
+		        -- sum_o port
+		        output_o => adder_outputs_s(i),
+		        
+		        -- Exception flags
+		        ine_o       => open,        -- Inexact flag
+		        overflow_o  => open,        -- Overflow flag
+		        underflow_o => open,        -- Underflow flag
+		        inf_o       => open,        -- Infinity flag
+		        zero_o      => open,        -- Zero flag
+		        qnan_o      => open,        -- Quiet Not-a-Number flag
+		        snan_o      => open         -- Signaling Not-a-Number flag
+			);
+
+	end generate AdderGen;
+
+
+	-- Handles writes to input registers and feeding back of results of previous iteration
+	ControlProc: process(clk, rst) begin
+
+		if rising_edge(clk) then
+
+			if rst = '1' then
+				reg_initialized_s <= '0';
+				ready_o <= '0';
+				reg_cycle_counter_s <= 0;
+				reg_inputs_s <= (others => (others => '0'));
+
+			elsif start_i = '1' then
+				reg_initialized_s <= '1';
+				reg_inputs_s <= operands_i;
+
+			-- Checks if adder tree is not idling. Only begins operation on next falling edge of start_i
+			-- TODO: Make sure this (waiting for start_i falling edge) is compatible with shapelet_distance control block
+			elsif start_i = '0' and reg_initialized_s = '1' then  
+
+				reg_cycle_counter_s <= incr(reg_cycle_counter_s, ADDER_NUM_CYCLES, 0);  -- reg_cycle_counter_s++
+
+				-- Checks if this is the last cycle of an iteration (Amount of adder cycles + 1 cycle for writing to output register)
+				if reg_cycle_counter_s = ADDER_NUM_CYCLES then 
+
+					reg_iterations_counter_s <= incr(reg_iterations_counter_s, LastIteration, 0);  -- reg_iterations_counter_s++
+
+					-- Checks if this is the last cycle of the last iteration
+					if reg_iterations_counter_s = LastIteration then
+
+						-- Signal final sum is ready. Will wait for next start_i = '1'
+						ready_o <= '1';
+						reg_initialized_s <= '0';
+						sum_o <= adder_outputs_s(0);
+
+					else  -- Not the last iteration
+
+						-- Feeds back result of previous iteration into adders
+						for i in 0 to (num_adders - 2*(reg_iterations_counter_s)) - 1 loop
+							reg_inputs_s(i) <= adder_outputs_s(i);
+						end loop;
+
+					end if;
+
+				end if;
+
+			end if;
+
+		end if;
+
+	end process ControlProc;
+
+end architecture RTL;
