@@ -14,9 +14,9 @@
 --------------------------------------------------------------------------------
 -- Changelog   : v0.01 - Initial implementation
 --------------------------------------------------------------------------------
--- TODO        : Check for uneven number of input and any implications
---               Break math_real dependence (ceil() and log2())
+-- TODO        : Break math_real dependence (ceil() and log2())
 --               Make sure waiting for start_i falling edge is compatible with shapelet_distance control block
+--               Make sure use of "mod 2" operations and integer types are synthesis safe
 --------------------------------------------------------------------------------
 
 
@@ -31,7 +31,7 @@ entity adder_tree is
 
 	generic (
 		NUM_INPUTS : integer;                   -- Number of single precision floating point values to sum
-		ADDER_NUM_CYCLES: integer := 6          -- Number of cycles the base adder takes to complete a single sum
+		ADDER_NUM_CYCLES: integer := 7          -- Number of cycles the base adder takes to complete a single sum
 	);
 
 	port(
@@ -51,19 +51,25 @@ end entity adder_tree;
 architecture RTL of adder_tree is
     
 	-- Amount of adders to be instantiated. Half as many inputs, accounting for an uneven number of inputs
-	constant num_adders         : integer := integer(ceil(real(NUM_INPUTS)/real(2)));
+	--constant num_adders               : integer := integer(ceil(real(NUM_INPUTS)/real(2)));
+	constant num_adders               : integer := integer(floor(real(NUM_INPUTS)/real(2)));
+	constant num_inputs_uveven        : integer := NUM_INPUTS mod 2;
     
-    signal reg_initialized_s        : std_logic;                                            
-	signal reg_inputs_s             : slv_vector_t(0 to NUM_INPUTS - 1);               -- Array of registers. Receives Input values when start_i is set to '1'
-	signal adder_outputs_s          : slv_vector_t(0 to num_adders - 1);                 -- Combinational output of adders, input to sum_o registers            
+    signal reg_initialized_s          : std_logic;                                            
+	signal reg_inputs_s               : slv_vector_t(0 to NUM_INPUTS - 1);               -- Array of registers. Receives Input values when start_i is set to '1'
+	--signal reg_inputs_s               : slv_vector_t(0 to 2*num_adders - 1);             -- Array of registers. Receives Input values when start_i is set to '1'
+	signal adder_outputs_s            : slv_vector_t(0 to num_adders - 1);               -- Combinational output of adders, input to sum_o registers            
     
 	-- Amount of clock cycles in an iteration
-	signal reg_cycle_counter_s      : integer range 0 to ADDER_NUM_CYCLES;
+	signal reg_cycle_counter_s        : integer range 0 to ADDER_NUM_CYCLES;
 
 	-- Amount of iterations (amount of times adder outputs will be fed back into inputs - 1 first iteration, where there is no feedback)
-	constant num_iterations     : integer := integer(ceil(log2(real(NUM_INPUTS))));
-	constant LastIteration          : integer := num_iterations - 1;
-	signal reg_iterations_counter_s : integer range 0 to num_iterations - 1;
+	constant num_iterations           : integer := integer(ceil(log2(real(NUM_INPUTS))));
+	constant LastIteration            : integer := num_iterations - 1;
+	signal reg_iterations_counter_s   : integer range 0 to num_iterations - 1;
+	
+	signal reg_amount_of_writebacks_s : integer;
+	signal uneven_leftover_used_flag  : std_logic;
 
 	-- Simple increment and wrap around. Used to increment amount of cycles in iteration and total number of iterations
     function incr(value: integer ; maxValue: integer ; minValue: integer) return integer is
@@ -81,32 +87,33 @@ architecture RTL of adder_tree is
     end function incr;
 
 begin
+
 	-- Generates IEEE 754 single precision adders
 	AdderGen: for i in 0 to num_adders - 1 generate
 
-		-- FPU100 adder
-		ADDER: entity work.fp_addsub
+        -- FPU100 adder
+        ADDER: entity work.fp_addsub
 
-			port map(
-				clk_i       => clk,
-		        op_type     => '0',       -- 0 => Addition
+            port map(
+                clk_i       => clk,
+                op_type     => '0',       -- 0 => Addition
 
-		        -- Input Operands A & B
-		        opa_i       => reg_inputs_s(2*i),
-		        opb_i       => reg_inputs_s(2*i + 1),
-		        
-		        -- sum_o port
-		        output_o => adder_outputs_s(i),
-		        
-		        -- Exception flags
-		        ine_o       => open,        -- Inexact flag
-		        overflow_o  => open,        -- Overflow flag
-		        underflow_o => open,        -- Underflow flag
-		        inf_o       => open,        -- Infinity flag
-		        zero_o      => open,        -- Zero flag
-		        qnan_o      => open,        -- Quiet Not-a-Number flag
-		        snan_o      => open         -- Signaling Not-a-Number flag
-			);
+                -- Input Operands A & B
+                opa_i       => reg_inputs_s(2*i),
+                opb_i       => reg_inputs_s(2*i + 1),
+                
+                -- sum_o port
+                output_o    => adder_outputs_s(i),
+                
+                -- Exception flags
+                ine_o       => open,        -- Inexact flag
+                overflow_o  => open,        -- Overflow flag
+                underflow_o => open,        -- Underflow flag
+                inf_o       => open,        -- Infinity flag
+                zero_o      => open,        -- Zero flag
+                qnan_o      => open,        -- Quiet Not-a-Number flag
+                snan_o      => open         -- Signaling Not-a-Number flag
+            );
 
 	end generate AdderGen;
 
@@ -120,7 +127,10 @@ begin
 				reg_initialized_s <= '0';
 				ready_o <= '0';
 				reg_cycle_counter_s <= 0;
+				reg_iterations_counter_s <= 0;
 				reg_inputs_s <= (others => (others => '0'));
+				reg_amount_of_writebacks_s <= num_adders;
+				uneven_leftover_used_flag <= '0';
 
 			elsif start_i = '1' then
 				reg_initialized_s <= '1';
@@ -144,13 +154,25 @@ begin
 						ready_o <= '1';
 						reg_initialized_s <= '0';
 						sum_o <= adder_outputs_s(0);
+						reg_amount_of_writebacks_s <= num_adders;
 
 					else  -- Not the last iteration
 
 						-- Feeds back result of previous iteration into adders
-						for i in 0 to (num_adders - 2*(reg_iterations_counter_s)) - 1 loop
+						for i in 0 to reg_amount_of_writebacks_s - 1 loop
 							reg_inputs_s(i) <= adder_outputs_s(i);
 						end loop;
+						
+						-- Handles leftover inputs, if there is an uneven number of inputs or operands in current iteration
+						if reg_amount_of_writebacks_s mod 2 = 1 and num_inputs_uveven = 1 and uneven_leftover_used_flag = '0' then
+						    reg_inputs_s(reg_amount_of_writebacks_s) <= reg_inputs_s(NUM_INPUTS - 1);
+						    uneven_leftover_used_flag <= '1';
+						elsif reg_amount_of_writebacks_s mod 2 = 1 then
+						    reg_inputs_s(reg_amount_of_writebacks_s) <= (others =>'0');
+						end if;
+						
+						-- Sets amount of writebacks to occur in next iteration. 
+						reg_amount_of_writebacks_s <= reg_amount_of_writebacks_s/2 + reg_amount_of_writebacks_s mod 2;
 
 					end if;
 

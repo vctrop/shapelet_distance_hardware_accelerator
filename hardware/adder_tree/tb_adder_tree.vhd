@@ -13,20 +13,20 @@ end entity tb_adder_tree;
 
 architecture TB of tb_adder_tree is
 
-	constant num_inputs: integer := 4;
-	constant adder_num_cycles: integer := 6;
+	constant num_inputs: integer := 34;
+	constant adder_num_cycles: integer := 7;
 
 	constant clockPeriod: time := 10 ns ;
     constant clockHalfPeriod: time := clockPeriod/2;
  
     signal Clock, Reset, Start, Ready : std_logic;
-	signal Inputs : slv_vector_t(0 to num_inputs - 1);
-	signal Output : std_logic_vector(31 downto 0);
+	signal Inputs: slv_vector_t(0 to num_inputs - 1);
+	signal Output: std_logic_vector(31 downto 0);
 	
-	function uint_to_fp(int_i : std_logic_vector(31 downto 0)) return std_logic_vector is
+	function uint_to_fp(int_i: std_logic_vector(31 downto 0)) return std_logic_vector is
             -- the position of the first '1' bit is also the value we must add to the exponent
-            variable shift_num_s : natural range 0 to 23;
-            variable mantissa_s, fp_o :  std_logic_vector(31 downto 0);
+            variable shift_num_s: natural range 0 to 23;
+            variable mantissa_s, fp_o:  std_logic_vector(31 downto 0);
         begin
             fp_o(31) := '0';        -- sign bit '0': all integers must be positive
         
