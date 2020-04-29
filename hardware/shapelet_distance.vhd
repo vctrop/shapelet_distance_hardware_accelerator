@@ -1,12 +1,14 @@
 library IEEE;
 use IEEE.numeric_std.all;
-use ieee.std_logic_1164.all;
+use IEEE.std_logic_1164.all;
 
+-- Synthesizable, only used  with generics 
 use IEEE.math_real.ceil;
 use IEEE.math_real.log2;      -- used to calculate the number of bits used by the input length
 
-use work.comppack.all;          -- FPU components package
-use work.fpupack.all;          -- FPU functions package
+use work.component_pkg.all;          -- FPU components package
+use work.fpu_pkg.all;          -- FPU functions package
+use work.array_pkg.all;
 
 -- Shapelet distance calculator hardware
 -- NUM_PU: specificies the level of paralelism. Must be a power of 2. (WARNING: CURRENTLY ONLY THE DEFAULT VALUE OF 2 IS IN WORKING CONDITION)
@@ -84,25 +86,16 @@ architecture behavioral of shapelet_distance is
     signal pivot_buf_rst_s                              : std_logic;
     signal en_pivot_load_s                              : shaplet_en_t;                 -- Pivot enable for each element of pivot_buffer_s when loading elements from data_i
     signal en_pivot_wb_norm_s                           : shaplet_en_t;                 -- Pivot enable for each element of pivot_buffer_s when writting back normalization results
-    signal en_pivot_wb_sub_s                            : shaplet_en_t;                 --NEW: Pivot enable for each element of pivot_buffer_s when writing back subtraction by average results
+    signal en_pivot_wb_sub_s                            : shaplet_en_t;                 --Pivot enable for each element of pivot_buffer_s when writing back subtraction by average results
     signal pivot_input_s                                : shapelet_buffer_t;            -- Mux that selects the input of pivot shapelet among data_i, addsub_out_s and div_out_s
     -- Shapelet target buffer
     signal buffer_target_s                              : shapelet_buffer_t;
     signal target_buf_rst_s                             : std_logic;
-    signal en_target_load_s                             : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when loading elements from data_i
-    signal en_target_wb_sub_s                           : shaplet_en_t;                 --NEW: Target enable for each element of pivot_buffer_s when writing back subtraction by average results
-    signal target_input_s                               : shapelet_buffer_t;            --NEW: Mux that selects the input of target shapelet between data_i and addsub_out_s
+    signal en_target_load_s                             : shaplet_en_t;                 -- Target enable for each element of pivot_buffer_s when loading elements from data_i
+    signal en_target_wb_sub_s                           : shaplet_en_t;                 -- Target enable for each element of pivot_buffer_s when writing back subtraction by average results
+    signal target_input_s                               : shapelet_buffer_t;            -- Mux that selects the input of target shapelet between data_i and addsub_out_s
     
     ---- FLOATING POINT OPERATORS
-    -- PU's single precision floating point array types   
-    type pu_operands_t                                  is array (0 to NUM_PU - 1) of std_logic_vector(31 downto 0); 
-    
-    -- Array of accumulator registers
-    signal reg_accumulators_s                           : pu_operands_t;
-    --signal reg_final_accumulator_s                      : std_logic_vector(31 downto 0);    -- holds the sum of every reg_acumulator 
-    signal accumulators_wr_s                            : std_logic;
-    signal accumulators_rst_s                           : std_logic;
-    
     -- Cycle counter signals
     signal counter_start_s                              : std_logic;
     signal counter_mode_s                               : std_logic_vector(1 downto 0);
@@ -112,27 +105,32 @@ architecture behavioral of shapelet_distance is
     
     -- addition/subtraction signals
     signal add_or_sub_s                                 : std_logic;                        -- 0: add, 1: sub
-    signal addsub_opa_s                                 : pu_operands_t;
-    signal addsub_opb_s                                 : pu_operands_t;
-    signal addsub_out_s                                 : pu_operands_t;
+    signal addsub_opa_s                                 : slv_array_t(0 to NUM_PU-1);
+    signal addsub_opb_s                                 : slv_array_t(0 to NUM_PU-1);
+    signal addsub_out_s                                 : slv_array_t(0 to NUM_PU-1);
     signal addsub_start_s                               : std_logic;                        -- used to start the cycle counter
     -- multiplication signals                          
     signal mul_start_s                                  : std_logic;
-    signal mul_operator_s                               : pu_operands_t;
-    signal mul_out_s                                    : pu_operands_t;
+    signal mul_operator_s                               : slv_array_t(0 to NUM_PU-1);
+    signal mul_out_s                                    : slv_array_t(0 to NUM_PU-1);
     -- division signals                                
     signal div_start_s                                  : std_logic;
-    signal div_opa_s                                    : pu_operands_t;
-    signal div_opb_s                                    : pu_operands_t;
-    signal div_out_s                                    : pu_operands_t;
-    signal div_out_mean_s                               : pu_operands_t;
+    signal div_opa_s                                    : slv_array_t(0 to NUM_PU-1);
+    signal div_opb_s                                    : slv_array_t(0 to NUM_PU-1);
+    signal div_out_s                                    : slv_array_t(0 to NUM_PU-1);
+    signal div_out_mean_s                               : slv_array_t(0 to NUM_PU-1);
     signal div_opb_zero_s                               : std_logic_vector(NUM_PU-1 downto 0);
     signal div_by_zero_s                                : std_logic;
     
-    -- sum of accumulators
-    signal acc_sum_opa_s                                : std_logic_vector(31 downto 0);
-    signal acc_sum_opb_s                                : std_logic_vector(31 downto 0);
-    signal acc_sum_out_s                                : std_logic_vector(31 downto 0);
+    -- Array of accumulator registers
+    signal reg_accumulators_s                           : slv_array_t(0 to NUM_PU-1);
+    signal accumulators_wr_s                            : std_logic;
+    signal accumulators_rst_s                           : std_logic;
+    
+    -- Adder tree (sum of accumulator registers)
+    signal adder_tree_start_s                           : std_logic;
+    signal adder_tree_out_s                             : std_logic_vector(31 downto 0);
+    signal adder_tree_ready_s                           : std_logic;
     
     -- sqrt signals                                     
     signal sqrt_start_s                                 : std_logic;
@@ -140,11 +138,11 @@ architecture behavioral of shapelet_distance is
     signal sqrt_out_s                                   : std_logic_vector(31 downto 0);
     
     -- PU output registers:
-    signal reg_addsub_out_s                             : pu_operands_t;
-    signal reg_mul_out_s                                : pu_operands_t;
-    signal reg_div_out_s                                : pu_operands_t;
+    signal reg_addsub_out_s                             : slv_array_t(0 to NUM_PU-1);
+    signal reg_mul_out_s                                : slv_array_t(0 to NUM_PU-1);
+    signal reg_div_out_s                                : slv_array_t(0 to NUM_PU-1);
     signal reg_sqrt_out_s                               : std_logic_vector(31 downto 0);
-    signal reg_acc_sum_out_s                            : std_logic_vector(31 downto 0);
+    signal reg_adder_tree_out_s                            : std_logic_vector(31 downto 0);
 
     ---- SHAPELETS POSITIONS MUX
     --
@@ -161,7 +159,7 @@ architecture behavioral of shapelet_distance is
     -- Matrix with processing units as rows and shapelet positions for each PU as columns
     signal matrix_representation_s                      : pu_matrix_t;
     -- The shapelet positions presented to each of the NUM_PU processing elements
-    signal shapelet_elements_mux_s                      : pu_operands_t;
+    signal shapelet_elements_mux_s                      : slv_array_t(0 to NUM_PU-1);
     
 begin
     
@@ -221,7 +219,7 @@ begin
                 when Savg_final_acc =>
                     reg_acc_counter_s <= 0;
                     -- Next state
-                    if fp_ready_s = '1' then
+                    if adder_tree_ready_s = '1' then
                         reg_state_s <= Savg_div;
                     end if;
                     
@@ -268,7 +266,7 @@ begin
                 when Sstd_final_acc =>
                     reg_acc_counter_s <= 0;
                     -- Next state
-                    if fp_ready_s = '1' then
+                    if adder_tree_ready_s = '1' then
                         reg_state_s <= Sstd_div;
                     end if;
                     
@@ -346,9 +344,9 @@ begin
                     
                 when Sdist_final_acc =>
                     -- Sums each PU's accumulators
-                    if fp_ready_s = '1' then
+                    if adder_tree_ready_s = '1' then
                         reg_state_s <= Sout_distance;
-						reg_distance_s <= acc_sum_out_s;	 -- Write the distance calculation to distance output register
+						reg_distance_s <= adder_tree_out_s;	 -- Write the distance calculation to distance output register
                     end if;
                 -- Net state
                 when Sout_distance  =>
@@ -373,16 +371,16 @@ begin
     -- Define write-back enables and the muxes of pivot_input_s and target_input_s
     GEN_WB_INPUT_J: for j in 0 to MAX_LEN/NUM_PU-1 generate
         GEN_WB_INPUT_I: for i in 0 to NUM_PU-1 generate
-            --NEW: Enables writing to corresponding pivot and target buffers elements when writing back x - avg during normalization
+            -- Enables writing to corresponding pivot and target buffers elements when writing back x - avg during normalization
             en_pivot_wb_sub_s(i + j*NUM_PU)     <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1' and reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '0' else '0';
             en_target_wb_sub_s(i + j*NUM_PU)    <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1' and reg_block_sel_s = j and reg_state_s = Sstd_wb_sub and reg_op_s = '1' else '0';
             -- Enables writing to corresponding pivot buffer elements when writing back after normalization
             en_pivot_wb_norm_s(i + j*NUM_PU)    <= '1' when reg_position_validity_s(i + j*NUM_PU) = '1'  and reg_block_sel_s = j and reg_state_s = Spivot_norm_wb else '0'; 
             -- Selects which data the pivot buffer will receive
             pivot_input_s(i + j*NUM_PU)  <= data_i          when reg_state_s = Sbuf_load    else
-                                            addsub_out_s(i) when reg_state_s = Sstd_wb_sub  else                --NEW: make addsub_out_s be one of the inputs for the pivot shapelet
+                                            addsub_out_s(i) when reg_state_s = Sstd_wb_sub  else               
                                             div_out_s(i);
-            --NEW: Selects which data the target buffer will receive
+            -- Selects which data the target buffer will receive
             target_input_s(i + j*NUM_PU) <= data_i          when reg_state_s = Sbuf_load    else
                                             addsub_out_s(i);
         end generate;
@@ -395,7 +393,6 @@ begin
             if rising_edge(clk) then
                 if rst = '1' or pivot_buf_rst_s = '1' then
                     buffer_pivot_s(i) <= (others => '0');
-                --NEW: consider en_pivot_wb_sub_s when writing on pivot
                 elsif en_pivot_load_s(i) = '1' or en_pivot_wb_norm_s(i) = '1' or en_pivot_wb_sub_s(i) = '1' then
                     buffer_pivot_s(i) <= pivot_input_s(i);
                 end if;
@@ -403,14 +400,13 @@ begin
         end process;
     end generate;
     
-    --NEW: The target buffer may receive data from PUs or data_i
+    --The target buffer may receive data from PUs or data_i
     GEN_TARGET_BUFFER: for i in buffer_target_s'range generate
         process(clk)
         begin 
             if rising_edge(clk) then
                 if rst = '1' or target_buf_rst_s = '1' then
                     buffer_target_s(i) <= (others => '0');
-                --NEW: consider en_pivot_wb_sub_s when writing on pivot
                 elsif en_target_load_s(i) = '1' or en_target_wb_sub_s(i) = '1' then
                     buffer_target_s(i) <= target_input_s(i);
                 end if;
@@ -447,8 +443,8 @@ begin
     end generate OUTER;
     
     -- Mux selector is a counter of how many blocks were processed to the moment 
-    block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc     else '0';   --NEW: reset block counter for new norm states
-    block_sel_inc_s <= '1' when reg_state_s = Savg_reg_acc  or reg_state_s = Sstd_reg_acc   or reg_state_s = Spivot_norm_wb     or reg_state_s = Sdist_reg_acc  else '0';       --NEW: increment block sel for the new norm states
+    block_sel_rst_s <= '1' when reg_state_s = Sbegin        or reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc     else '0';                                       
+    block_sel_inc_s <= '1' when reg_state_s = Savg_reg_acc  or reg_state_s = Sstd_reg_acc   or reg_state_s = Spivot_norm_wb     or reg_state_s = Sdist_reg_acc  else '0';       
     
     reg_selector: process(clk)
     begin
@@ -480,7 +476,6 @@ begin
     
     
     ---- PROCESSING UNITS
-    --NEW: Change operands and add new states in the multiplexation of PUs signals
     -- Addsub
     -- add_or_sub_s selcts if a addition='0' or subtraction='1' will be computed
     add_or_sub_s    <=  '1'                     when reg_state_s = Sdist_sub    or reg_state_s = Sstd_sub  else '0';
@@ -491,9 +486,9 @@ begin
     addsub_opb_s    <=  shapelet_elements_mux_s when reg_state_s = Savg_sum_acc or reg_state_s = Sdist_sub else
                         div_out_mean_s          when reg_state_s = Sstd_sub     else
                         reg_mul_out_s;
-    addsub_start_s  <=  '0'                     when reg_state_s = Savg_sum_acc or reg_state_s = Savg_final_acc or reg_state_s = Sstd_sub   or reg_state_s = Sstd_sum_acc  or reg_state_s = Sstd_final_acc    or 
-                                                     reg_state_s = Sdist_sub    or reg_state_s = Sdist_sum_acc  or reg_state_s = Sdist_final_acc
-                                                     else '1';
+    addsub_start_s  <=  '0'                     when reg_state_s = Savg_sum_acc or reg_state_s = Sstd_sub       or reg_state_s = Sstd_sum_acc or
+                                                     reg_state_s = Sdist_sub    or reg_state_s = Sdist_sum_acc  else
+                        '1';
 
     -- Multiplier 
     mul_start_s     <= '0'  when    reg_state_s = Sstd_square   or reg_state_s = Sdist_square   else '1';
@@ -503,15 +498,15 @@ begin
                        shapelet_elements_mux_s;
     
     -- Divisor
-    -- NEW: convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation
+    -- convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation
     dec_shapelet_length_s <= 0  when reg_state_s = Sbegin   else reg_shapelet_length_s - 1;
     shapelet_length_float_s     <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, shapelet_length_float_s'length)));
     dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(dec_shapelet_length_s, dec_shapelet_length_float_s'length)));
     
     div_start_s    <= '0'                               when reg_state_s = Savg_div or reg_state_s = Sstd_div  or reg_state_s = Szscore_div     else '1';
-    --NEW: To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate
-    div_opa_s(0)    <=  shapelet_elements_mux_s(0)      when reg_state_s = Szscore_div   else
-                        reg_acc_sum_out_s;
+    -- To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate
+    div_opa_s(0)    <=  shapelet_elements_mux_s(0)      when reg_state_s = Szscore_div  else
+                        reg_adder_tree_out_s;
     div_opb_s(0)    <=  reg_sqrt_out_s                  when reg_state_s = Szscore_div  else
                         dec_shapelet_length_float_s     when reg_state_s = Sstd_div     else
                         shapelet_length_float_s;
@@ -528,7 +523,7 @@ begin
     
     -- Cycle counter
     -- Start cycle counter when an operation start is set down
-    counter_start_s <= '1'  when addsub_start_s = '0'       or mul_start_s = '0' or div_start_s = '0' or sqrt_start_s = '0' else '0';
+    counter_start_s <=  '1'  when addsub_start_s = '0'      or mul_start_s = '0'            or div_start_s = '0'            or sqrt_start_s = '0' else '0';
     -- Counter mode
     counter_mode_s  <=  "10" when reg_state_s = Sstd_square or reg_state_s = Sdist_square   else                                                                -- Multiplication
                         "01" when reg_state_s = Savg_div    or reg_state_s = Sstd_div       or reg_state_s = Szscore_div    or reg_state_s = Sstd_sqrt  else    -- Division and sqrt
@@ -596,7 +591,7 @@ begin
             clk_i 			=> clk,
             start_i         => div_start_s,
             opa_i        	=> div_opa_s(i),                    -- Input Operands A & B
-            opb_i           => div_opb_s(i),                    --NEW: Div opb may come from different sources    
+            opb_i           => div_opb_s(i),                      
             output_o        => div_out_s(i),
             
             -- Exceptions
@@ -613,36 +608,30 @@ begin
         -- Compare every opb with 0
         div_opb_zero_s(i) <= '1' when div_opb_s(i) = (31 downto 0 => '0') else '0';
         
-        
     end generate PROCESSING_UNITS; 
     
     -- Check if division by zero is currently occurring
     div_by_zero_s <= '0' when div_opb_zero_s = (NUM_PU-1 downto 0 => '0') else '1';
     
-    -- FUTURE: ADDER TREE
-    -- Sum accumulators (NOW: assumes there are only 2 PUs)
-    acc_sum_opa_s <= reg_accumulators_s(0);
-    acc_sum_opb_s <= reg_accumulators_s(1);
+    --  Adder tree to sum the NUM_PU  accumulator registers
+    -- Unlike PUs, the adder tree starts operation when adder_tree_start <= '1'
+    adder_tree_start_s <=  '1' when reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc or reg_state_s = Sdist_final_acc else
+                           '0'; 
     
-    -- sums accumulator registers
-    sum_accs: fp_addsub
-    port map(
-        clk_i 			=> clk,      
-        op_type         => '0',                    -- 0 = add
-        opa_i        	=> acc_sum_opa_s,
-        opb_i           => acc_sum_opb_s,
-        output_o        => acc_sum_out_s,
-        -- Exceptions
-        ine_o 			=> open,                -- inexact
-        overflow_o  	=> open,                -- overflow
-        underflow_o 	=> open,                -- underflow
-        inf_o			=> open,                -- infinity
-        zero_o			=> open,                -- zero
-        qnan_o			=> open,                -- queit Not-a-Number
-        snan_o			=> open                 -- signaling Not-a-Number
-    );
- 
- 
+    adder_tree: entity work.adder_tree
+	generic map (
+		NUM_INPUTS => NUM_PU,
+		ADDER_NUM_CYCLES => 7
+	)
+	port map(
+		clk        => clk,
+		rst        => accumulators_rst_s,
+		operands_i => reg_accumulators_s,
+		start_i    => adder_tree_start_s,
+		sum_o      => adder_tree_out_s,     -- Single Precision IEEE 754 float
+		ready_o    => adder_tree_ready_s
+	);
+    
     -- Single square root unit, computing in 33 cycles
     sqrt: fp_sqrt
     port map(
@@ -660,17 +649,16 @@ begin
         snan_o			=> open                             -- signaling Not-a-Number
     );
         
-    -- registers that save the PU's results
-    --NEW: save outputs in the new states and delete references to the old ones
+    -- Registers that save the FP operations results
     process(clk, rst)
     begin
         if rising_edge(clk) then
             if rst = '1' then
-                reg_addsub_out_s    <= (others => (others => '0'));
-                reg_mul_out_s       <= (others => (others => '0'));
-                reg_div_out_s       <= (others => (others => '0'));
-                reg_sqrt_out_s      <= (others => '0');
-                reg_acc_sum_out_s   <= (others => '0');
+                reg_addsub_out_s        <= (others => (others => '0'));
+                reg_mul_out_s           <= (others => (others => '0'));
+                reg_div_out_s           <= (others => (others => '0'));
+                reg_sqrt_out_s          <= (others => '0');
+                reg_adder_tree_out_s    <= (others => '0');
             elsif fp_ready_s = '1' then
                 -- Multiplier
                 if reg_state_s = Sstd_square or reg_state_s = Sdist_square then
@@ -681,13 +669,6 @@ begin
                 if reg_state_s = Savg_sum_acc or reg_state_s = Sstd_sum_acc or reg_state_s =  Sdist_sum_acc or reg_state_s = Sdist_sub or reg_state_s = Sstd_sub then
                     reg_addsub_out_s <= addsub_out_s;
                 end if;
-                
-                -- The norm write back during operation 0 writes directly to the pivot buffer
-                
-                -- Divisor
-                -- if reg_state_s = Savg_div or reg_state_s = Sstd_div or (reg_state_s = Szscore_div and reg_op_s = '1') then
-                    -- reg_div_out_s <= div_out_s;
-                -- end if;
                 
                 -- Divisor output registration depends will depend on div_by_zero_s only in Szscore_div because the other states leave NUM_PU - 1 divisors idle
                 if reg_state_s = Savg_div or reg_state_s = Sstd_div or (reg_state_s = Szscore_div and div_by_zero_s = '0') then
@@ -701,19 +682,19 @@ begin
                 if reg_state_s = Sstd_sqrt then
                     reg_sqrt_out_s <= sqrt_out_s;
                 end if;
-                -- Final acc sum (FUTURE: adder tree)
-                -- The distance final sum during operation 1 writes directly to reg_distance_s
-                if reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc then
-                    reg_acc_sum_out_s <= acc_sum_out_s;
-                end if;
+                
+            -- Final acc sum
+            -- The distance final sum during operation 1 writes directly to reg_distance_s
+            elsif adder_tree_ready_s = '1' and (reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc) then
+                reg_adder_tree_out_s <= adder_tree_out_s;
             end if;
+
         end if;
     end process;
 
     -- ACCUMULATOR DRIVER
-    -- NEW: Update to new acc writing/reseting states
     -- Reset the accumulator at the start of the FSM and after summing all accumulators to a single value.
-    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or ((reg_state_s = Savg_final_acc   or reg_state_s = Sstd_final_acc) and fp_ready_s = '1')  else '0';
+    accumulators_rst_s  <= '1' when reg_state_s = Sbegin        or ((reg_state_s = Savg_final_acc   or reg_state_s = Sstd_final_acc) and adder_tree_ready_s = '1')  else '0';
     accumulators_wr_s   <= '1' when reg_state_s = Savg_reg_acc  or reg_state_s = Sstd_reg_acc       or reg_state_s = Sdist_reg_acc                          else '0';
     -- Accummulator registers
     acc_regs: process(clk)
@@ -728,6 +709,5 @@ begin
             end if;
         end if;
     end process;
-
 
 end behavioral;

@@ -47,9 +47,9 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 library work;
-use work.fpupack.all;
+use work.fpu_pkg.all;
 
-package comppack is
+package component_pkg is
 
 
 --- Component Declartions ---	
@@ -329,4 +329,4 @@ package comppack is
     end component;
         
         
-end comppack;
+end component_pkg;

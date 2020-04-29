@@ -70,11 +70,12 @@ add wave -noupdate /tb_shapelet_distance/DUV/en_target_wb_sub_s
 add wave -noupdate -divider Accumulators
 add wave -noupdate /tb_shapelet_distance/DUV/accumulators_wr_s
 add wave -noupdate /tb_shapelet_distance/DUV/accumulators_rst_s
-add wave -noupdate /tb_shapelet_distance/DUV/acc_sum_opa_s
-add wave -noupdate /tb_shapelet_distance/DUV/acc_sum_opb_s
-add wave -noupdate /tb_shapelet_distance/DUV/acc_sum_out_s
 add wave -noupdate /tb_shapelet_distance/DUV/reg_accumulators_s
-add wave -noupdate /tb_shapelet_distance/DUV/reg_acc_sum_out_s
+add wave -noupdate -divider {Adder Tree}
+add wave -noupdate /tb_shapelet_distance/DUV/adder_tree_start_s
+add wave -noupdate /tb_shapelet_distance/DUV/adder_tree_out_s
+add wave -noupdate /tb_shapelet_distance/DUV/adder_tree_ready_s
+add wave -noupdate /tb_shapelet_distance/DUV/reg_adder_tree_out_s
 add wave -noupdate -divider {Cycle counter}
 add wave -noupdate /tb_shapelet_distance/DUV/counter_start_s
 add wave -noupdate /tb_shapelet_distance/DUV/counter_mode_s
@@ -96,4 +97,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ns} {7599 ns}
+WaveRestoreZoom {0 ns} {561 ns}

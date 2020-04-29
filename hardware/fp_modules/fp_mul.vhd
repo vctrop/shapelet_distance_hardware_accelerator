@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-use work.fpupack.all;
-use work.comppack.all;
+use work.fpu_pkg.all;
+use work.component_pkg.all;
 
 -- floating point multiplication in 11 cycles after start signal falls (if the start signal remains HIGH, the multiplication will not start)
 entity fp_mul is

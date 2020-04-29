@@ -3,8 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-use work.fpupack.all;
-use work.comppack.all;
+use work.fpu_pkg.all;
+use work.component_pkg.all;
 
 -- floating point sqrt takes 31 cycles to complete
 entity fp_sqrt is

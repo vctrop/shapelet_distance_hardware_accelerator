@@ -49,7 +49,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 
-package fpupack is
+package fpu_pkg is
 
 
 	-- Data width of floating-point number. Deafult: 32
@@ -83,9 +83,9 @@ package fpupack is
 	-- int must be in range of 0 <= <= 2 ^ 24 - 1 
 	function uint_to_fp(int_i : std_logic_vector(31 downto 0)) return std_logic_vector;
     
-end fpupack;
+end fpu_pkg;
 
-package body fpupack is
+package body fpu_pkg is
     
     -- count the  zeros starting from left
 	function count_l_zeros (signal s_vector: std_logic_vector) return std_logic_vector is
@@ -168,4 +168,4 @@ package body fpupack is
         end function;
 
 		
-end fpupack;
+end fpu_pkg;

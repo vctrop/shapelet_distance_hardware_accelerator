@@ -5,7 +5,7 @@ library ieee;
 	use ieee.math_real.all;
 
 library work;
-	use work.adder_tree_pkg.all;
+	use work.array_pkg.all;
 
 entity tb_adder_tree is
 
@@ -13,14 +13,14 @@ end entity tb_adder_tree;
 
 architecture TB of tb_adder_tree is
 
-	constant num_inputs: integer := 34;
-	constant adder_num_cycles: integer := 7;
+	constant num_inputs: integer := 10;
+	constant adder_num_cycles: integer := 6;
 
 	constant clockPeriod: time := 10 ns ;
     constant clockHalfPeriod: time := clockPeriod/2;
  
     signal Clock, Reset, Start, Ready : std_logic;
-	signal Inputs: slv_vector_t(0 to num_inputs - 1);
+	signal Inputs: slv_array_t(0 to num_inputs - 1);
 	signal Output: std_logic_vector(31 downto 0);
 	
 	function uint_to_fp(int_i: std_logic_vector(31 downto 0)) return std_logic_vector is

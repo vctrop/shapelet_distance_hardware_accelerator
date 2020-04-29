@@ -48,7 +48,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.std_logic_misc.all;
 
 library work;
-use work.fpupack.all;
+use work.fpu_pkg.all;
 
 entity post_norm_addsub is
 	port(

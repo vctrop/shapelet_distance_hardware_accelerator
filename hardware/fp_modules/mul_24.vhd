@@ -47,7 +47,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 library work;
-use work.fpupack.all;
+use work.fpu_pkg.all;
 
 entity mul_24 is
 	port(

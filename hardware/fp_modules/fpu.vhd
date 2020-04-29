@@ -49,8 +49,8 @@ use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
 library work;
-use work.comppack.all;
-use work.fpupack.all;
+use work.component_pkg.all;
+use work.fpu_pkg.all;
 
 
 entity fpu is

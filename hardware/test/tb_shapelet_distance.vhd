@@ -42,8 +42,8 @@ architecture behavioral of tb_shapelet_distance is
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
-    constant NUM_PU : integer := 2;
-    constant MAX_LEN : integer := 32;
+    constant NUM_PU : integer := 5;
+    constant MAX_LEN : integer := 40;
 
     --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile containts:
 	--file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/debug_vector.txt";

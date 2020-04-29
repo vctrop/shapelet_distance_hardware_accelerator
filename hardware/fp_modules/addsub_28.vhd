@@ -49,7 +49,7 @@ use ieee.std_logic_misc.all;
 use IEEE.std_logic_arith.all;
 
 library work;
-use work.fpupack.all;
+use work.fpu_pkg.all;
 
 entity addsub_28 is
 	port(
