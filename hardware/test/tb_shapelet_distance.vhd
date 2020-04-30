@@ -42,8 +42,8 @@ architecture behavioral of tb_shapelet_distance is
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
-    constant NUM_PU : integer := 5;
-    constant MAX_LEN : integer := 40;
+    constant NUM_PU : integer := 2;
+    constant MAX_LEN : integer := 32;
 
     --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile containts:
 	--file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/debug_vector.txt";
@@ -58,7 +58,6 @@ architecture behavioral of tb_shapelet_distance is
     signal rst : std_logic := '1';
     signal start, ready, op : std_logic;
     signal data, distance, expected_output : std_logic_vector(31 downto 0);
-    signal length_slv : std_logic_vector(6 downto 0);
     signal index : natural;
 
 begin
@@ -82,7 +81,6 @@ begin
             
             -- Data input is a single precision float shapelet datapoint
             data_i      => data,
-            ---length_i    => length_slv,
     
             -- begins opeartions
             start_i     => start,      
@@ -93,13 +91,14 @@ begin
         );
 
     process
-        variable fileLine	: line;				-- Stores a read line from a text file
-        variable str 		: string(1 to 8);	-- Stores an 8 characters string
-        variable char		: character;		-- Stores a single character
-        variable bool		: boolean;	
-		variable row        : line;				-- Output file line
- 		variable length	: integer;
-		variable l_v : std_logic_vector(31 downto 0);
+        variable fileLine	        : line;				-- Stores a read line from a text file
+        variable str 		        : string(1 to 8);	-- Stores an 8 characters string
+        variable char		        : character;		-- Stores a single character
+        variable bool		        : boolean;	
+		variable row                : line;				-- Output file line
+ 		variable length	            : integer;
+        variable current_minimum    : std_logic_vector(31 downto 0);
+		variable l_v                : std_logic_vector(31 downto 0);
     begin
 		op <= '0';
 		start <= '0';
@@ -110,21 +109,18 @@ begin
 		--wait for half_clk_period;
         -- read all lines in the test file
         while not (endfile(testFile)) loop
-            
-            -- pivot normalization 
-            
-            readline(testFile, fileLine);   -- read the line containing length
+            -- Pivot normalization 
+            -- read the line containing length
+            readline(testFile, fileLine);   
             for i in str'range loop
                 read(fileLine, char, bool);
                 str(i) := char;
             end loop;
 			l_v := StringToStdLogicVector(str);
             data <= l_v;
-            --length_slv <= l_v(6 downto 0);
 			length := to_integer(unsigned(l_v));
 			report "length: " & integer'image(length);
             --assert length > 0 report "Incompatible length < 0 !" severity warning;
-
 
             -- Start normalization
             start <= '1';
@@ -136,7 +132,6 @@ begin
             report "loading values";
 
             -- load pivot values
-
             readline(testFile, fileLine);
             for i in 0 to length-1 loop
 
@@ -154,7 +149,20 @@ begin
 
             wait until ready = '1';
 			wait for clk_period;
+            
             -- loads target and waits for output
+            
+            -- FUTURE: read the line containing current minimum distance
+            -- readline(testFile, fileLine);   
+            -- for i in str'range loop
+                -- read(fileLine, char, bool);
+                -- str(i) := char;
+            -- end loop;
+            -- data <= StringToStdLogicVector(str);          
+            
+            -- REMOVE LATER: fixed minimum distance 
+            data <=  x"3f23f869";
+            
             start <= '1';
             op <= '1';
             wait for clk_period;

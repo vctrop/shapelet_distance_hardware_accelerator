@@ -71,6 +71,11 @@ add wave -noupdate -divider Accumulators
 add wave -noupdate /tb_shapelet_distance/DUV/accumulators_wr_s
 add wave -noupdate /tb_shapelet_distance/DUV/accumulators_rst_s
 add wave -noupdate /tb_shapelet_distance/DUV/reg_accumulators_s
+add wave -noupdate -divider {Early abandon}
+add wave -noupdate /tb_shapelet_distance/DUV/reg_exp_minimum_s
+add wave -noupdate /tb_shapelet_distance/DUV/addsub_out_exp_s
+add wave -noupdate /tb_shapelet_distance/DUV/exp_acc_greater_s
+add wave -noupdate /tb_shapelet_distance/DUV/any_acc_greater_s
 add wave -noupdate -divider {Adder Tree}
 add wave -noupdate /tb_shapelet_distance/DUV/adder_tree_start_s
 add wave -noupdate /tb_shapelet_distance/DUV/adder_tree_out_s
@@ -81,7 +86,7 @@ add wave -noupdate /tb_shapelet_distance/DUV/counter_start_s
 add wave -noupdate /tb_shapelet_distance/DUV/counter_mode_s
 add wave -noupdate /tb_shapelet_distance/DUV/fp_ready_s
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {94811 ns} 0}
+WaveRestoreCursors {{Cursor 1} {176 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 388
 configure wave -valuecolwidth 100

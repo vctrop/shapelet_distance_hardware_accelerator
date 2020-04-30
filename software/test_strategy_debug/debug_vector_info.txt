@@ -1,0 +1,1400 @@
+Length
+00000003
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized pivot shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized target shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Pointwise distance
+00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000003
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized pivot shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 
+sum: 40503dd6, avg: 3f8ad3e4
+Shapelet elements - avg
+00000000 00000000 00000000 
+Subtractions squared
+00000000 00000000 00000000 
+std acc: 00000000
+std_div: 00000000, std: 00000000
+Normalized target shapelet
+00000000 00000000 00000000 
+Pointwise distance
+3fa0d240 3dd20c8e 3f2419f0 
+Distance: 40000000
+
+Length
+00000003
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized pivot shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 
+sum: 3f8b45bc, avg: 3eb9b250
+Shapelet elements - avg
+00000000 00000000 00000000 
+Subtractions squared
+00000000 00000000 00000000 
+std acc: 00000000
+std_div: 00000000, std: 00000000
+Normalized target shapelet
+00000000 00000000 00000000 
+Pointwise distance
+3fa0d240 3dd20c8e 3f2419f0 
+Distance: 40000000
+
+Length
+00000003
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized pivot shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 
+sum: c0522606, avg: bf8c1959
+Shapelet elements - avg
+00000000 00000000 00000000 
+Subtractions squared
+00000000 00000000 00000000 
+std acc: 00000000
+std_div: 00000000, std: 00000000
+Normalized target shapelet
+00000000 00000000 00000000 
+Pointwise distance
+3fa0d240 3dd20c8e 3f2419f0 
+Distance: 40000000
+
+Length
+00000003
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b 
+sum: c09eefe2, avg: bfd3ea83
+Shapelet elements - avg
+3d5a51c0 bc798180 bd1bf100 
+Subtractions squared
+3b3a2f55 39732d2d 3abdfb72 
+std acc: 3b942ff0
+std_div: 3b142ff0, std: 3d42c581
+Normalized pivot shapelet
+3f8f79a5 bea3f869 bf4cf698 
+Target shapelet
+bf8d480a bf8d480a bf8d480a 
+sum: c053ec0f, avg: bf8d480a
+Shapelet elements - avg
+00000000 00000000 00000000 
+Subtractions squared
+00000000 00000000 00000000 
+std acc: 00000000
+std_div: 00000000, std: 00000000
+Normalized target shapelet
+00000000 00000000 00000000 
+Pointwise distance
+3fa0d240 3dd20c8e 3f2419f0 
+Distance: 40000000
+
+Length
+00000006
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized pivot shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized target shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000006
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized pivot shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 
+sum: 40ce63eb, avg: 3f8997f2
+Shapelet elements - avg
+3c1df900 3c1df900 3c1df900 bc1df900 bc1df900 bc1df900 
+Subtractions squared
+38c2f6b8 38c2f6b8 38c2f6b8 38c2f6b8 38c2f6b8 38c2f6b8 
+std acc: 3a12390a
+std_div: 38e9f4dd, std: 3c2d0ce5
+Normalized target shapelet
+3f69b1e9 3f69b1e9 3f69b1e9 bf69b1e9 bf69b1e9 bf69b1e9 
+Pointwise distance
+3f88da78 3f06119f 3fdb8404 3e0bf53d 3e0bf53d 3d8a4858 
+Distance: 40698491
+
+Length
+00000006
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized pivot shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 
+sum: 400d3b87, avg: 3ebc4f5f
+Shapelet elements - avg
+bba743c0 bba743c0 bba743c0 3cd114a0 bba743c0 bba743c0 
+Subtractions squared
+37da92ed 37da92ed 37da92ed 3a2ac2af 37da92ed 37da92ed 
+std acc: 3a4ce9a3
+std_div: 3923ee1c, std: 3c4cdb37
+Normalized target shapelet
+bed105fa bed105fa bed105fa 4002a3b2 bed105fa bed105fa 
+Pointwise distance
+40b17ddc 3eb6c0c3 390bf12c 40d5bbe9 3c9520dd 3d756902 
+Distance: 414a936e
+
+Length
+00000006
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized pivot shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 
+sum: c0d24a34, avg: bf8c3178
+Shapelet elements - avg
+3a40f800 3a40f800 3a40f800 bac0f800 3a40f800 bac0f800 
+Subtractions squared
+351174f0 351174f0 351174f0 361174f0 351174f0 361174f0 
+std acc: 36da2f68
+std_div: 35ae8c53, std: 3a957913
+Normalized target shapelet
+3f253f4f 3f253f4f 3f253f4f bfa53f4f 3f253f4f bfa53f4f 
+Pointwise distance
+3fd8c777 3e553562 3f8b0788 3f0f2a4f 3fb4db00 3ed06342 
+Distance: 40abbfa9
+
+Length
+00000006
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 
+sum: c1211b6d, avg: bfd6cf3c
+Shapelet elements - avg
+3d9b7470 3bf1b600 bc7d6780 bcad7c40 bcad7c40 bcd09240 
+Subtractions squared
+3bbccc69 3864382d 397ad5bd 39eb2256 39eb2256 3a29edfc 
+std acc: 3bf90d90
+std_div: 3ac73e0d, std: 3d1fb259
+Normalized pivot shapelet
+3ff9333e 3e41bc6d becb1bc6 bf0b0d49 bf0b0d49 bf272c89 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a 
+sum: c0d3ec0e, avg: bf8d4809
+Shapelet elements - avg
+b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 
+Subtractions squared
+28800000 28800000 28800000 28800000 28800000 28800000 
+std acc: 29c00000
+std_div: 2899999a, std: 340c378c
+Normalized target shapelet
+bf69b1e8 bf69b1e8 bf69b1e8 bf69b1e8 bf69b1e8 bf69b1e8 
+Pointwise distance
+4102d9b8 3f9b7661 3e886a54 3e0bf53b 3e0bf53b 3d8a4854 
+Distance: 41200012
+
+Length
+00000009
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized pivot shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized target shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000009
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized pivot shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 
+sum: 411a5476, avg: 3f892ea2
+Shapelet elements - avg
+3c52a100 3c52a100 3c52a100 bbd2a200 bbd2a200 bbd2a200 bbd2a200 bbd2a200 bbd2a200 
+Subtractions squared
+392d4c89 392d4c89 392d4c89 382d4e2f 382d4e2f 382d4e2f 382d4e2f 382d4e2f 382d4e2f 
+std acc: 3a42f6b9
+std_div: 38c2f6b9, std: 3c1df900
+Normalized target shapelet
+3faaaa66 3faaaa66 3faaaa66 bf2aab35 bf2aab35 bf2aab35 bf2aab35 bf2aab35 bf2aab35 
+Pointwise distance
+3fb77e02 3f3c4d03 40184caf 3da7ac10 3da7ac10 3ccbbb6f 3ccbbb6f 3ccbbb6f 3ccbbb6f 
+Distance: 4099fbc4
+
+Length
+00000009
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized pivot shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 
+sum: 4052de65, avg: 3ebb705a
+Shapelet elements - avg
+bb5f0500 bb5f0500 bb5f0500 3cdf04f0 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 
+Subtractions squared
+374249b6 374249b6 374249b6 3a42499a 374249b6 374249b6 374249b6 374249b6 374249b6 
+std acc: 3a5a92d2
+std_div: 38da92d2, std: 3c2743b6
+Normalized target shapelet
+beaaaab5 beaaaab5 beaaaab5 402aaaa9 beaaaab5 beaaaab5 beaaaab5 beaaaab5 beaaaab5 
+Pointwise distance
+41033c84 3f278dd5 3c7c12af 4114915b 3b1210aa 3cfcb800 3cfcb800 3cfcb800 3cfcb800 
+Distance: 4192442a
+
+Length
+00000009
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized pivot shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 
+sum: c11dae9b, avg: bf8c296d
+Shapelet elements - avg
+3a00a000 3a00a000 3a00a000 bae12400 3a00a000 bae12400 3a00a000 3a00a000 3a00a000 
+Subtractions squared
+348140c8 348140c8 348140c8 3646004d 348140c8 3646004d 348140c8 348140c8 348140c8 
+std acc: 36fe8ca4
+std_div: 357e8ca4, std: 3a7f460e
+Normalized target shapelet
+3f00fdb1 3f00fdb1 3f00fdb1 bfe1c7ff 3f00fdb1 bfe1c7ff 3f00fdb1 3f00fdb1 3f00fdb1 
+Pointwise distance
+4083729f 3a504a52 3f023417 3ff4f4be 3f483d8c 3fc995aa 3f834f34 3f834f34 3f834f34 
+Distance: 413f72ad
+
+Length
+00000009
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 
+sum: c172e200, avg: bfd7e555
+Shapelet elements - avg
+3dacd600 3c81f3c0 bbe4b600 bc4fec00 bc4fec00 bc8b0c00 bc8b0c00 bc8b0c00 bc8b0c00 
+Subtractions squared
+3be96086 3983ef1f 384c54b1 3928df82 3928df82 39970c11 39970c11 39970c11 39970c11 
+std acc: 3c11c490
+std_div: 3a91c490, std: 3d089867
+Normalized pivot shapelet
+4021f5cd 3ef38cb9 be5651b7 bec2d69b bec2d69b bf024c1b bf024c1b bf024c1b bf024c1b 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a 
+sum: c11ef10a, avg: bf8d4809
+Shapelet elements - avg
+b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 
+Subtractions squared
+28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 
+std acc: 2a100000
+std_div: 28900000, std: 3407c3b6
+Normalized target shapelet
+bf715bf0 bf715bf0 bf715bf0 bf715bf0 bf715bf0 bf715bf0 bf715bf0 bf715bf0 bf715bf0 
+Pointwise distance
+41410944 4000c692 3f09bd13 3ea1dd6e 3ea1dd6e 3e40baef 3e40baef 3e40baef 3e40baef 
+Distance: 41800020
+
+Length
+0000000c
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized pivot shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized target shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+0000000c
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized pivot shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 
+sum: 414e63ea, avg: 3f8997f1
+Shapelet elements - avg
+3c1df980 3c1df980 3c1df980 bc1df880 bc1df880 bc1df880 bc1df880 bc1df880 bc1df880 3c1df980 3c1df980 3c1df980 
+Subtractions squared
+38c2f7f4 38c2f7f4 38c2f7f4 38c2f57c 38c2f57c 38c2f57c 38c2f57c 38c2f57c 38c2f57c 38c2f7f4 38c2f7f4 38c2f7f4 
+std acc: 3a92390b
+std_div: 38d4b010, std: 3c24ff40
+Normalized target shapelet
+3f751ab7 3f751ab7 3f751ab7 bf75192a bf75192a bf75192a bf75192a bf75192a bf75192a 3f751ab7 3f751ab7 3f751ab7 
+Pointwise distance
+3f9fd043 3fe0d654 3ff8f8d5 3e817798 3e817798 3e75b8d4 3e75b8d4 3e75b8d4 3e75b8d4 4001f57b 40133f34 3f1bdcd3 
+Distance: 4135b1ed
+
+Length
+0000000c
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized pivot shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 
+sum: 408c40a1, avg: 3ebb00d7
+Shapelet elements - avg
+bb274380 bb274380 bb274380 3ce5fd20 bb274380 bb274380 bb274380 bb274380 bb274380 bb274380 bb274380 bb274380 
+Subtractions squared
+36da9246 36da9246 36da9246 3a4e9ed6 36da9246 36da9246 36da9246 36da9246 36da9246 36da9246 36da9246 36da9246 
+std acc: 3a61676b
+std_div: 38a3ee1f, std: 3c10daf6
+Normalized target shapelet
+be93cd0a be93cd0a be93cd0a 404b3a34 be93cd0a be93cd0a be93cd0a be93cd0a be93cd0a be93cd0a be93cd0a be93cd0a 
+Pointwise distance
+3c87c0e6 3bcdb668 3cb4c85b 4152d425 3ce16c7b 3d0310f1 3d0310f1 3d0310f1 3d0310f1 3d0310f1 40f447e8 40836691 
+Distance: 41c931b4
+
+Length
+0000000c
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized pivot shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 
+sum: c1525340, avg: bf8c3780
+Shapelet elements - avg
+3a713800 3a713800 3a713800 baa8d800 3a713800 baa8d800 3a713800 3a713800 3a713800 baa8d800 baa8d800 baa8d800 
+Subtractions squared
+35634a7c 35634a7c 35634a7c 35deb86c 35634a7c 35deb86c 35634a7c 35634a7c 35634a7c 35deb86c 35deb86c 35deb86c 
+std acc: 376ea3dc
+std_div: 35ad8e71, std: 3a950c37
+Normalized target shapelet
+3f4f27b7 3f4f27b7 3f4f27b7 bf910024 3f4f27b7 bf910024 3f4f27b7 3f4f27b7 3f4f27b7 bf910024 bf910024 bf910024 
+Pointwise distance
+3f7071f0 3fb15aab 3fc6dbb9 3eeb89bc 3fcc6d39 3ee298ef 3fd0a737 3fd0a737 3fd0a737 3ee298ef 41502cf0 4103d6f5 
+Distance: 4203d902
+
+Length
+0000000c
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 
+sum: c194c2ad, avg: bfc658e7
+Shapelet elements - avg
+bd57e1c0 bdf849f0 be138920 be196230 be196230 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 be1dc4f0 3f50b991 3f129779 
+Subtractions squared
+3b360cf8 3c70cf56 3caa0d88 3cb7cd06 3cb7cd06 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3cc2764c 3f2a2e12 3ea7e23f 
+std acc: 3f98e41a
+std_div: 3dde630f, std: 3ea8b7a1
+Normalized pivot shapelet
+be23c838 bebc5e40 bedfdc44 bee8bbce bee8bbce beef6364 beef6364 beef6364 beef6364 beef6364 401e5a34 3fde6d9a 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a 
+sum: c153ec0d, avg: bf8d4809
+Shapelet elements - avg
+b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 b4000000 
+Subtractions squared
+28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 28800000 
+std acc: 2a400000
+std_div: 288ba2e9, std: 3405b10f
+Normalized target shapelet
+bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 bf7519f2 
+Pointwise distance
+3f22cf9a 3eb1f00b 3e8a8d1b 3e81792a 3e81792a 3e75bbe4 3e75bbe4 3e75bbe4 3e75bbe4 3e75bbe4 413c6c52 40e87132 
+Distance: 41b00007
+
+Length
+0000000f
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized pivot shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized target shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+0000000f
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized pivot shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 
+sum: 418139af, avg: 3f89d721
+Shapelet elements - avg
+3bfcc300 3bfcc300 3bfcc300 bc3d9080 bc3d9080 bc3d9080 bc3d9080 bc3d9080 bc3d9080 3bfcc300 3bfcc300 3bfcc300 3bfcc300 3bfcc300 3bfcc300 
+Subtractions squared
+3879907d 3879907d 3879907d 390c5eaf 390c5eaf 390c5eaf 390c5eaf 390c5eaf 390c5eaf 3879907d 3879907d 3879907d 3879907d 3879907d 3879907d 
+std acc: 3aaf77a7
+std_div: 38c888bf, std: 3c2036a9
+Normalized target shapelet
+3f49f09d 3f49f09d 3f49f09d bf977310 bf977310 bf977310 bf977310 bf977310 bf977310 3f49f09d 3f49f09d 3f49f09d 3f49f09d 3f49f09d 3f49f09d 
+Pointwise distance
+3fd6bcc6 3fec0ec7 3ff36384 3eb0ef17 3eb0ef17 3eae947b 3eae947b 3eae947b 3eae947b 3ff6a19b 3e800680 3f059795 3eb5d6a4 3f8a4343 400f300d 
+Distance: 415d9864
+
+Length
+0000000f
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized pivot shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 
+sum: 40b00cf6, avg: 3ebbc98f
+Shapelet elements - avg
+bb85cfc0 bb85cfc0 bb85cfc0 3cd971a0 bb85cfc0 bb85cfc0 bb85cfc0 bb85cfc0 bb85cfc0 bb85cfc0 bb85cfc0 bb85cfc0 3cd971a0 bb85cfc0 bb85cfc0 
+Subtractions squared
+378be30c 378be30c 378be30c 3a38b1d4 378be30c 378be30c 378be30c 378be30c 378be30c 378be30c 378be30c 378be30c 3a38b1d4 378be30c 378be30c 
+std acc: 3ad51bf0
+std_div: 38f38da5, std: 3c30905e
+Normalized target shapelet
+bec20367 bec20367 bec20367 401da2ca bec20367 bec20367 bec20367 bec20367 bec20367 bec20367 bec20367 bec20367 401da2ca bec20367 bec20367 
+Pointwise distance
+3c851eef 3d1442c7 3d36ab2e 4115a950 3d3fd4cf 3d46d9a3 3d46d9a3 3d46d9a3 3d46d9a3 3d46d9a3 3ee444c4 3e4b1deb 3f94d35d 409be0bd 40e304f7 
+Distance: 41bc1a65
+
+Length
+0000000f
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized pivot shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 
+sum: c1837bf2, avg: bf8c3ff1
+Shapelet elements - avg
+3a9a6000 3a9a6000 3a9a6000 ba871400 3a9a6000 ba871400 3a9a6000 3a9a6000 3a9a6000 ba871400 ba871400 ba871400 ba871400 ba871400 ba871400 
+Subtractions squared
+35ba2f48 35ba2f48 35ba2f48 358e8c33 35ba2f48 358e8c33 35ba2f48 35ba2f48 35ba2f48 358e8c33 358e8c33 358e8c33 358e8c33 358e8c33 358e8c33 
+std acc: 3798bac8
+std_div: 35ae8c52, std: 3a957913
+Normalized target shapelet
+3f8432a5 3f8432a5 3f8432a5 bf6758a1 3f8432a5 bf6758a1 3f8432a5 3f8432a5 3f8432a5 bf6758a1 bf6758a1 bf6758a1 bf6758a1 bf6758a1 bf6758a1 
+Pointwise distance
+4017a01e 40243efe 402890a5 3dc2ba09 4029a74f 3dbdcd81 402a78e1 402a78e1 402a78e1 3dbdcd81 3fb603ed 3f70f01d 40a79654 40eed078 4122a48e 
+Distance: 422ee123
+
+Length
+0000000f
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 
+sum: c17be0bb, avg: bf8655b9
+Shapelet elements - avg
+bf0d8478 bf1f0f9a bf24e8a4 bf265ee8 bf265ee8 bf277798 bf277798 bf277798 bf277798 bf277798 3ea1666a 3d9488e8 3fc17d72 3fff70c1 401f9bf2 
+Subtractions squared
+3e9c7661 3ec5a8c4 3ed475cb 3ed83e70 3ed83e70 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3edb1a80 3dcb83f5 3bac5d2b 40123e63 407ee1d2 40c7062b 
+std acc: 41857635
+std_div: 3f988718, std: 3f8bba08
+Normalized pivot shapelet
+bf01a3f6 bf11b62c bf171192 bf18686d bf18686d bf19698f bf19698f bf19698f bf19698f bf19698f 3e93dabb 3d8811a2 3fb1404f 3fea009c 401236bd 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a 
+sum: c1847c5a, avg: bf8d5171
+Shapelet elements - avg
+39967000 39967000 39967000 39967000 39967000 39967000 39967000 39967000 39967000 39967000 39967000 39967000 baf48c00 baf48c00 39967000 
+Subtractions squared
+33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 33b0cee2 36699b2d 36699b2d 33b0cee2 
+std acc: 3706c29a
+std_div: 351a02f9, std: 3a468ff1
+Normalized target shapelet
+3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b 3ec1f44b c01da4ab c01da4ab 3ec1f44b 
+Pointwise distance
+3f489b8b 3f6611d4 3f7056b5 3f72f0e6 3f72f0e6 3f74e6e2 3f74e6e2 3f74e6e2 3f74e6e2 3f74e6e2 3c04d325 3dc7d7b7 416ce856 419352c7 40687245 
+Distance: 42390c77
+
+Length
+00000012
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized pivot shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized target shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000012
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized pivot shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 
+sum: 419b19eb, avg: 3f89de26
+Shapelet elements - avg
+3bf5be00 3bf5be00 3bf5be00 bc411300 bc411300 bc411300 bc411300 bc411300 bc411300 3bf5be00 3bf5be00 3bf5be00 3bf5be00 3bf5be00 3bf5be00 bc411300 3bf5be00 3bf5be00 
+Subtractions squared
+386be539 386be539 386be539 39119da7 39119da7 39119da7 39119da7 39119da7 39119da7 386be539 386be539 386be539 386be539 386be539 386be539 39119da7 386be539 386be539 
+std acc: 3ad080c0
+std_div: 38c43cf1, std: 3c1e7cf3
+Normalized target shapelet
+3f46781c 3f46781c 3f46781c bf9beed0 bf9beed0 bf9beed0 bf9beed0 bf9beed0 bf9beed0 3f46781c 3f46781c 3f46781c 3f46781c 3f46781c 3f46781c bf9beed0 3f46781c 3f46781c 
+Pointwise distance
+400b6405 4014a65d 4017cd68 3e4ec8e2 3e4ec8e2 3e4c0520 3e4c0520 3e4c0520 3e4c0520 40193128 3f3f8216 3f894eda 3a09fb42 3dceaa5e 3ee4af68 40ecc3b3 3f215b17 3f2eb088 
+Distance: 41ac612f
+
+Length
+00000012
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized pivot shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 
+sum: 40d2de65, avg: 3ebb705a
+Shapelet elements - avg
+bb5f0500 bb5f0500 bb5f0500 3cdf04f0 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 3cdf04f0 bb5f0500 bb5f0500 bb5f0500 bb5f0500 bb5f0500 
+Subtractions squared
+374249b6 374249b6 374249b6 3a42499a 374249b6 374249b6 374249b6 374249b6 374249b6 374249b6 374249b6 374249b6 3a42499a 374249b6 374249b6 374249b6 374249b6 374249b6 
+std acc: 3ada92d0
+std_div: 38cdb75a, std: 3c224538
+Normalized target shapelet
+beafeb5a beafeb5a beafeb5a 402feb4e beafeb5a beafeb5a beafeb5a beafeb5a beafeb5a beafeb5a beafeb5a beafeb5a 402feb4e beafeb5a beafeb5a beafeb5a beafeb5a beafeb5a 
+Pointwise distance
+3e0275e3 3e2818c3 3e35b35c 4145f985 3e392f32 3e3bd19a 3e3bd19a 3e3bd19a 3e3bd19a 3e3bd19a 3d8412eb 3be28201 407f14e2 40041235 404c6ad2 4059f72b 406a283f 40721862 
+Distance: 420868a3
+
+Length
+00000012
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized pivot shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 
+sum: c19dce43, avg: bf8c4591
+Shapelet elements - avg
+3ab0e000 3ab0e000 3ab0e000 ba612800 3ab0e000 ba612800 3ab0e000 3ab0e000 3ab0e000 ba612800 ba612800 ba612800 ba612800 ba612800 ba612800 ba612800 ba612800 ba612800 
+Subtractions squared
+35f46988 35f46988 35f46988 35460756 35f46988 35460756 35f46988 35f46988 35f46988 35460756 35460756 35460756 35460756 35460756 35460756 35460756 35460756 35460756 
+std acc: 37af00b3
+std_div: 35a4b55d, std: 3a9132e2
+Normalized target shapelet
+3f9bec98 3f9bec98 3f9bec98 bf467c8e 3f9bec98 bf467c8e 3f9bec98 3f9bec98 3f9bec98 bf467c8e bf467c8e bf467c8e bf467c8e bf467c8e bf467c8e bf467c8e bf467c8e bf467c8e 
+Pointwise distance
+406b9b4f 4077998e 407ba9e6 38308cef 407caf50 374a735e 407d73b8 407d73b8 407d73b8 374a735e 3ef0babc 3e87bc4c 40155c5f 405f6370 409d8e75 40a5f0dc 40afe594 40b4c113 
+Distance: 425c804d
+
+Length
+00000012
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 
+sum: c12ec7a8, avg: bf1b5c24
+Shapelet elements - avg
+bf7ed3c6 bf882f74 bf8b1bf9 bf8bd71b bf8bd71b bf8c6373 bf8c6373 bf8c6373 bf8c6373 bf8c6373 be027064 bebd7c62 3f88d5ca 3fc6c91a 4003481e 400894d0 400eb408 4011a08e 
+Subtractions squared
+3f7da8ec 3f90e4e8 3f972ec7 3f98c698 3f98c698 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3f99f9d9 3c84ecae 3e0c40e5 3f9247b2 401a5bb2 4086a5c6 4091bce7 409f186f 40a5ae8b 
+std acc: 42094cc1
+std_div: 4001392e, std: 3fb5e1e0
+Normalized pivot shapelet
+bf3355ca bf3fae6e bf43cbf9 bf44d35d bf44d35d bf4598e6 bf4598e6 bf4598e6 bf4598e6 bf4598e6 bdb797e8 be8559dc 3f40988d 3f8be54b 3fb8c78b 3fc03d18 3fc8daf6 3fccf882 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a 
+sum: c19efe45, avg: bf8d53cc
+Shapelet elements - avg
+39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 39bc2000 baeb2000 baeb2000 39bc2000 baeb2000 39bc2000 39bc2000 
+Subtractions squared
+340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 340a3f04 3657f3c4 3657f3c4 340a3f04 3657f3c4 340a3f04 340a3f04 
+std acc: 37425d97
+std_div: 3536eeac, std: 3a58676a
+Normalized target shapelet
+3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 3ede8bf8 c00b12c0 c00b12c0 3ede8bf8 c00b12c0 3ede8bf8 3ede8bf8 
+Pointwise distance
+3fa4f2a6 3fb342ca 3fb82a08 3fb9667f 3fb9667f 3fba5489 3fba5489 3fba5489 3fba5489 3fba5489 3e8cbf63 3ef7639c 4108ec28 412aa9d1 3f824bb7 4158138b 3fa4c0e6 3fae3950 
+Distance: 424dd370
+
+Length
+00000015
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized pivot shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized target shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000015
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized pivot shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 
+sum: 41958182, avg: 3f63d189
+Shapelet elements - avg
+3e4758fc 3e4758fc 3e4758fc 3e3399dc 3e3399dc 3e3399dc 3e3399dc 3e3399dc 3e3399dc 3e4758fc 3e4758fc 3e4758fc 3e4758fc 3e4758fc 3e4758fc 3e3399dc 3e4758fc 3e4758fc bfbdd3ac bf8c75ca bf49eef6 
+Subtractions squared
+3d1b3b77 3d1b3b77 3d1b3b77 3cfc010c 3cfc010c 3cfc010c 3cfc010c 3cfc010c 3cfc010c 3d1b3b77 3d1b3b77 3d1b3b77 3d1b3b77 3d1b3b77 3d1b3b77 3cfc010c 3d1b3b77 3d1b3b77 400cc23b 3f9a2216 3f1f491d 
+std acc: 40950deb
+std_div: 3e6e7cab, std: 3ef716a0
+Normalized target shapelet
+3ece8991 3ece8991 3ece8991 3eba141f 3eba141f 3eba141f 3eba141f 3eba141f 3eba141f 3ece8991 3ece8991 3ece8991 3ece8991 3ece8991 3ece8991 3eba141f 3ece8991 3ece8991 c044ac59 c01186a9 bfd1376b 
+Pointwise distance
+3fcab16d 3fd92ad8 3fde1a5e 3fd2099c 3fd2099c 3fd2f18a 3fd2f18a 3fd2f18a 3fd2f18a 3fe0479f 3efa3892 3f3b58a0 3ba8f6f0 3e16ba11 3efe4448 3f2307ee 3f2c01fa 3f38957f 41974761 414a9d5c 410859b5 
+Distance: 42728b0c
+
+Length
+00000015
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized pivot shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 
+sum: 40f5afd4, avg: 3ebb30a2
+Shapelet elements - avg
+bb3f2900 bb3f2900 bb3f2900 3ce30070 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 3ce30070 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 bb3f2900 
+Subtractions squared
+370ebe35 370ebe35 370ebe35 3a4949c7 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 3a4949c7 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 370ebe35 
+std acc: 3ade7a00
+std_div: 38b1fb33, std: 3c16ef8d
+Normalized target shapelet
+bea21cae bea21cae bea21cae 404081d8 bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae 404081d8 bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae bea21cae 
+Pointwise distance
+3e94661d 3eadbd68 3eb6a169 41768cac 3eb8e34b 3eba9703 3eba9703 3eba9703 3eba9703 3eba9703 39e5db42 3c964a22 40cd4522 3f9bead1 4001e906 400bd291 4017b9fd 401d9566 40223c92 40241de4 40241de4 
+Distance: 422bc3cd
+
+Length
+00000015
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized pivot shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 
+sum: c1984a9a, avg: bf681028
+Shapelet elements - avg
+be408a28 be408a28 be408a28 be42cd10 be408a28 be42cd10 be408a28 be408a28 be408a28 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 be42cd10 3fce97a8 3ffe14c9 
+Subtractions squared
+3d10cf87 3d10cf87 3d10cf87 3d143b71 3d10cf87 3d143b71 3d10cf87 3d10cf87 3d10cf87 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 3d143b71 4026b86c 407c2d41 
+std acc: 40e743c2
+std_div: 3eb90302, std: 3f19e351
+Normalized target shapelet
+bea02645 bea02645 bea02645 bea207ca bea02645 bea207ca bea02645 bea02645 bea02645 bea207ca bea207ca bea207ca bea207ca bea207ca bea207ca bea207ca bea207ca bea207ca bea207ca 402bd694 40535690 
+Pointwise distance
+3e968502 3eb008a9 3eb8fb77 3eb8fc67 3ebb4108 3ebab03d 3ebcf789 3ebcf789 3ebcf789 3ebab03d 39e25ed7 3c96a4bc 3f2071d0 3f9bdf4a 4001e197 400bcada 4017b1f4 401d8d36 40223443 3ffaf7de 40823db9 
+Distance: 41b84b2c
+
+Length
+00000015
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 
+sum: c0b909f2, avg: be8cfb63
+Shapelet elements - avg
+bfa9d91c bfb29ead bfb58b32 bfb64654 bfb64654 bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac bfb6d2ac beeaf517 bf339ca4 3f3ccd22 3f9c59e1 3fdc2104 3fe6ba68 3ff2f8d8 3ff8d1e3 3ffd6374 3fff3747 3fff3747 
+Subtractions squared
+3fe160be 3ff94216 4000be20 4001c813 4001c813 4002903a 4002903a 4002903a 4002903a 4002903a 3e57a4f9 3efc08da 3f0b3dee 3fbefb54 403d48c3 404ff37b 40669b6a 4071d754 407acdba 407e6f2b 407e6f2b 
+std acc: 4240b146
+std_div: 401a276b, std: 3fc6a76e
+Normalized pivot shapelet
+bf5ae0ea bf662eb7 bf69f350 bf6ae477 bf6ae477 bf6b9952 bf6b9952 bf6b9952 bf6b9952 bf6b9952 be97643e bee775fe 3ef34d96 3f497c41 3f8dd64b 3f94aaa1 3f9c8e43 3fa052dd 3fa34475 3fa471e4 3fa471e4 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 
+sum: c1b98030, avg: bf8d557a
+Shapelet elements - avg
+39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 39d70000 bae46800 bae46800 39d70000 bae46800 39d70000 39d70000 39d70000 39d70000 bae46800 
+Subtractions squared
+34349100 34349100 34349100 34349100 34349100 34349100 34349100 34349100 34349100 34349100 34349100 34349100 364bc96a 364bc96a 34349100 364bc96a 34349100 34349100 34349100 34349100 364bc96a 
+std acc: 377bbfef
+std_div: 35496659, std: 3a63108c
+Normalized target shapelet
+3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df 3ef265df c000c19c c000c19c 3ef265df c000c19c 3ef265df 3ef265df 3ef265df 3ef265df c000c19c 
+Pointwise distance
+3fe1e25e 3ff12675 3ff6598e 3ff7a88b 3ff7a88b 3ff8a45d 3ff8a45d 3ff8a45d 3ff8a45d 3ff8a45d 3f176f8a 3f5b478c 40c5eda7 40faad69 3ece3c60 41211d5c 3f0fde63 3f1b63aa 3f24b2cf 3f287f77 412de006 
+Distance: 4269bb2d
+
+Length
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized target shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 3e4a4611 3e82c1c4 3e9680eb 
+sum: 419b7b19, avg: 3f4f4ecc
+Shapelet elements - avg
+3e8cb1f8 3e8cb1f8 3e8cb1f8 3e82d268 3e82d268 3e82d268 3e82d268 3e82d268 3e82d268 3e8cb1f8 3e8cb1f8 3e8cb1f8 3e8cb1f8 3e8cb1f8 3e8cb1f8 3e82d268 3e8cb1f8 3e8cb1f8 bfb3924e bf82346b bf356c39 bf1cbd48 bf0dedea bf040e56 
+Subtractions squared
+3d9aa646 3d9aa646 3d9aa646 3d85b4bd 3d85b4bd 3d85b4bd 3d85b4bd 3d85b4bd 3d85b4bd 3d9aa646 3d9aa646 3d9aa646 3d9aa646 3d9aa646 3d9aa646 3d85b4bd 3d9aa646 3d9aa646 3ffbebd9 3f84728f 3f009236 3ebfee77 3e9d5fe2 3e883d93 
+std acc: 40b7b6f8
+std_div: 3e7f9a64, std: 3effcd2d
+Normalized target shapelet
+3f0ccdec 3f0ccdec 3f0ccdec 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f02ec66 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f0ccdec 3f02ec66 3f0ccdec 3f0ccdec c033b5fc c0024e4a bfb59045 bf9cdc6c bf8e0a1d bf842893 
+Pointwise distance
+401732e3 401fbc97 4022a27e 401b90bf 401b90bf 401c1987 401c1987 401c1987 401c1987 4023e92d 3f7d644e 3fa83eb9 3d7b3c07 3b438188 3e090879 3e550c86 3e694284 3e82fe01 4171a0ed 411c0e79 40c8e199 40b18527 409c6e4c 40907ba2 
+Distance: 4293b669
+
+Length
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3f5a4bee bece5459 
+sum: 4107d798, avg: 3eb51f75
+Shapelet elements - avg
+3c125b60 3c125b60 3c125b60 3d2209a0 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3d2209a0 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3c125b60 3eff7867 bf41b9e7 
+Subtractions squared
+38a758b4 38a758b4 38a758b4 3acd205e 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 3acd205e 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 38a758b4 3e7ef116 3f1299d5 
+std acc: 3f538bd3
+std_div: 3d13299e, std: 3e4218d0
+Normalized target shapelet
+3d4108cc 3d4108cc 3d4108cc 3e55b74e 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3e55b74e 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 3d4108cc 4028793c c07f82d2 
+Pointwise distance
+3f88e40d 3f9474da 3f986a76 3fca0a66 3f9969f3 3f9a2a1d 3f9a2a1d 3f9a2a1d 3f9a2a1d 3f9a2a1d 3e77e074 3ed412fd 3c0fafbf 3e9f232f 3f4130b5 3f58e0b7 3f75f21a 3f823ca5 3f880e91 3f8a6ba9 3f8a6ba9 3f960ca2 40160849 41ced650 
+Distance: 42457ccf
+
+Length
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 3f7e0d09 3f4462ce 3f1bae68 
+sum: c18559a9, avg: bf31cce1
+Shapelet elements - avg
+becccba2 becccba2 becccba2 becded16 becccba2 becded16 becccba2 becccba2 becccba2 becded16 becded16 becded16 becded16 becded16 becded16 becded16 becded16 becded16 becded16 3fb37604 3fe2f326 3fd7ecf5 3fbb17d8 3fa6bda4 
+Subtractions squared
+3e23d52c 3e23d52c 3e23d52c 3e25a591 3e23d52c 3e25a591 3e23d52c 3e23d52c 3e23d52c 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3e25a591 3ffb9c80 40493236 40361fdf 4008bbd8 3fd934fa 
+std acc: 416d9807
+std_div: 3f25485e, std: 3f4db320
+Normalized target shapelet
+befedfe7 befedfe7 befedfe7 bf002411 befedfe7 bf002411 befedfe7 befedfe7 befedfe7 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 bf002411 3fdf5857 400d3925 40065cfd 3fe8d7f1 3fcf83ac 
+Pointwise distance
+3e7513d9 3e90eb0b 3e98cb73 3e9940be 3e9acbe5 3e9ac156 3e9c4e6b 3e9c4e6b 3e9c4e6b 3e9ac156 3b4b23c3 3c16b785 3f25083d 3f9c5804 400064a2 4009f0c6 4015654a 401b0729 401f802d 3edd9314 3fa07119 3f70aa7d 3f03e54f 3e8f2e45 
+Distance: 419d38b4
+
+Length
+00000018
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 
+sum: bf06e766, avg: bcb3df33
+Shapelet elements - avg
+bfca4878 bfd30e09 bfd5fa8e bfd6b5b0 bfd6b5b0 bfd74208 bfd74208 bfd74208 bfd74208 bfd74208 bf365943 bf747b5b 3ef7dcd5 3f77d50a 3fbbb1a8 3fc64b0c 3fd2897c 3fd86287 3fdcf418 3fdec7eb 3fdec7eb 3fe78d7d 3fe1b471 3fdfe09e 
+Subtractions squared
+401fd672 402e0024 4032dae6 40341443 40341443 4034fffa 4034fffa 4034fffa 4034fffa 4034fffa 3f01e30a 3f697b61 3e6ffbe2 3f6feccb 40099d07 4019982d 402d25d9 4036e66a 403eb472 4041df58 4041df58 405170a6 4046feae 4043c918 
+std acc: 426bd997
+std_div: 402411cd, std: 3fccf183
+Normalized pivot shapelet
+bf7cad4b bf83d125 bf85a4a4 bf861984 bf861984 bf86712c bf86712c bf86712c bf86712c bf86712c bee3c6bf bf18b1ba 3e9ace45 3f1ac967 3f6a740b 3f77b168 3f837e5b 3f87255b 3f89ffd2 3f8b2402 3f8b2402 3f909e82 3f8cf782 3f8bd352 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 3f468171 3f80bbee 3f3db055 
+sum: c1a552e2, avg: bf5c6e83
+Shapelet elements - avg
+be788644 be788644 be788644 be788644 be788644 be788644 be788644 be788644 be788644 be788644 be788644 be788644 be7aba94 be7aba94 be788644 be7aba94 be788644 be788644 be788644 be788644 be7aba94 3fd177fa 3feef330 3fcd0f6c 
+Subtractions squared
+3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d71446a 3d7590f1 3d7590f1 3d71446a 3d7590f1 3d71446a 3d71446a 3d71446a 3d71446a 3d7590f1 402b651e 405f0914 402441b4 
+std acc: 411f87c8
+std_div: 3eddf491, std: 3f288db2
+Normalized target shapelet
+bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebcbaed bebe6778 bebe6778 bebcbaed bebe6778 bebcbaed bebcbaed bebcbaed bebcbaed bebe6778 401f1233 40357592 401bb92c 
+Pointwise distance
+3ec3cd45 3edfd7e5 3ee99b77 3eec14b3 3eec14b3 3eedf1d0 3eedf1d0 3eedf1d0 3eedf1d0 3eedf1d0 3bbe9351 3d54a4a5 3ee8c0f0 3f741e68 3fd32cc4 3fe5a485 3ff96a4f 4001dbab 4005f450 40079c55 40083876 3feb3c78 40406e8e 3fe61baa 
+Distance: 41d32267
+
+Length
+0000001b
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized pivot shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized target shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+0000001b
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized pivot shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 3e4a4611 3e82c1c4 3e9680eb 3eaa4012 3eb41fa6 3ebdff3a 
+sum: 41a3ec95, avg: 3f4247cd
+Shapelet elements - avg
+3ea6bff6 3ea6bff6 3ea6bff6 3e9ce066 3e9ce066 3e9ce066 3e9ce066 3e9ce066 3e9ce066 3ea6bff6 3ea6bff6 3ea6bff6 3ea6bff6 3ea6bff6 3ea6bff6 3e9ce066 3ea6bff6 3ea6bff6 bfad0ece bf7761d7 bf28653a bf0fb649 bf00e6eb beee0eaf beda4f88 bed06ff4 bec69060 
+Subtractions squared
+3dd93b06 3dd93b06 3dd93b06 3dc04482 3dc04482 3dc04482 3dc04482 3dc04482 3dc04482 3dd93b06 3dd93b06 3dd93b06 3dd93b06 3dd93b06 3dd93b06 3dc04482 3dd93b06 3dd93b06 3fe9fa07 3f6f0df2 3edd8a08 3ea15a4f 3e81cf77 3e5d5f4e 3e3a2b8c 3e29b61d 3e1a03a6 
+std acc: 40c9a343
+std_div: 3e782b66, std: 3efc0dea
+Normalized target shapelet
+3f295c32 3f295c32 3f295c32 3f1f5511 3f1f5511 3f1f5511 3f1f5511 3f1f5511 3f1f5511 3f295c32 3f295c32 3f295c32 3f295c32 3f295c32 3f295c32 3f1f5511 3f295c32 3f295c32 c02fc452 bffb4134 bfab080e bf91f633 bf82eb7b bf71c8ae bf5dba64 bf53b33f bf49ac1a 
+Pointwise distance
+4047a2f4 405166a8 4054b529 404c7a60 404c7a60 404d16b6 404d16b6 404d16b6 404d16b6 40562995 3fc0436b 3ff29c2f 3e6c6fad 3d036641 3c8cfce9 3d49bc73 3d7086ae 3d96292d 415b2650 41090516 40a93a3b 40936f05 40801047 406a46d7 40563b80 404d283b 4044473e 
+Distance: 42ab2219
+
+Length
+0000001b
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized pivot shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3f5a4bee bece5459 bece5459 bece5459 bece5459 
+sum: 40e8ff5e, avg: 3e8a1297
+Shapelet elements - avg
+3dbe7ee4 3dbe7ee4 3dbe7ee4 3dfd3848 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dfd3848 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3dbe7ee4 3f1542a2 bf2c3378 bf2c3378 bf2c3378 bf2c3378 
+Subtractions squared
+3c0dc099 3c0dc099 3c0dc099 3c7a784b 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c7a784b 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3c0dc099 3eae0d44 3ee7aa67 3ee7aa67 3ee7aa67 3ee7aa67 
+std acc: 40169ed9
+std_div: 3db9610b, std: 3e9a0a68
+Normalized target shapelet
+3e9e4ad3 3e9e4ad3 3e9e4ad3 3ed269b4 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3ed269b4 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3e9e4ad3 3ff80e36 c00f1723 c00f1723 c00f1723 c00f1723 
+Pointwise distance
+3fffd61c 4007c1f4 400a6c2f 401ef725 400b17c6 400b98be 400b98be 400b98be 400b98be 400b98be 3f43302c 3f864e23 3d58848f 3cf6000a 3e6f780c 3e92a1d5 3eb517e2 3ec6d5ab 3ed5458e 3edb3031 3edb3031 3ef8b6de 3f6c0d39 41244f3a 4123c34d 4123c34d 4123c34d 
+Distance: 4289510f
+
+Length
+0000001b
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized pivot shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 3f7e0d09 3f4462ce 3f1bae68 3ee836ed 3eb8b9cb 3e9369c3 
+sum: c179107e, avg: bf1397ff
+Shapelet elements - avg
+bf049ab3 bf049ab3 bf049ab3 bf052b6d bf049ab3 bf052b6d bf049ab3 bf049ab3 bf049ab3 bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d bf052b6d 3fa45b94 3fd3d8b4 3fc8d284 3fabfd66 3f97a334 3f83d9bb 3f6ff4e4 3f5d4ce0 
+Subtractions squared
+3e895fcc 3e895fcc 3e895fcc 3e8a8c4d 3e895fcc 3e8a8c4d 3e895fcc 3e895fcc 3e895fcc 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3e8a8c4d 3fd30aed 402f4ef0 401d899b 3fe71902 3fb3a3df 3f87d11d 3f60eb2c 3f3f4dd2 
+std acc: 418ef731
+std_div: 3f2ff529, std: 3f543d0b
+Normalized target shapelet
+bf1ff230 bf1ff230 bf1ff230 bf20a0c1 bf1ff230 bf20a0c1 bf1ff230 bf1ff230 bf1ff230 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 bf20a0c1 3fc63f2a 3fff86f9 3ff23ae0 3fcf73d8 3fb6e75b 3f9f096e 3f90b779 3f857714 
+Pointwise distance
+3e6bbd92 3e8bc55c 3e937c53 3e93fa07 3e957259 3e9572dd 3e96ed0c 3e96ed0c 3e96ed0c 3e9572dd 3b83d807 3bfc1f16 3f275729 3f9daeb3 40011637 400aa19e 401614a4 401bb592 40202dbe 3eaf6cb9 3f888c03 3f491698 3ed3b5e3 3e58cfb6 3d9f6fab 3ce4d934 3bcdbba3 
+Distance: 419911a5
+
+Length
+0000001b
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 
+sum: 40941d66, avg: 3e2f8b24
+Shapelet elements - avg
+bfe3095a bfebceea bfeebb70 bfef7692 bfef7692 bff002ea bff002ea bff002ea bff002ea bff002ea bf67db06 bf92fe8f 3e94d950 3f465347 3fa2f0c6 3fad8a2a 3fb9c89a 3fbfa1a6 3fc43336 3fc6070a 3fc6070a 3fcecc9c 3fc8f390 3fc71fbc 3fc6070a 3fc6070a 3fc6070a 
+Subtractions squared
+40495996 40593589 405ea10d 405ffe9c 405ffe9c 40610577 40610577 40610577 40610577 40610577 3f51fd00 3fa8ceb0 3dad17fa 3f19a4ed 3fcf6b3a 3feb480f 4006d38c 400f729c 40165e75 40192ee4 40192ee4 40270def 401dbd79 401ae25a 40192ee4 40192ee4 40192ee4 
+std acc: 428614be
+std_div: 402505d6, std: 3fcd89b5
+Normalized pivot shapelet
+bf8d636e bf92d9de bf94ac04 bf95208d bf95208d bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf9577f4 bf1063b5 bf371553 3e3964a2 3ef70440 3f4af1c5 3f582555 3f676550 3f6eade7 3f745e9c 3f76a54b 3f76a54b 3f80c917 3f7a4997 3f7802e7 3f76a54b 3f76a54b 3f76a54b 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 3f468171 3f80bbee 3f3db055 3f0346fc 3e9ba684 3e3bdd81 
+sum: c19d5255, avg: bf3a748b
+Shapelet elements - avg
+bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec03712 bec1513a bec1513a bec03712 bec1513a bec03712 bec03712 bec03712 bec03712 bec1513a 3fc07afe 3fddf634 3fbc1270 3f9eddc4 3f8423e6 3f696beb 
+Subtractions squared
+3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e11fb93 3e11fb93 3e1052a7 3e11fb93 3e1052a7 3e1052a7 3e1052a7 3e1052a7 3e11fb93 4010b8b8 40407303 400a2b16 3fc52cfc 3f886a14 3f54d59f 
+std acc: 415d4b9e
+std_div: 3f082e89, std: 3f3ab712
+Normalized target shapelet
+bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf03c53c bf0486aa bf0486aa bf03c53c bf0486aa bf03c53c bf03c53c bf03c53c bf03c53c bf0486aa 4003f3cc 401829af 4000ee22 3fd9d134 3fb52c82 3fa004db 
+Pointwise distance
+3eb225d6 3eccdbb6 3ed62d1e 3ed889c0 3ed889c0 3eda5167 3eda5167 3eda5167 3eda5167 3eda5167 3b1f3d72 3d249024 3ef9f807 3f8008ca 3fdad103 3fed720a 4000cc6c 40060442 400a2a54 400bd7b1 400c66cb 3f8ea25f 3ffad451 3f8bfa2e 3f0b84bd 3e512bda 3da85363 
+Distance: 41c71053
+
+Length
+0000001e
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized pivot shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Target shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized target shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Pointwise distance
+00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 
+Distance: 00000000
+
+Length
+0000001e
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized pivot shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Target shapelet
+3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f885c00 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f8ad3e4 3f885c00 3f8ad3e4 3f8ad3e4 bf17d5cf be546829 3dcf149a 3e4a4611 3e82c1c4 3e9680eb 3eaa4012 3eb41fa6 3ebdff3a 3ec7decd 3ec7decd 3ed1be61 
+sum: 41ad7285, avg: 3f3902b0
+Shapelet elements - avg
+3eb94a30 3eb94a30 3eb94a30 3eaf6aa0 3eaf6aa0 3eaf6aa0 3eaf6aa0 3eaf6aa0 3eaf6aa0 3eb94a30 3eb94a30 3eb94a30 3eb94a30 3eb94a30 3eb94a30 3eaf6aa0 3eb94a30 3eb94a30 bfa86c40 bf6e1cba bf1f201d bf06712c beef439c bedb8475 bec7c54e bebde5ba beb40626 beaa2693 beaa2693 bea046ff 
+Subtractions squared
+3e061c4f 3e061c4f 3e061c4f 3df065e6 3df065e6 3df065e6 3df065e6 3df065e6 3df065e6 3e061c4f 3e061c4f 3e061c4f 3e061c4f 3e061c4f 3e061c4f 3df065e6 3e061c4f 3e061c4f 3fdd9c84 3f5d796d 3ec5d1d0 3e8d3558 3e5f9f4f 3e3c3be5 3e1be457 3e0cdd03 3dfd314b 3de22e82 3de22e82 3dc8b1a5 
+std acc: 40d4f986
+std_div: 3e6b01ae, std: 3ef5475e
+Normalized target shapelet
+3f41638d 3f41638d 3f41638d 3f371582 3f371582 3f371582 3f371582 3f371582 3f371582 3f41638d 3f41638d 3f41638d 3f41638d 3f41638d 3f41638d 3f371582 3f41638d 3f41638d c02fc8e0 bff8852b bfa614b4 bf8c518f bf79b8f0 bf651cd3 bf5080b6 bf4632a6 bf3be497 bf319689 bf319689 bf27487a 
+Pointwise distance
+40778e68 408141a7 40831be4 407ccde0 407ccde0 407d7d39 407d7d39 407d7d39 407d7d39 4083ec6d 40014e96 401e8959 3ee5b30b 3e08fae1 3b362939 3acd0db2 3b672e16 3bfe4cac 4150cfbf 40fdd754 40970556 4081d30b 405e8b61 4049b336 4036a7c6 402e0dfb 4025a949 401cef82 401d79b1 4014f88e 
+Distance: 42c18377
+
+Length
+0000001e
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized pivot shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Target shapelet
+3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3ec960a9 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3eb9b250 3f5a4bee bece5459 bece5459 bece5459 bece5459 bede02b2 bede02b2 bece5459 
+sum: 40c059c2, avg: 3e4d2c8b
+Shapelet elements - avg
+3e263815 3e263815 3e263815 3e4594c7 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e4594c7 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3e263815 3f2700cb bf1a754f bf1a754f bf1a754f bf1a754f bf224c7c bf224c7c bf1a754f 
+Subtractions squared
+3cd7d98f 3cd7d98f 3cd7d98f 3d187e51 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3d187e51 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3cd7d98f 3ed9e412 3eba62b2 3eba62b2 3eba62b2 3eba62b2 3ecdc9c8 3ecdc9c8 3eba62b2 
+std acc: 4069aa93
+std_div: 3e00eb5a, std: 3eb5ab12
+Normalized target shapelet
+3eea3ac8 3eea3ac8 3eea3ac8 3f0b3642 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3f0b3642 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3eea3ac8 3feb559d bfd9a81d bfd9a81d bfd9a81d bfd9a81d bfe4b48c bfe4b48c bfd9a81d 
+Pointwise distance
+40323b67 403b8bfb 403eb458 40531623 403f7f7c 4040181d 4040181d 4040181d 4040181d 4040181d 3fa18f43 3fd06382 3e56f577 3b96a0a2 3d764ff3 3db4f34c 3e02c163 3e189a79 3e2ad896 3e326e6e 3e326e6e 3e592274 3f66b19a 40d5205a 40d43d0a 40d43d0a 40d43d0a 40e23ee8 40e2b42e 40d3cb90 
+Distance: 42a4f6d5
+
+Length
+0000001e
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized pivot shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Target shapelet
+bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c1959 bf8c61b6 bf8c1959 bf8c1959 bf8c1959 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 bf8c61b6 3f351f28 3f8a0cb5 3f7e0d09 3f4462ce 3f1bae68 3ee836ed 3eb8b9cb 3e9369c3 3e556abb 3e2167c6 3ddac9a4 
+sum: c1717fa1, avg: bf00cc9a
+Shapelet elements - avg
+bf176618 bf176618 bf176618 bf17f6d2 bf176618 bf17f6d2 bf176618 bf176618 bf176618 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 bf17f6d2 3f9af5e1 3fca7302 3fbf6cd2 3fa297b4 3f8e3d81 3f74e810 3f5d2980 3f4a817c 3f362749 3f29268c 3f1c25ce 
+Subtractions squared
+3eb31332 3eb31332 3eb31332 3eb46a33 3eb31332 3eb46a33 3eb31332 3eb31332 3eb31332 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3eb46a33 3fbb997e 402019b3 400f2390 3fce88b3 3f9e1094 3f6a4b31 3f3f10ae 3f203099 3f019be2 3edf87d5 3ebe7c31 
+std acc: 419aa62a
+std_div: 3f2aa5b3, std: 3f5102e1
+Normalized target shapelet
+bf396f79 bf396f79 bf396f79 bf3a20bd bf396f79 bf3a20bd bf396f79 bf396f79 bf396f79 bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd bf3a20bd 3fbdcc3e 3ff7f678 3fea75d0 3fc72550 3fae37c9 3f95fb86 3f8770f8 3f780833 3f5f1aac 3f4f2d96 3f3f407f 
+Pointwise distance
+3e72d1a3 3e8fd378 3e97b858 3e98366a 3e99b9fc 3e99b7f3 3e9b3d6d 3e9b3d6d 3e9b3d6d 3e99b7f3 3b746f76 3c08e1e7 3f2913fc 3f9fa166 4002d4ab 400c863a 4018273e 401ddeda 40226913 3ebd3218 3f9071e8 3f55bf5d 3ee37c42 3e6cb380 3db470fe 3d09818f 3c10a819 350b365c 3b8d1bb7 3c804b03 
+Distance: 419cfa53
+
+Length
+0000001e
+Pivot shapelet
+bfcd17f5 bfd5dd86 bfd8ca0b bfd9852d bfd9852d bfda1185 bfda1185 bfda1185 bfda1185 bfda1185 bf3bf83d bf7a1a55 3eec9ee2 3f723610 3fb8e22b 3fc37b8f 3fcfb9ff 3fd5930a 3fda249b 3fdbf86e 3fdbf86e 3fe4be00 3fdee4f4 3fdd1121 3fdbf86e 3fdbf86e 3fdbf86e 3fdb6c15 3fdbf86e 3fdb6c15 
+sum: 411c68c6, avg: 3ea6d629
+Shapelet elements - avg
+bff6cd7f bfff9310 c0013fcb c0019d5c c0019d5c c001e388 c001e388 c001e388 c001e388 c001e388 bf87b1a9 bfa6c2b5 3e0b9172 3f1ecafc 3f8f2ca1 3f99c605 3fa60475 3fabdd80 3fb06f11 3fb242e4 3fb242e4 3fbb0876 3fb52f6a 3fb35b97 3fb242e4 3fb242e4 3fb242e4 3fb1b68b 3fb242e4 3fb1b68b 
+Subtractions squared
+406def95 407f264e 408282b5 40833fef 40833fef 4083ce33 4083ce33 4083ce33 4083ce33 4083ce33 3f8fd9b7 3fd9422e 3c982e89 3ec4fe60 3fa025c7 3fb8bc96 3fd75390 3fe6c351 3ff331cf 3ff8422d 3ff8422d 4008a55d 40003c15 3ffb526c 3ff8422d 3ff8422d 3ff8422d 3ff6bbdd 3ff8422d 3ff6bbdd 
+std acc: 4292f54c
+std_div: 40222928, std: 3fcbbf6e
+Normalized pivot shapelet
+bf9b0c5e bfa08f18 bfa26557 bfa2dae6 bfa2dae6 bfa33311 bfa33311 bfa33311 bfa33311 bfa33311 bf2a7e53 bf5186f9 3daf5c75 3ec78427 3f33e465 3f4135a6 3f5097ee 3f57f0e6 3f5dae68 3f5ffa35 3f5ffa35 3f6affab 3f63a6b2 3f615ae5 3f5ffa35 3f5ffa35 3f5ffa35 3f5f49de 3f5ffa35 3f5f49de 
+Target shapelet
+bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 bf8d8e94 bf8d480a bf8d8e94 bf8d480a bf8d480a bf8d480a bf8d480a bf8d8e94 3f468171 3f80bbee 3f3db055 3f0346fc 3e9ba684 3e3bdd81 3d9fb7d5 3c7efdfa bd0b0a05 
+sum: c19cd842, avg: bf274d13
+Shapelet elements - avg
+bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee68602 bee7a02a bee7a02a bee68602 bee7a02a bee68602 bee68602 bee68602 bee68602 bee7a02a 3fb6e742 3fd46278 3fb27eb4 3f954a08 3f752055 3f564473 3f3b440e 3f2b490b 3f1e9c73 
+Subtractions squared
+3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e519270 3e519270 3e4f9512 3e519270 3e4f9512 3e4f9512 3e4f9512 3e4f9512 3e519270 4002ada3 4030333d 3ff8e8e2 3fae1e85 3f6ab6e7 3f335683 3f08fc7f 3ee53553 3ec48afb 
+std acc: 41759486
+std_div: 3f077e15, std: 3f3a3df4
+Normalized target shapelet
+bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1f30f0 bf1f30f0 bf1e6f05 bf1f30f0 bf1e6f05 bf1e6f05 bf1e6f05 bf1e6f05 bf1f30f0 3ffb692c 4011f79e 3ff559ea 3fcd34d0 3fa87849 3f9342df 3f80b423 3f6b70f3 3f5a0513 
+Pointwise distance
+3eb3b34d 3ecec455 3ed83600 3eda9ad6 3eda9ad6 3edc68ad 3edc68ad 3edc68ad 3edc68ad 3edc68ad 3b11703a 3d2328d7 3f00214f 3f82f75d 3fdf9030 3ff28d23 40038d3c 4008df1a 400d19d7 400ecf8d 400f6087 3f8c1890 3ff7d595 3f8984a0 3f07c618 3e4761fa 3d9b84d8 3c9182e8 3b036b68 39de1354 
+Distance: 41c97ff9
+

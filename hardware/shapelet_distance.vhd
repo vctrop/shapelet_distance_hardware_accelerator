@@ -49,11 +49,21 @@ architecture behavioral of shapelet_distance is
     signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
     signal dec_shapelet_length_float_s                  : std_logic_vector(31 downto 0);
    
-   -- Register to track used shapelet valid positions when writing back
-   signal reg_position_validity_s                       : std_logic_vector(MAX_LEN-1 downto 0);
+    -- Register to track used shapelet valid positions when writing back
+    signal reg_position_validity_s                      : std_logic_vector(MAX_LEN-1 downto 0);
     -- Register to keep output result
     signal reg_distance_s                               : std_logic_vector(31 downto 0);
 
+    -- Early Abandon
+    -- Signal to track addsub outputs exponents
+    type exponent_array_t                               is array (0 to NUM_PU-1) of std_logic_vector(7 downto 0);
+    signal addsub_out_exp_s                             : exponent_array_t;
+    -- Register to keep the exponent of the current minimum distance
+    signal reg_exp_minimum_s                            : std_logic_vector(7 downto 0);
+    -- Signals to indicate wether some of the outputs in addsub PUs has an exponent larger than the current minimum
+    signal exp_acc_greater_s                            : std_logic_vector(NUM_PU-1 downto 0);
+    signal any_acc_greater_s                            : std_logic;
+    
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (-- Initialization states
                                                             Sbegin, Sbuf_load,
@@ -169,6 +179,8 @@ begin
         if rst = '1' then
             reg_state_s <= Sbegin;
             reg_distance_s <= (others => '0');
+            reg_exp_minimum_s <= (others => '1');
+            reg_shapelet_length_s <= 0;
         else
             case reg_state_s is
                 -- INITIALIZATION STATES
@@ -181,10 +193,11 @@ begin
                     if start_i = '1' then
                         -- If operation is set pivot and change length
                         if op_i = '0' then
-                            -- the number of bits used by the length must be based on the log2 of the parameter MAX_LEN
+                            -- the number of bits used by the length is based on the log2 of the parameter MAX_LEN
                             -- for the default MAX_LEN=128 it should result in 7
                             reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) - 1 downto 0)));
-
+                        else
+                            reg_exp_minimum_s <= data_i(30 downto 23);
                         end if;
                         reg_state_s <= Sbuf_load;
                     end if;
@@ -319,7 +332,7 @@ begin
                     -- Next state
                     -- Checks if the next iteration will exceed the shapelet length
                     -- This is to offset the fact that we begin the iterations at 0
-                    if inc_acc_counter_s >= reg_shapelet_length_s then
+                    if inc_acc_counter_s >= reg_shapelet_length_s or any_acc_greater_s = '1' then
                         reg_state_s <= Sdist_final_acc;
                     else
                         reg_state_s <= Szscore_div;
@@ -608,15 +621,20 @@ begin
         -- Compare every opb with 0
         div_opb_zero_s(i) <= '1' when div_opb_s(i) = (31 downto 0 => '0') else '0';
         
+        -- Compare the exponents of each partial distance (from addsub out) with the minimum distance exponent 
+        addsub_out_exp_s(i) <= addsub_out_s(i)(30 downto 23);
+        exp_acc_greater_s(i) <= '1' when addsub_out_exp_s(i) > reg_exp_minimum_s and addsub_out_exp_s(i) /= (NUM_PU-1 downto 0 => '1') else '0';
     end generate PROCESSING_UNITS; 
     
+    -- Check if any of the partial distance exponents are greater than the minimum distance exponent
+    any_acc_greater_s   <= '1' when exp_acc_greater_s /= (NUM_PU-1 downto 0 => '0');
+    
     -- Check if division by zero is currently occurring
-    div_by_zero_s <= '0' when div_opb_zero_s = (NUM_PU-1 downto 0 => '0') else '1';
+    div_by_zero_s       <= '0' when div_opb_zero_s      = (NUM_PU-1 downto 0 => '0') else '1';
     
     --  Adder tree to sum the NUM_PU  accumulator registers
     -- Unlike PUs, the adder tree starts operation when adder_tree_start <= '1'
-    adder_tree_start_s <=  '1' when reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc or reg_state_s = Sdist_final_acc else
-                           '0'; 
+    adder_tree_start_s <=  '1' when reg_state_s = Savg_final_acc or reg_state_s = Sstd_final_acc or reg_state_s = Sdist_final_acc else '0'; 
     
     adder_tree: entity work.adder_tree
 	generic map (
