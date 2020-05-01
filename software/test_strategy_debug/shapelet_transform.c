@@ -42,31 +42,6 @@ Shapelet init_shapelet(Timeseries *time_series, uint16_t shapelet_position, uint
 }
 
 
-// Generic vector normalization
-void algebric_normalization(numeric_type *values, uint16_t length){
-    numeric_type squares_sum, absolute_value;
-    
-    squares_sum = 0;
-    // Compute absolute value
-    for (uint16_t i = 0; i < length; i++){
-        squares_sum += pow(values[i], 2);
-    }
-    absolute_value = sqrt(squares_sum);
-    //printf("Abs: %g\n", absolute_value);
-    
-    // check for possible division by zero error
-    if(absolute_value == 0)
-        return;
-
-    // Compute normalized vector values
-    //printf("Normalized value: ");
-    for (uint16_t i = 0; i < length; i++){
-        values[i] = values[i] / absolute_value;
-        //printf("%g\t", values[i]);
-    }
-    
-}
-
 // Z score vector normalization
 // this is the original normalization used for shapelet discovery algorithm
 // z score a.k.a. standardizing or normalizing (using sameple std_deviation)
@@ -84,7 +59,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     mean = mean_sum / length;
     
-    // Test vector human log
+    // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
@@ -119,7 +94,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     }
     
     
-    // Test vector human log
+    // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
@@ -139,7 +114,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     // take the sqrt
     std = sqrt(differrence_sum);
     
-    // Test vector human log
+    // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
@@ -166,46 +141,100 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     }
 }
 
-
-numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance){
-    numeric_type total_distance = 0.0;
+// Euclidean distance between vectors with early abandon mechanisms
+numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance, uint8_t sim_exp_ea){
+    numeric_type pointwise_sse, distance = 0.0;
     
-    // Test vector human log 
+    // Test vectors extraction. Refer to readme_vectors.txt for more information 
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         printf("Pointwise distance\n");
     } 
     #endif
-
-    for (uint16_t i = 0; i < length; i++){
-        // the default calculation
-        total_distance += pow((double)(pivot_values[i] - target_values[i]), 2.0);
     
-        // Test vector human log
-        #ifdef READABLE_VECTOR
-        if (length % BASE_SSIZE == 0){
-            // Union to represent float as unsigned without type punning
-            union {
-                float f;
-                uint32_t u;
-            } f2u;
-            f2u.f = pow((double)(pivot_values[i] - target_values[i]), 2.0);
-            printf("%08x ", f2u.u);
+    // When using vanilla early abandon 
+    if(!sim_exp_ea){      
+        for (uint16_t i = 0; i < length; i++){
+            pointwise_sse = pow((double)(pivot_values[i] - target_values[i]), 2.0);
+            distance += pointwise_sse;
+        
+            // Test vectors extraction. Refer to readme_vectors.txt for more information    
+            #ifdef READABLE_VECTOR
+            if (length % BASE_SSIZE == 0){
+                // Union to represent float as unsigned without type punning
+                union {
+                    float f;
+                    uint32_t u;
+                } f2u;
+                f2u.f = pointwise_sse;
+                printf("%08x ", f2u.u);
+            }
+            #endif
+        
+            // Early abandon: if partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
+            if(distance >= current_minimum_distance) return INFINITY;
         }
+    }
+    // When simulating hardware exponent-based early abandon
+    else{
+        // Integer-only exopnent-based early abandon hardware simulation is only possible when the number of processing units is defined
+        #ifndef NUM_PU
+        printf("To simulate hardware exponent-based early abandon, please define NUM_PU"); 
+        exit(-1);
         #endif
-    
-        //early abandon: in case partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
-        if(total_distance >= current_minimum_distance) return INFINITY;
+        
+        // Float array representing the register array of accumulators     
+        numeric_type *accumulators = safe_alloc(NUM_PU * sizeof(*accumulators));
+        
+        // Reset accumulators at 0
+        if(memset(accumulators, 0, NUM_PU * sizeof(*accumulators)) == NULL){
+            printf("Error on memset of accumulators (HW simulation)\n");
+            exit(-1);
+        }
+        
+        // Loop over both lenght and number of processing units, with partial accumulation of squared differences and exponent-based early abandon
+        for (uint16_t i = 0; i < length; i += NUM_PU){
+            for (uint16_t j = 0; j < NUM_PU; j++){
+                if (i + j < length){
+                    // Sum of squared error
+                    pointwise_sse = pow((double)(pivot_values[i+j] - target_values[i+j]), 2.0);
+                    accumulators[j] += pointwise_sse;
+                    
+                    // Test vectors extraction. Refer to readme_vectors.txt for more information
+                    #ifdef READABLE_VECTOR
+                    if (length % BASE_SSIZE == 0){
+                        // Union to represent float as unsigned without type punning
+                        union {
+                            float f;
+                            uint32_t u;
+                        } f2u;
+                        f2u.f = pointwise_sse;
+                        printf("%08x ", f2u.u);
+                    }
+                    #endif
+                    
+                    // 
+                    
+                }
+            }
+        }
+        
+        // Final sum, done in hardware by an adder tree
+        for (uint16_t j = 0; j < NUM_PU; j++){
+            distance += accumulators[j];    
+        }
     }
     
-    // Test vector human log
+    
+    
+    // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         printf("\n");
     }    
     #endif
     
-    return total_distance;
+    return distance;
 }
 
 
@@ -216,7 +245,6 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;         // number of shapelets of length "shapelet_len" in time_series    uint8_t print_flag;
     uint32_t closer_shapelet = 0;
     
-    //printf("Time series %p\n", time_series);
     minimum_distance = INFINITY;
 
     // Normalize pivot 
@@ -238,7 +266,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     // Normalize pivot shapelet values
     zscore_normalization(pivot_values, pivot_shapelet->length);
 
-    // Test vector human log
+    // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
     if (pivot_shapelet->length % BASE_SSIZE == 0){
         printf("Normalized pivot shapelet\n");
@@ -268,7 +296,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // Normalize target shapelet values
         zscore_normalization(target_values, pivot_shapelet->length);
         
-        // Test vector human log
+        // Test vectors extraction. Refer to readme_vectors.txt for more information
         #ifdef READABLE_VECTOR
         if (pivot_shapelet->length % BASE_SSIZE == 0){
             printf("Normalized target shapelet\n");
@@ -277,8 +305,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         #endif
         
         // Compute shapelet-shapelet distance
-        shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
-        
+        shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 0);
+
         // Test vector extraction. Refer to readme_vectors.txt for more information.
         if (pivot_shapelet->length % BASE_SSIZE == 0){
             #ifdef READABLE_VECTOR
@@ -398,9 +426,9 @@ static int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
 // (DESTROY ALL k RETURNED SHAPELETS AFTER USAGE)
 Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t min, uint16_t max, uint16_t k){
     uint16_t i, l, j, position, shapelets_index;
-    uint32_t num_shapelets; //number of shapelets of lenght l 
-    uint32_t total_num_shapelets; //total number of shapelets of a given timeseries length from given min and max shapelet lenght parameters
-    uint32_t num_merged_shapelets; //total number of shapelets to be merged after removing self similars
+    uint32_t num_shapelets;                             //number of shapelets of lenght l 
+    uint32_t total_num_shapelets;                       //total number of shapelets of a given timeseries length from given min and max shapelet lenght parameters
+    uint32_t num_merged_shapelets;                      //total number of shapelets to be merged after removing self similars
     Shapelet *k_shapelets, *ts_shapelets;
     Shapelet shapelet_candidate;
     numeric_type *shapelet_distances;
@@ -411,15 +439,13 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
         exit(-1);
     }
 
-    if(num_ts <= 2)
-    {
+    if(num_ts <= 2){
         printf("Number of time series must be greater than 2");
         exit(-1);
     }
 
     k_shapelets = safe_alloc(k*sizeof(*k_shapelets));
-    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)
-    {
+    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL){
         printf("Error on memset k_shapelets\n");
         exit(-1);
     }
@@ -552,20 +578,17 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_ts
         exit(-1);
     }
 
-    if(max_num_threads <= 0)
-    {
+    if(max_num_threads <= 0)    {
         printf("Maximun number of threads must be greater than zero!\n");
     }
 
-    if(num_ts <= 2)
-    {
+    if(num_ts <= 2)    {
         printf("Number of time series must be greater than 2!");
         exit(-1);
     }
 
     k_shapelets = safe_alloc(k*sizeof(*k_shapelets));
-    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)
-    {
+    if(memset(k_shapelets, 0, k * sizeof(*k_shapelets)) == NULL)    {
         printf("Error on memset k_shapelets\n");
         exit(-1);
     }
