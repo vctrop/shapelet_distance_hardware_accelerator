@@ -51,18 +51,15 @@ void algebric_normalization(numeric_type *values, uint16_t length){
         squares_sum += pow(values[i], 2);
     }
     absolute_value = sqrt(squares_sum);
-    //printf("Abs: %g\n", absolute_value);
     
     // check for possible division by zero error
     if(absolute_value == 0)
         return;
 
     // Compute normalized vector values
-    //printf("Normalized value: ");
-    for (uint16_t i = 0; i < length; i++){
+    for (uint16_t i = 0; i < length; i++)
         values[i] = values[i] / absolute_value;
-        //printf("%g\t", values[i]);
-    }
+    
     
     #else                                           // Fixed point normalization
     // Compute absolute value
@@ -70,17 +67,13 @@ void algebric_normalization(numeric_type *values, uint16_t length){
         squares_sum += fixedpt_pow2(values[i]);
     }
     absolute_value = fixedpt_sqrt(squares_sum);
-    //printf("Abs: %s\n", fixedpt_cstr(absolute_value, 3));
     // Check for possible future division by zero
     if(absolute_value == 0)
         return;
     
     // Compute normalized vector values
-    //printf("Normalized values: ");
-    for (uint16_t i = 0; i < length; i++){
-        values[i] = fixedpt_div(values[i], absolute_value);    
-        //printf("%s\t", fixedpt_cstr(values[i], 3));
-    }
+    for (uint16_t i = 0; i < length; i++)
+        values[i] = fixedpt_div(values[i], absolute_value);
     #endif
 }
 
@@ -102,11 +95,9 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     mean = s / length;
     std = sqrt((s2 - pow((double) mean, 2)) / length);
-    // printf("Mi = %g, sigma = %g\n", mean, std);
     
     #else  
     // Computation of standard deviation by sample formula
-    
     numeric_type differrence_sum;
     
     // calculate arithmetic mean 
@@ -125,10 +116,8 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     differrence_sum /= (length - 1); // this is sample std deviation. Remove the -1 to make it population std_dev
     // take the sqrt
     std = sqrt(differrence_sum);
-    // printf("avg = %g, std = %g\n", mean, std);
     
     #endif
-    
     // special case, when the vector is a straight line and has no variance
     // the std results in zero, all values in the vector are set to zero
     if(std == 0){   
@@ -170,9 +159,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     exit(-1);
     #else
     for(uint16_t i = 0; i < length; i++){
-        //printf("values %d\n",i);       fixedpt_print(pivot_values[i]);        fixedpt_print(target_values[i]);
         total_distance += fixedpt_pow2(pivot_values[i] - target_values[i]);
-        // printf("ED %d: ",i); fixedpt_print(total_distance);
         if(total_distance >= current_minimum_distance) return MAX_FIXEDPT;
     }  
     #endif 
@@ -190,7 +177,6 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;         // number of shapelets of length "shapelet_len" in time_series    uint8_t print_flag;
     uint32_t closer_shapelet = 0;
     
-    //printf("Time series %p\n", time_series);
     #ifndef USE_FIXED
     minimum_distance = INFINITY;
     #else
@@ -213,7 +199,6 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 
     // Loops over shapelets in the time-series
     for (uint32_t i=0; i<num_shapelets; i++){
-        //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
@@ -233,9 +218,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
             closer_shapelet = i;
         }
         
-        //printf("Shapelet minimum distance: "); fixedpt_print(minimum_distance);
     }
-    //  printf("closer shapelet: (%d) (%g)\n", closer_shapelet, minimum_distance);
 
     free(pivot_values);
     free(target_values);
@@ -353,13 +336,10 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     total_dists_sum = class_zero_sum + class_one_sum;
     total_dists_avg = total_dists_sum/num_ts;
     
-    //printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n%g\n%g\n%g\n%g\n%g\n%g\n", class_zero_sum, class_one_sum, class_zero_avg, class_one_avg, total_dists_sum, total_dists_avg);
-    
     // Calculate the sum in f-stat formula numerator
     numerator_sum = pow(class_zero_avg - total_dists_avg, 2) + pow(class_one_avg - total_dists_avg, 2);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_ts; i++){
-        //printf("Denominator sum before: %g\n", denominator_sum);
         if (ts_set[i].class == 0){
             denominator_sum += pow(measured_distances[i] - class_zero_avg, 2);
         }
@@ -370,7 +350,6 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
-        //printf("Denominator sum after: %g\n", denominator_sum);
     }
     if(denominator_sum == 0)
     {
@@ -384,12 +363,10 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     class_one_avg = fixedpt_div(class_one_sum, fixedpt_fromint(class_one_ts_num));
     total_dists_sum = class_zero_sum + class_one_sum;
     total_dists_avg = fixedpt_div(total_dists_sum, fixedpt_fromint(num_ts));
-    //printf("Class 0/1 sums, avgs, tota_dists_sum, total_dists_avg:\n");   fixedpt_print(class_zero_sum); fixedpt_print(class_one_sum); fixedpt_print(class_zero_avg);  fixedpt_print(class_one_avg);   fixedpt_print(total_dists_sum); fixedpt_print(total_dists_avg);
     // Calculate the sum in f-stat formula numerator
     numerator_sum = fixedpt_pow2(class_zero_avg - total_dists_avg) + fixedpt_pow2(class_one_avg - total_dists_avg);
     // Calculate the sums in f-stat formula denominator
     for(uint16_t i = 0; i < num_ts; i++){
-        //printf("Denominator sum before: ");        fixedpt_print(denominator_sum);
         if(ts_set[i].class == 0){
             temp_difference = measured_distances[i] - class_zero_avg;
         }
@@ -400,8 +377,6 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
             printf("Class is not binary");
             exit(-1);
         }
-        //printf("temp dif: ");   fixedpt_print(temp_difference);
-        //printf("temp dif squared: "); fixedpt_print(fixedpt_pow2(temp_difference));
         denominator_sum += fixedpt_pow2(temp_difference);
         
     }
@@ -570,7 +545,6 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
         printf("[TS %u]\n", i);
-        //printf("Shapelet #\tquality\n");
         // For each length between min and max
         for (l = min; l <= max; l++){ 
             num_shapelets = T->length - l + 1;    
@@ -578,10 +552,8 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
             for (position = 0; position < num_shapelets; position++){
                 shapelet_candidate = init_shapelet(&T[i], position, l);                                         // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_ts * sizeof(*shapelet_distances));
-                //printf("(Pivot shapelet %d)\n", shapelets_index);
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_ts; j++){
-                    //printf("target TS %d\n", j);
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
                     
                 }
@@ -589,7 +561,6 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
                 // F-Statistic as shapelet quality measure
                 shapelet_candidate.quality = bin_f_statistic(shapelet_distances, T, num_ts);
                 
-                //printf("%u\t\t%g\n", shapelets_index, shapelet_candidate.quality);
                 free(shapelet_distances);   //shapelet_distances is only used to measure quality
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
@@ -604,8 +575,6 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        //printf("After merging\n");
-        //print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
     
@@ -727,7 +696,6 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_ts
     for (i = 0; i < num_ts; i++){
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
-        //printf("[TS %u]\n", i);
 
         // For each length between min and max
         for (int tid = 0; tid < num_threads; tid++){
@@ -768,7 +736,6 @@ Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_ts
         ts_shapelets = remove_self_similars(ts_shapelets, &num_merged_shapelets);
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
-        //print_shapelets_ids(k_shapelets, k, T);
         free(ts_shapelets);
     }
 
@@ -838,7 +805,7 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets){
 
     // updates the shapelet size
     *num_shapelets = ts_shapelets_size - num_removed_shapelets;
-    //frees old list and points it to new one
+    // frees old list and points it to new one
     free(ts_shapelets);
 
     return new_list;
@@ -883,9 +850,7 @@ numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shape
     for (uint16_t i = 0; i < num_ts; i++){
         for (uint16_t j = 0; j < num_shapelets; j++){
             transformed_data[i][j] = shapelet_ts_distance(&shapelet_set[j], &T[i]);
-            // printf("%g  ", transformed_data[i][j]);
         }
-        // printf("\n");
     }
     
     return transformed_data;
@@ -916,18 +881,11 @@ void print_shapelets_ids(Shapelet * S, uint16_t num_shapelets, Timeseries *T){
         #ifndef USE_FIXED 
         ts_i = (uint64_t)(S[i].Ti - T);
         printf("%dth Shapelet is from TS %I64d,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, S[i].length, S[i].start_position ,S[i].quality); 
-        /*for(int j = 0; j < S[i].length; j++)
-            printf("%g ", get_value(&S[i], j));
-        printf("\n\n");*/
         
         #else
         printf("%dth Shapelet has length: %d, quality:", i, S[i].length);
         fixedpt_print(S[i].quality);
         printf("\nValues from timseries %p:\t", S[i].Ti); 
-        // for(int j = 0; j < S[i].length; j++)
-            // printf("%s ", fixedpt_cstr(get_value(&S[i], j),3));
-        // printf("\n\n");
-            
         #endif
     }
 }
@@ -991,7 +949,6 @@ void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeser
 // Read datasets into ts_array, loading number of time-series and time-series length from file header
 // Free all float arrays from ts_array and the ts_array itself 
 uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
-    //char filename[] = "data/Wafer/Wafer_TRAIN.csv";
     FILE *file_descriptor;
     char *field;
     uint16_t num_ts, ts_len;
@@ -1043,14 +1000,12 @@ uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
         
         // The first ts_len values are from the time-series, and the last one is the time-series class
         field = strtok(time_series_buffer, ",");
-        //printf("TIME-SERIES %u\n %s\t",i, field);
         
         #ifndef USE_FIXED
         ts_values[0] = atof(field);
         
         for(uint16_t j = 1; j < ts_len; j++){
             field = strtok(NULL, ",");
-            //printf("%s\t", field);
             ts_values[j] = atof(field);
         }
         
@@ -1058,7 +1013,6 @@ uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
         ts_values[0] = fixedpt_fromfloat(atof(field));
         for(uint16_t j = 1; j < ts_len; j++){
             field = strtok(NULL, ",");
-            //printf("%s\t", field);
             ts_values[j] = fixedpt_fromfloat(atof(field));
         }
         #endif

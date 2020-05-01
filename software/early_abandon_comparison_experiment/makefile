@@ -5,18 +5,15 @@ ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
 TIMING_OBJS= shapelet_transform.c timing_test.c
 
-all: print_debug_vector print_readable_debug_vector
+all: count_early_abandons
 
 # Uses zscore normaliztion and power of two in distance computation
-print_debug_vector: $(OBJS)
+count_early_abandons: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -DNUM_PU=4 -o $@ $^   $(CFLAGS)
-
-print_readable_debug_vector: $(OBJS)
-	$(CC) $(ARITH) -DUSE_ZSCORE -DREADABLE_VECTOR -DNUM_PU=4 -o $@ $^   $(CFLAGS)
 
 .PHONY: clean
 clean:
-	$(RM) *.o print_debug_vector  print_readable_debug_vector
+	$(RM) *.o count_early_abandons 
 .PHONY: clean_win
 clean_win: 
 	del *.o *.exe

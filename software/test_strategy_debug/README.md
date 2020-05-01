@@ -1,1 +1,0 @@
-This directory contains the source files to extract 20 pair of shapelets, with 5 different sizes ranging from 32 to 128

@@ -13,15 +13,8 @@
 #include <assert.h>
 #include <fenv.h>                           // change floating point rounding modes
 #include <pthread.h>                        // multi thread implementation
-#include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-#ifndef USE_FIXED
-    typedef float numeric_type;
-#else
-    #define MAX_FIXEDPT 0x7fffff00
-    typedef fixedpt numeric_type;
-#endif
-
+typedef float numeric_type;
 
 // Time series structure
 typedef struct{
@@ -42,6 +35,12 @@ typedef struct
     //numeric_type *Ti;                   // Timeseries values window pointer
 } Shapelet;
 
+// Union to represent floats as hexadecimal safely (i.e. without type punning)
+typedef union {
+    float f;
+    uint32_t u;
+} F2u;
+
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size);
 
@@ -51,17 +50,14 @@ Timeseries init_timeseries(numeric_type * values, uint8_t class, uint16_t length
 // Returns a new shapelet of a given size in a given time-series position
 Shapelet init_shapelet(Timeseries *time_series, uint16_t shapelet_position, uint16_t shapelet_len);
 
-// Generic vector normalization based on vector absolute value
-void algebric_normalization(numeric_type *values, uint16_t length);
-
 // Z score vector normalization
 void zscore_normalization(numeric_type *values, uint16_t length);
 
-// Generic euclidean distance
-numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance);
+// Euclidean distance between vectors with early abandon mechanisms
+numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance, uint8_t use_exp_ea);
 
 // Distance from a shapelet to an entire time-series
-numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series);
+numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series, uint64_t *vanilla_count_addr, uint64_t *exp_count_addr);
 
 // Normalization and distance from a shapelet to an entire time-series using dynamic programming algorithm proposed by (Chang, 2012)
 numeric_type dynamic_shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series);
@@ -83,7 +79,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 //implements shapelet_cached_selection with multiple threads
 // the number of threads is the maximum threads that may be created 
 // however, if min + max < num_threads, fewer threads than expected will be used
-Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, const uint16_t min, const uint16_t max, uint16_t k, const uint16_t num_threads);
+// Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, const uint16_t min, const uint16_t max, uint16_t k, const uint16_t num_threads);
 
 // Remove self similar shapelets (shapelets with overlapping indices)
 Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
@@ -92,7 +88,7 @@ Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
 void merge_shapelets(Shapelet* k_shapelets, uint16_t k, Shapelet* ts_shapelets, uint64_t ts_num_shapelets);
 
 // Transform set of time-series based on the distances to a set o shapelets (the Transform of the ST)
-numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shapelet_set, uint16_t num_shapelets);
+// numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shapelet_set, uint16_t num_shapelets);
 
 // Print all positions of a certain shapelet as HEX
 void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len);
