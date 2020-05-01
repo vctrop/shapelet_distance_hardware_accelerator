@@ -23,24 +23,27 @@
 #endif
 
 
-//time series structure
+// Time series structure
 typedef struct{
     uint8_t class;                      // The time series class is represented by a number
     numeric_type *values;    
     uint16_t length;                    // Number of points in time series
 } Timeseries;
 
-//Shapelet structure
-typedef struct 
-{
+// Shapelet structure
+typedef struct{
     uint16_t length;                    // Number of points contained in the shapelet
     numeric_type quality;               // Quality measure value
     Timeseries *Ti;                     // Timeseries from which the shapelet was extracted
     
     uint16_t start_position;            // Index position on timeseries window
-    
-    //numeric_type *Ti;                   // Timeseries values window pointer
 } Shapelet;
+
+// Union to represent floats as hexadecimal safely (i.e. without type punning)
+typedef union {
+    float f;
+    uint32_t u;
+} F2u;
 
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size);

@@ -63,10 +63,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
+        F2u f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
         f2u_mean_sum.f = mean_sum;
         f2u_mean.f = mean;
         printf("sum: %08x, avg: %08x\n", f2u_mean_sum.u, f2u_mean.u);
@@ -98,10 +95,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_std_acc;
+        F2u f2u_std_acc;
         f2u_std_acc.f = differrence_sum;
         printf("std acc: %08x\n", f2u_std_acc.u);
     }
@@ -118,10 +112,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     #ifdef READABLE_VECTOR
     if (length % BASE_SSIZE == 0){
         // Union to represent float as unsigned without type punning
-        union {
-            float f;
-            uint32_t u;
-        } f2u_std_div, f2u_std;
+        F2u f2u_std_div, f2u_std;
         f2u_std_div.f = differrence_sum;
         f2u_std.f = std;
         printf("std_div: %08x, std: %08x\n", f2u_std_div.u, f2u_std.u);
@@ -162,17 +153,15 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
             #ifdef READABLE_VECTOR
             if (length % BASE_SSIZE == 0){
                 // Union to represent float as unsigned without type punning
-                union {
-                    float f;
-                    uint32_t u;
-                } f2u;
+                F2u f2u;
                 f2u.f = pointwise_sse;
                 printf("%08x ", f2u.u);
             }
             #endif
         
             // Early abandon: if partial distance sum result is bigger than the current minimun distance, we discard the calculation and return INFINITY
-            if(distance >= current_minimum_distance) return INFINITY;
+            if(distance >= current_minimum_distance)
+                return INFINITY;
         }
     }
     // When simulating hardware exponent-based early abandon
@@ -185,12 +174,20 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         
         // Float array representing the register array of accumulators     
         numeric_type *accumulators = safe_alloc(NUM_PU * sizeof(*accumulators));
-        
+        uint32_t exponent_mask = 0x7F800000;                                    // Mask for binary operations
+        uint32_t masked_minimum, masked_accumulator;
+        F2u f2u_minimum, f2u_accumulator;
         // Reset accumulators at 0
         if(memset(accumulators, 0, NUM_PU * sizeof(*accumulators)) == NULL){
             printf("Error on memset of accumulators (HW simulation)\n");
             exit(-1);
         }
+        
+        // Extract exponent of current minimum euclidean distance
+        f2u_minimum.f = current_minimum_distance;
+        masked_minimum = f2u_minimum.u & exponent_mask;
+        // printf("Current minimum = %08x\n", f2u_minimum.u);
+        // printf("Masked current minimum = %08x\n", masked_minimum);
         
         // Loop over both lenght and number of processing units, with partial accumulation of squared differences and exponent-based early abandon
         for (uint16_t i = 0; i < length; i += NUM_PU){
@@ -204,17 +201,24 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
                     #ifdef READABLE_VECTOR
                     if (length % BASE_SSIZE == 0){
                         // Union to represent float as unsigned without type punning
-                        union {
-                            float f;
-                            uint32_t u;
-                        } f2u;
+                        F2u f2u;
                         f2u.f = pointwise_sse;
                         printf("%08x ", f2u.u);
                     }
                     #endif
                     
-                    // 
+                    // Exponent-based early abandon
+                    // The proposed technique uses only integer comparisons between exponents (IEEE 754) to decide whether to early abandon or not.
+                    // If the exponent of any of the accumulators is greater than the current minimum exponent, the computation is abandoned
+                    // The number of abandons using this method is expected to be lesser than when using vanilla early abandon
+                    f2u_accumulator.f = accumulators[j];
+                    masked_accumulator = f2u_accumulator.u & exponent_mask;
+                    // printf("Accumulator j = %08x\n", f2u_accumulator.u);
+                    // printf("Masked accumulator j = %08x\n", masked_accumulator);
                     
+                    // If the accumulator exponent does not indicate exception and is greater than minimum exponent, early abandon distance computation 
+                    if(masked_accumulator != exponent_mask && masked_accumulator > masked_minimum)
+                        return INFINITY;
                 }
             }
         }
@@ -224,8 +228,6 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
             distance += accumulators[j];    
         }
     }
-    
-    
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
@@ -279,8 +281,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
 
     // Loops over shapelets in the time-series
-    // for (uint32_t i=0; i<num_shapelets; i++){
-    uint32_t i = 0;
+     for (uint32_t i=0; i<5; i++){
+    //uint32_t i = 0;
         //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
@@ -305,8 +307,8 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         #endif
         
         // Compute shapelet-shapelet distance
-        shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 0);
-
+        shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 1);
+        
         // Test vector extraction. Refer to readme_vectors.txt for more information.
         if (pivot_shapelet->length % BASE_SSIZE == 0){
             #ifdef READABLE_VECTOR
@@ -314,10 +316,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
             #endif
             
             // Union to represent float as unsigned without type punning
-            union {
-                float f;
-                uint32_t u;
-            } f2u;
+            F2u f2u;
             f2u.f = shapelet_distance;
             printf("%08x\n", f2u.u);
             
@@ -327,11 +326,11 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         }
         
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
-        // if (shapelet_distance < minimum_distance){
-           // minimum_distance = shapelet_distance;
-           // closer_shapelet = i;
-        // }
-
+        if (shapelet_distance < minimum_distance){
+           minimum_distance = shapelet_distance;
+           closer_shapelet = i;
+        }
+     }
     free(pivot_values);
     free(target_values);
 
@@ -782,10 +781,7 @@ numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shape
 // Print all positions of a certain shapelet as HEX
 void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len){
     // Union to represent float as unsigned without type punning
-    union {
-            float f;
-            uint32_t u;
-    } f2u;
+    F2u f2u;
     
     for (uint16_t i = 0; i < shapelet_len; i++){
         f2u.f = shapelet_values[i];
