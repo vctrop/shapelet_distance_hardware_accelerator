@@ -13,14 +13,9 @@
 #include <assert.h>
 #include <fenv.h>                           // change floating point rounding modes
 #include <pthread.h>                        // multi thread implementation
-#include "fixedptc.h"                       // Fixed point operations by Ivan Voras and Tim Hartrick 
 
-#ifndef USE_FIXED
-    typedef float numeric_type;
-#else
-    #define MAX_FIXEDPT 0x7fffff00
-    typedef fixedpt numeric_type;
-#endif
+
+typedef float numeric_type;
 
 
 // Time series structure

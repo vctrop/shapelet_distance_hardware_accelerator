@@ -42,8 +42,8 @@ architecture behavioral of tb_shapelet_distance is
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
-    constant NUM_PU : integer := 2;
-    constant MAX_LEN : integer := 32;
+    constant NUM_PU : integer := 4;
+    constant MAX_LEN : integer := 16;
 
     --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile containts:
 	--file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/debug_vector.txt";
@@ -149,27 +149,24 @@ begin
 
             wait until ready = '1';
 			wait for clk_period;
+			wait for clk_period;
             
-            -- loads target and waits for output
-            
-            -- FUTURE: read the line containing current minimum distance
-            -- readline(testFile, fileLine);   
-            -- for i in str'range loop
-                -- read(fileLine, char, bool);
-                -- str(i) := char;
-            -- end loop;
-            -- data <= StringToStdLogicVector(str);          
-            
-            -- REMOVE LATER: fixed minimum distance 
-            data <=  x"3f23f869";
+            ---- 1st TARGET
+            -- Read the line containing current minimum distance
+            readline(testFile, fileLine);   
+            for i in str'range loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            data <= StringToStdLogicVector(str);          
             
             start <= '1';
             op <= '1';
             wait for clk_period;
             start <= '0';
             
+            -- Read target shapelet
             readline(testFile, fileLine);
-
             for i in 0 to length-1 loop
                 for i in str'range  loop
                     read(fileLine, char, bool);
@@ -183,7 +180,7 @@ begin
 
             wait until ready = '1';
 
-            --read expected output
+            -- Read expected output
             readline(testFile, fileLine);
             for i in str'range loop
                 read(fileLine, char, bool);
@@ -192,15 +189,102 @@ begin
             expected_output <= StringToStdLogicVector(str);
 
             report "shapelet " & natural'image(index) & " has output " & integer'image(to_integer(unsigned(distance))) & "expected " & integer'image(to_integer(unsigned(expected_output)));
-
-			-- write to output file:
-            write(row, index, right, 9);
-			write(row, slv_to_hexstr(distance), right, 9); -- transform distance to string
-			write(row, str, right, 9);	-- expected output in string format
-			writeLine(outFile, row);
-
             index <= index + 1;
 			wait for clk_period;
+			wait for clk_period;
+            
+            ---- 2nd TARGET
+            -- Read the line containing current minimum distance
+            readline(testFile, fileLine);   
+            for i in str'range loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            data <= StringToStdLogicVector(str);          
+            
+            start <= '1';
+            op <= '1';
+            wait for clk_period;
+            start <= '0';
+            
+            -- Read target shapelet
+            readline(testFile, fileLine);
+            for i in 0 to length-1 loop
+                for i in str'range  loop
+                    read(fileLine, char, bool);
+                    str(i) := char;
+                end loop;
+                data <= StringToStdLogicVector(str);
+
+                read(fileLine, char, bool); -- read the space separating the values
+                wait for clk_period;
+            end loop;
+
+            wait until ready = '1';
+
+            -- Read expected output
+            readline(testFile, fileLine);
+            for i in str'range loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            expected_output <= StringToStdLogicVector(str);
+
+            report "shapelet " & natural'image(index) & " has output " & integer'image(to_integer(unsigned(distance))) & "expected " & integer'image(to_integer(unsigned(expected_output)));
+            index <= index + 1;
+			wait for clk_period;
+			wait for clk_period;
+            
+            ---- 3rd TARGET
+            -- Read the line containing current minimum distance
+            readline(testFile, fileLine);   
+            for i in str'range loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            data <= StringToStdLogicVector(str);          
+            
+            start <= '1';
+            op <= '1';
+            wait for clk_period;
+            start <= '0';
+            
+            -- Read target shapelet
+            readline(testFile, fileLine);
+            for i in 0 to length-1 loop
+                for i in str'range  loop
+                    read(fileLine, char, bool);
+                    str(i) := char;
+                end loop;
+                data <= StringToStdLogicVector(str);
+
+                read(fileLine, char, bool); -- read the space separating the values
+                wait for clk_period;
+            end loop;
+
+            wait until ready = '1';
+
+            -- Read expected output
+            readline(testFile, fileLine);
+            for i in str'range loop
+                read(fileLine, char, bool);
+                str(i) := char;
+            end loop;
+            expected_output <= StringToStdLogicVector(str);
+
+            report "shapelet " & natural'image(index) & " has output " & integer'image(to_integer(unsigned(distance))) & "expected " & integer'image(to_integer(unsigned(expected_output)));
+            index <= index + 1;
+			wait for clk_period;
+			wait for clk_period;
+			
+
+            
+            
+            -- write to output file:
+            -- write(row, index, right, 9);
+			-- write(row, slv_to_hexstr(distance), right, 9); -- transform distance to string
+			-- write(row, str, right, 9);	-- expected output in string format
+			-- writeLine(outFile, row);
         end loop;
         wait;
     end process;

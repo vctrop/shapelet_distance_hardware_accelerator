@@ -10,10 +10,10 @@ all: print_debug_vector print_readable_debug_vector
 
 # Uses zscore normaliztion and power of two in distance computation
 print_debug_vector: $(OBJS)
-	$(CC) $(ARITH) -DUSE_ZSCORE -DNUM_PU=5 -o $@ $^   $(CFLAGS)
+	$(CC) $(ARITH) -DUSE_ZSCORE -DNUM_PU=4 -o $@ $^   $(CFLAGS)
 
 print_readable_debug_vector: $(OBJS)
-	$(CC) $(ARITH) -DUSE_ZSCORE -DREADABLE_VECTOR -DNUM_PU=5 -o $@ $^   $(CFLAGS)
+	$(CC) $(ARITH) -DUSE_ZSCORE -DREADABLE_VECTOR -DNUM_PU=4 -o $@ $^   $(CFLAGS)
 
 .PHONY: clean
 clean:

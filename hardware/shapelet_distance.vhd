@@ -75,7 +75,7 @@ architecture behavioral of shapelet_distance is
                                                             -- Euclidean distance states
                                                             Sdist_sub, Sdist_square, Sdist_sum_acc, Sdist_reg_acc,
                                                             -- Finishing states
-                                                            Spivot_norm_wb, Spivot_norm_ready, Sdist_final_acc, Sout_distance);
+                                                            Spivot_norm_wb, Spivot_norm_ready, Sdist_final_acc, Searly_abandon, Sout_distance);
     -- Register to keep FSM state
     signal reg_state_s                                  : fsm_state_t;
     
@@ -179,7 +179,7 @@ begin
         if rst = '1' then
             reg_state_s <= Sbegin;
             reg_distance_s <= (others => '0');
-            reg_exp_minimum_s <= (others => '1');
+            reg_exp_minimum_s <= x"FE";
             reg_shapelet_length_s <= 0;
         else
             case reg_state_s is
@@ -324,7 +324,12 @@ begin
                     -- Next state
                     -- Is sum ready?
                     if fp_ready_s = '1' then
-                        reg_state_s <= Sdist_reg_acc;
+                        -- Is the exponent of any of the accumulators greater than the exponent of the current minimum distance?
+                        if any_acc_greater_s = '1' then
+                            reg_state_s <= Searly_abandon;
+                        else
+                            reg_state_s <= Sdist_reg_acc;
+                        end if;
                     end if;
                 
                 when Sdist_reg_acc  =>  
@@ -332,7 +337,7 @@ begin
                     -- Next state
                     -- Checks if the next iteration will exceed the shapelet length
                     -- This is to offset the fact that we begin the iterations at 0
-                    if inc_acc_counter_s >= reg_shapelet_length_s or any_acc_greater_s = '1' then
+                    if inc_acc_counter_s >= reg_shapelet_length_s then
                         reg_state_s <= Sdist_final_acc;
                     else
                         reg_state_s <= Szscore_div;
@@ -357,11 +362,17 @@ begin
                     
                 when Sdist_final_acc =>
                     -- Sums each PU's accumulators
+                    -- Next state
                     if adder_tree_ready_s = '1' then
                         reg_state_s <= Sout_distance;
 						reg_distance_s <= adder_tree_out_s;	 -- Write the distance calculation to distance output register
                     end if;
-                -- Net state
+                
+                when Searly_abandon =>
+                    reg_distance_s <= x"7f800000";
+                    -- Next state
+                    reg_state_s <= Sout_distance;
+                
                 when Sout_distance  =>
                     reg_state_s <= Sbegin;                  -- End operation 1
                 
@@ -627,7 +638,7 @@ begin
     end generate PROCESSING_UNITS; 
     
     -- Check if any of the partial distance exponents are greater than the minimum distance exponent
-    any_acc_greater_s   <= '1' when exp_acc_greater_s /= (NUM_PU-1 downto 0 => '0');
+    any_acc_greater_s   <= '1' when exp_acc_greater_s /= (NUM_PU-1 downto 0 => '0') else '0';
     
     -- Check if division by zero is currently occurring
     div_by_zero_s       <= '0' when div_opb_zero_s      = (NUM_PU-1 downto 0 => '0') else '1';

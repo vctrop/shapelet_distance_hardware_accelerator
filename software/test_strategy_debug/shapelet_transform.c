@@ -5,7 +5,7 @@
 #include "shapelet_transform.h"
 #include <time.h>
 
-#define BASE_SSIZE 3
+#define BASE_SSIZE 4
 
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size)
@@ -166,7 +166,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     }
     // When simulating hardware exponent-based early abandon
     else{
-        // Integer-only exopnent-based early abandon hardware simulation is only possible when the number of processing units is defined
+        // Integer-only exponent-based early abandon hardware simulation is only possible when the number of processing units is defined
         #ifndef NUM_PU
         printf("To simulate hardware exponent-based early abandon, please define NUM_PU"); 
         exit(-1);
@@ -201,9 +201,9 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
                     #ifdef READABLE_VECTOR
                     if (length % BASE_SSIZE == 0){
                         // Union to represent float as unsigned without type punning
-                        F2u f2u;
-                        f2u.f = pointwise_sse;
-                        printf("%08x ", f2u.u);
+                        F2u f2u_point;
+                        f2u_point.f = pointwise_sse;
+                        printf("p:%08x ", f2u_point.u);
                     }
                     #endif
                     
@@ -273,6 +273,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     if (pivot_shapelet->length % BASE_SSIZE == 0){
         printf("Normalized pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
+        printf("\n");
     }
     #endif
     
@@ -281,7 +282,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
 
     // Loops over shapelets in the time-series
-     for (uint32_t i=0; i<5; i++){
+    for (uint32_t i=0; i<3; i++){
     //uint32_t i = 0;
         //printf("Target shapelet %d\n", i);
         // initialize normalized values of time series shapelet starting at i
@@ -289,6 +290,13 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information.
         if (pivot_shapelet->length % BASE_SSIZE == 0){
+            #ifdef READABLE_VECTOR
+            printf("Current minimum distance\n");
+            #endif
+            F2u f2u;
+            f2u.f = minimum_distance;
+            printf("%08x\n", f2u.u);
+            
             #ifdef READABLE_VECTOR
             printf("Target shapelet\n");
             #endif
@@ -330,7 +338,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
            minimum_distance = shapelet_distance;
            closer_shapelet = i;
         }
-     }
+    }
     free(pivot_values);
     free(target_values);
 
