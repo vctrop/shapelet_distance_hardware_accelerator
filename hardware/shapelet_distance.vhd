@@ -80,9 +80,9 @@ architecture behavioral of shapelet_distance is
     signal reg_state_s                                  : fsm_state_t;
     
     -- Buffer filling counter used to load the buffer. incremented by 1 each time.
-    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN-1;
+    signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
     -- Operation counter used to select buffer elements to write back from the processing units. Incremented by NUM_PU. 
-    signal reg_acc_counter_s                            : natural range 0 to MAX_LEN-1;
+    signal reg_acc_counter_s                            : natural range 0 to MAX_LEN;
     signal inc_acc_counter_s                            : natural range 0 to 2*MAX_LEN; -- The range is double so that we avoid overflow
     
     ---- SHAPELET BUFFERING DEFINITIONS
@@ -156,14 +156,14 @@ architecture behavioral of shapelet_distance is
 
     ---- SHAPELETS POSITIONS MUX
     --
-    type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU-1) of std_logic_vector(31 downto 0);
+    type positions_by_pu_t                              is array(0 to MAX_LEN/NUM_PU) of std_logic_vector(31 downto 0);
     -- 
     type pu_matrix_t                                    is array(0 to NUM_PU-1)         of positions_by_pu_t;
     
     -- Input buffer may be either pivot or target shapelets
     signal input_buffer_s                               : shapelet_buffer_t;
     -- Register to count how many blocks of shapelet positions were already presented to the PUs, acting as a MUX selector for the shapelet . (reg_acc_counter_s is an absolute element count)
-    signal reg_block_sel_s                              : natural range 0 to MAX_LEN/NUM_PU-1;
+    signal reg_block_sel_s                              : natural range 0 to MAX_LEN/NUM_PU;
     signal block_sel_rst_s                              : std_logic;
     signal block_sel_inc_s                              : std_logic;
     -- Matrix with processing units as rows and shapelet positions for each PU as columns
@@ -195,7 +195,7 @@ begin
                         if op_i = '0' then
                             -- the number of bits used by the length is based on the log2 of the parameter MAX_LEN
                             -- for the default MAX_LEN=128 it should result in 7
-                            reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) - 1 downto 0)));
+                            reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0)));
                         else
                             reg_exp_minimum_s <= data_i(30 downto 23);
                         end if;
