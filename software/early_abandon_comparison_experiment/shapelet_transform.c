@@ -84,12 +84,13 @@ void zscore_normalization(numeric_type *values, uint16_t length){
 
 
 // Euclidean distance between vectors with early abandon mechanisms
-numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance, uint8_t sim_exp_ea){
+numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target_values, uint16_t length, numeric_type current_minimum_distance, uint8_t sim_exp_ea, uint32_t *abandon_position_addr){
     numeric_type pointwise_sse, distance = 0.0;
     
     // When using vanilla early abandon 
     if(!sim_exp_ea){      
         for (uint16_t i = 0; i < length; i++){
+            *abandon_position_addr = i;
             pointwise_sse = pow((double)(pivot_values[i] - target_values[i]), 2.0);
             distance += pointwise_sse;
         
@@ -125,6 +126,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         
         // Loop over both lenght and number of processing units, with partial accumulation of squared differences and exponent-based early abandon
         for (uint16_t i = 0; i < length; i += NUM_PU){
+            *abandon_position_addr = i;
             for (uint16_t j = 0; j < NUM_PU; j++){
                 if (i + j < length){
                     // Sum of squared error
@@ -158,12 +160,15 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
 
 
 // Distance from a shapelet to an entire time-series
-numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series, uint64_t *vanilla_count_addr, uint64_t *exp_count_addr){
+numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series, uint64_t *vanilla_count_addr, uint64_t *exp_count_addr, uint64_t *vanilla_positions_sum_addr, uint64_t *exp_positions_sum_addr){
     numeric_type shapelet_distance_vanilla, shapelet_distance_exp, minimum_distance;
     numeric_type *pivot_values, *target_values;                                              // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
     const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;         // number of shapelets of length "shapelet_len" in time_series    uint8_t print_flag;
     uint32_t closer_shapelet = 0;
     
+    uint32_t vanilla_abandon_position, exp_abandon_position;
+    
+    // Initialized as inf to avoid if inside for
     minimum_distance = INFINITY;
     
     // Normalize pivot 
@@ -185,15 +190,28 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         zscore_normalization(target_values, pivot_shapelet->length);
 
         // Compute vanilla shapelet-shapelet distance
-        shapelet_distance_vanilla   = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 0);
-        shapelet_distance_exp       = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 1);
+        shapelet_distance_vanilla   = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 0, &vanilla_abandon_position);
+        shapelet_distance_exp       = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 1, &exp_abandon_position);
         
-        if (shapelet_distance_vanilla == INFINITY)
+        // printf("abandon pos: %d, %d\n", vanilla_abandon_position, exp_abandon_position);
+        // if (exp_abandon_position != 0)
+            // printf("\n\nHERE\n\n");
+        
+        if (vanilla_abandon_position >= pivot_shapelet->length + NUM_PU || exp_abandon_position >= pivot_shapelet->length + NUM_PU){
+            printf("Error, abandon position is larger than shapelet length");
+            exit(-1);
+        }
+        
+        
+        if (shapelet_distance_vanilla == INFINITY){
             *vanilla_count_addr = *vanilla_count_addr + 1;
+            *vanilla_positions_sum_addr = *vanilla_positions_sum_addr + vanilla_abandon_position;
+        }
         
-        if (shapelet_distance_exp == INFINITY)
+        if (shapelet_distance_exp == INFINITY){
             *exp_count_addr = *exp_count_addr + 1;
-        
+            *exp_positions_sum_addr = *exp_positions_sum_addr + exp_abandon_position;
+        }
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
         if (shapelet_distance_vanilla < minimum_distance){
             minimum_distance = shapelet_distance_vanilla;
@@ -305,6 +323,8 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
     
     // Early abandon counting
     uint64_t vanilla_count = 0, exp_count = 0;
+    // Early abandon leaving distance accumulation
+    uint64_t vanilla_positions_sum = 0, exp_positions_sum = 0;
     
     //checks to assert if the parameters are valid
     if (min > max){
@@ -327,7 +347,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
 
     // total number of shapelets in each T[i] 
     total_num_shapelets = (min-max-1) * (max + min - 2*T->length - 2)/(2);
-    printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
+    //printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
     
     // For each time-series T[i] in T
     for (i = 0; i < num_ts; i++){
@@ -343,7 +363,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
                 shapelet_distances = safe_alloc(num_ts * sizeof(*shapelet_distances));
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_ts; j++){
-                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j], &vanilla_count, &exp_count);   
+                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j], &vanilla_count, &exp_count, &vanilla_positions_sum, &exp_positions_sum);   
                 }
 
                 // F-Statistic as shapelet quality measure
@@ -366,8 +386,13 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
         free(ts_shapelets);
     }
     
-    printf("Vanilla abandons count:%d\n", vanilla_count);
-    printf("Exponent abandon count:%d\n", exp_count);
+    printf("[Abandon count]\n");
+    printf("Full :%d\n", vanilla_count);
+    printf("Exponent-only: %d\n", exp_count);
+    
+    printf("[Abandon positions sum]\n");
+    printf("Full :%d\n", vanilla_positions_sum);
+    printf("Exponent-only: %d\n", exp_positions_sum);
     
     return k_shapelets;
 }
