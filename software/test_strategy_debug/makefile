@@ -3,7 +3,6 @@ ARMCC = arm-linux-gnueabi-gcc
 CFLAGS= -lm -Wall -pthread -O2 -std=gnu99 #add -g for debugging
 ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
-TIMING_OBJS= shapelet_transform.c timing_test.c
 
 all: print_debug_vector print_readable_debug_vector
 
