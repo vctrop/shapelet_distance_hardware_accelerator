@@ -205,7 +205,7 @@ begin
                             -- in case of an invalid length, a warning signal is set,
                             -- and the state machine is kept on Sbegin
                             -- the number of bits used by the length is based on the log2 of the parameter MAX_LEN
-                            if  to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) <= 3 or 
+                            if  to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) < 3 or 
                                 to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) > MAX_LEN then 
                                 reg_invalid_length_s <= '1';
                                 reg_state_s <= Sbegin;
