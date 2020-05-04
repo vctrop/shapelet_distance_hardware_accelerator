@@ -34,7 +34,9 @@ entity shapelet_distance is
         -- Ready flag for operation completion
         ready_o     : out std_logic;
         --distance result
-        distance_o  : out std_logic_vector(31 downto 0)
+        distance_o  : out std_logic_vector(31 downto 0);
+        -- invalid length signal
+        invalid_length_o : out std_logic
     );
 end shapelet_distance;
 
@@ -48,7 +50,7 @@ architecture behavioral of shapelet_distance is
     -- length must be bigger than 3 and smaller than MAX_LEN
     -- this signal is cleared only if a valid range was input during operation '0' or
     -- if a operation '1' has been started
-    reg_invalid_length_s                                : std_logic;
+    signal reg_invalid_length_s                                : std_logic;
     -- Registers to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
     signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
@@ -72,7 +74,7 @@ architecture behavioral of shapelet_distance is
     -- Shapelet distance FSM states definition
     type fsm_state_t                                    is (-- Initialization states
                                                             Sbegin, Sbuf_load,
-                                                            -- Euclidean normalization states
+                                                            -- Euclidean normalization states (no longer used)
                                                             --Snorm_square, Snorm_sum_acc, Snorm_reg_acc, Snorm_final_acc, Snorm_sqrt, Snorm_div,
                                                             -- Z-score normalization states
                                                             Savg_sum_acc, Savg_reg_acc, Savg_final_acc, Savg_div, Sstd_sub, Sstd_wb_sub, Sstd_square, Sstd_sum_acc,
@@ -203,7 +205,7 @@ begin
                             -- in case of an invalid length, a warning signal is set,
                             -- and the state machine is kept on Sbegin
                             -- the number of bits used by the length is based on the log2 of the parameter MAX_LEN
-                            if  to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) < 3 or 
+                            if  to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) <= 3 or 
                                 to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) > MAX_LEN then 
                                 reg_invalid_length_s <= '1';
                                 reg_state_s <= Sbegin;
@@ -403,7 +405,8 @@ begin
     -- Entity outputs
     distance_o  <= reg_distance_s;
     ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Spivot_norm_ready else '0';
-    
+    invalid_length_o <= reg_invalid_length_s;
+
     -- PIVOT AND TARGET BUFFERS DEFINITION 
     -- Enables writing to pivot and target buffers when loading values from data_i during their respective operations
     GEN_LOADING_EN: for i in buffer_pivot_s'range generate 
