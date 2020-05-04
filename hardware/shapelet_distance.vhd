@@ -43,9 +43,14 @@ architecture behavioral of shapelet_distance is
     -- Flip-flop to keep the desired operation constant during the entire processing
     signal reg_op_s                                     : std_logic;
     
+    -- FF to store invalid length signal. Is set to '1' if the input length value
+    -- during Sbegin at the start of operation '0' is invalid 
+    -- length must be bigger than 3 and smaller than MAX_LEN
+    -- this signal is cleared only if a valid range was input during operation '0' or
+    -- if a operation '1' has been started
+    reg_invalid_length_s                                : std_logic;
     -- Registers to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
-    signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN;
     signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
     signal dec_shapelet_length_float_s                  : std_logic_vector(31 downto 0);
    
@@ -181,25 +186,39 @@ begin
             reg_distance_s <= (others => '0');
             reg_exp_minimum_s <= x"FE";
             reg_shapelet_length_s <= 0;
+            reg_invalid_length_s <= '0';
         else
             case reg_state_s is
                 -- INITIALIZATION STATES
                 when Sbegin         =>
                     reg_op_s <= op_i;
-                    -- reg_buf_counter_s e reg_acc_counter_s podem ser unidos num so reg
+                    -- TODO: reg_buf_counter_s e reg_acc_counter_s podem ser unidos num so reg
                     reg_buf_counter_s <= 0;
                     reg_acc_counter_s <= 0;
                     reg_position_validity_s <= (others => '0');
                     if start_i = '1' then
                         -- If operation is set pivot and change length
                         if op_i = '0' then
+                            -- check input length validity
+                            -- in case of an invalid length, a warning signal is set,
+                            -- and the state machine is kept on Sbegin
                             -- the number of bits used by the length is based on the log2 of the parameter MAX_LEN
-                            -- for the default MAX_LEN=128 it should result in 7
-                            reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0)));
+                            if  to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) < 3 or 
+                                to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0))) > MAX_LEN then 
+                                reg_invalid_length_s <= '1';
+                                reg_state_s <= Sbegin;
+                            else
+                                -- valid length, start operation
+                                reg_shapelet_length_s <= to_integer(unsigned(data_i(integer(ceil(log2(real(MAX_LEN)))) downto 0)));
+                                reg_invalid_length_s <= '0';
+                                reg_state_s  <= Sbuf_load;
+                            end if;
                         else
+                            -- Get the minimun exponent for early abandon
                             reg_exp_minimum_s <= data_i(30 downto 23);
+                            reg_invalid_length_s <= '0';
+                            reg_state_s <= Sbuf_load;
                         end if;
-                        reg_state_s <= Sbuf_load;
                     end if;
                 
                 when Sbuf_load      => 
@@ -523,9 +542,8 @@ begin
     
     -- Divisor
     -- convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation
-    dec_shapelet_length_s <= 0  when reg_state_s = Sbegin   else reg_shapelet_length_s - 1;
     shapelet_length_float_s     <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, shapelet_length_float_s'length)));
-    dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(dec_shapelet_length_s, dec_shapelet_length_float_s'length)));
+    dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s - 1, dec_shapelet_length_float_s'length)));
     
     div_start_s    <= '0'                               when reg_state_s = Savg_div or reg_state_s = Sstd_div  or reg_state_s = Szscore_div     else '1';
     -- To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate

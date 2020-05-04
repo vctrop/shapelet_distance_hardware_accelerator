@@ -5,6 +5,7 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use std.textio.all;
 
 package test_pkg is  
     
@@ -14,11 +15,14 @@ package test_pkg is
 	-- Converts an hexadecimal string number into a std_logic_vector.
 	-- The vector length depends on the number of string characteres (string length * 4).
 	function StringToStdLogicVector(value: string) return std_logic_vector;
-	    
+	
 	function StdLogicVectorToChar(slv : std_Logic_vector(3 downto 0)) return character;
 	
+	-- Converts a std_logic_vector into a hexadecimal string representation
 	function slv_to_hexstr(value : std_logic_vector(31 downto 0)) return string;
-	     
+	
+	-- reads a string of size str_size, given a file line, and outputs to str
+	procedure read_str(variable file_line : inout line; constant str_size : in integer; signal str : out string);
 end test_pkg;
 
 
@@ -133,5 +137,22 @@ package body test_pkg is
 		hexstr(1) := StdLogicVectorToChar(value(31 downto 28));
 		return hexstr;
 	end slv_to_hexstr;
+
+	procedure read_str(variable file_line : inout line; constant str_size : in integer; signal str : out string)
+	is
+        variable char		: character;		-- Stores a single character
+        variable bool		: boolean;	
+    begin
+    
+        for i in str'range loop
+            read(file_line, char, bool);
+            if bool = false then
+                report "read call during read_str() failed!" severity warning;
+            end if;
+            str(i) <= char;
+        end loop;
+        
+    end procedure;
+
 
 end test_pkg;
