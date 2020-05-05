@@ -47,10 +47,7 @@ architecture behavioral of tb_shapelet_distance is
             -- Ready flag for operation completion
             ready_o     : out std_logic;
             --distance result
-            distance_o  : out std_logic_vector(31 downto 0);
-             
-            -- invalid length signal
-            invalid_length_o : out std_logic
+            distance_o  : out std_logic_vector(31 downto 0)
         );
     end component;
     
@@ -61,16 +58,18 @@ architecture behavioral of tb_shapelet_distance is
     constant NUM_PU : integer := 4;
     constant MAX_LEN : integer := 16;
 
-    file testFile : TEXT open READ_MODE is "test/debug_vector.txt";
+    --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile containts:
+	--file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/debug_vector.txt";
+    file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelets\shapelet_distance_hardware_accelerator\hardware\test\debug_vector.txt";
     -- 1 line for integer length 
 	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
 	-- 1 line for target shapelet 32-bit float values, separated by 1 character
 	-- 1 line for expected output 32-bit float distance
 	-- all values must be in hexadecimal, each with 8 characters of length. eg.: 00000004
-	file outFile : text open write_mode is "output_file.txt"; --output file contains the number of the test and the distance found for each input followed by the expected output, one per line.
+	file outFile : text open write_mode is "../output_file.txt"; --output file contains the number of the test and the distance found for each input followed by the expected output, one per line.
     signal clk : std_logic := '0';
     signal rst : std_logic := '1';
-    signal start, ready, op, invalid_length : std_logic;
+    signal start, ready, op : std_logic;
     signal data, distance, expected_output : std_logic_vector(31 downto 0);
     signal index : natural;
 
@@ -101,9 +100,7 @@ begin
             -- Ready flag for operation completion
             ready_o     => ready,
             --distance result
-            distance_o  => distance,
-            
-            invalid_length_o => invalid_length
+            distance_o  => distance
         );
 
     process
@@ -142,21 +139,6 @@ begin
             start <= '1';
             op <= '0';
             wait for clk_period;
-
-            -- if the input length was invalid, retry it
-            while invalid_length = '1' loop
-                readline(testFile, fileLine);   
-                for i in str'range loop
-                    read(fileLine, char, bool);
-                    str(i) := char;
-                end loop;
-                l_v := StringToStdLogicVector(str);
-                data <= l_v;
-                length := to_integer(unsigned(l_v));
-                report "length: " & integer'image(length);
-                wait for clk_period;
-            end loop;
-
 
             start <= '0';
 
