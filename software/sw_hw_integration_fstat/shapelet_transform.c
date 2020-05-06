@@ -447,24 +447,32 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
 
     // total number of shapelets in each T[i] 
     total_num_shapelets = (min-max-1) * (max + min - 2*T->length - 2)/(2);
-    printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
+    //printf("Total number of shapelets for each time-series: %u\n", total_num_shapelets);
     
     // For each time-series T[i] in T
-    for (i = 0; i < num_ts; i++){
+    //for (i = 0; i < num_ts; i++){
+        i = 0;
         ts_shapelets = safe_alloc(total_num_shapelets * sizeof(*ts_shapelets));
         shapelets_index = 0;
-        printf("[TS %u]\n", i);
+        //printf("[TS %u]\n", i);
         // For each length between min and max
-        for (l = min; l <= max; l++){ 
+        //for (l = min; l <= max; l++){ 
+            l = 80;
             num_shapelets = T->length - l + 1;    
             // For each shapelet of the given length
-            for (position = 0; position < num_shapelets; position++){
+            //for (position = 0; position < num_shapelets; position++){
+            position = 0;
                 shapelet_candidate = init_shapelet(&T[i], position, l);                                         // Assemble each shapelet on the fly, instead of keeping them in a matrix
                 shapelet_distances = safe_alloc(num_ts * sizeof(*shapelet_distances));
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_ts; j++){
-                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);   
-                    
+                    shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);                     
+                    union {
+                        float f;
+                        uint32_t u;
+                    } f2u;
+                    f2u.f = shapelet_distances[j];
+                    printf("%08x\n",f2u.u);
                 }
 
                 // F-Statistic as shapelet quality measure
@@ -474,8 +482,8 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
                 // Store every shapelet of T[i] with its quality measure and length in the format [quality, length, shapelet] with shapelet = [s1, s2, ..., sl] 
                 ts_shapelets[shapelets_index] = shapelet_candidate;
                 shapelets_index++;
-            }         
-        }  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
+            //}         
+        //}  // Here all shapelets from T[i] should have been stored together with its quality measures in ts_shapelets                                                             
         
         // Sort shapelets by quality
         qsort(ts_shapelets, (size_t) total_num_shapelets, sizeof(*ts_shapelets), compare_shapelets);
@@ -485,7 +493,7 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
         // Merge ts_shapelets with k_shapelets and keep only best k shapelets, destroying all total_num_shapelets in ts_shapelets
         merge_shapelets(k_shapelets, k, ts_shapelets, num_merged_shapelets);
         free(ts_shapelets);
-    }
+    //}
     
     return k_shapelets;
 }
