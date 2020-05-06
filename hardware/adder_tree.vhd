@@ -168,7 +168,7 @@ begin
 					else  -- Not the last iteration
 
 						-- Feeds back result of previous iteration into adders
-						for i in 0 to reg_num_writebacks_s - 1 loop
+						for i in 0 to num_adders_c - 1 loop
 							reg_inputs_s(i) <= adder_outputs_s(i);
 						end loop;
 						
