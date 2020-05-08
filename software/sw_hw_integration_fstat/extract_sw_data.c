@@ -28,21 +28,23 @@ int main(int argc, char *argv[]){
         printf("Could not set rouding to FE_NEAREST!\n");
     }
     // Get filenames and k from argv
-    if(argc != 4){
-        printf("Please use: %s {path_to_dataset} {output_basename} {k_best}\n", argv[0]);
+    if(argc != 2){
+        printf("Please use: %s {path_to_dataset}\n", argv[0]);
         exit(-1);
     }
     infilename = argv[1];
-    outfilename = argv[2];
+    // outfilename = argv[2];
+    outfilename = "irrelevant";
     //min_len = (uint16_t) atoi(argv[3]);
     //max_len = (uint16_t) atoi(argv[4]);
     min_len = 80;
     max_len = 80;
-    k = (uint16_t) atoi(argv[3]);
-    if(k < 0){
-        printf("Error: k must be greater than zero\n");
-        exit(-1);
-    }
+    k = 10;
+    // k = (uint16_t) atoi(argv[3]);
+    // if(k < 0){
+        // printf("Error: k must be greater than zero\n");
+        // exit(-1);
+    // }
     
     // Load dataset and hold number of time-series loaded
     num_ts = read_train_dataset(infilename, &T);

@@ -36,14 +36,19 @@ net_proportions  = np.array(net_areas)/total_net_area
 static_proportions  = np.array(static_powers)/total_static_power
 dynamic_proportions = np.array(dynamic_powers)/total_dynamic_power
 
-print(cell_proportions)
-print(np.sum(cell_proportions))
+print(entities)
+print("Net")
 print(net_proportions)
-print(np.sum(net_proportions))
+#print(np.sum(net_proportions))
+print("Cell")
+print(cell_proportions)
+#print(np.sum(cell_proportions))
+print("Static")
 print(static_proportions)
-print(np.sum(static_proportions))
+#print(np.sum(static_proportions))
+print("Dynamic")
 print(dynamic_proportions)
-print(np.sum(dynamic_proportions))
+#print(np.sum(dynamic_proportions))
 
 plt.figure()
 plt.title("Cell donnut")

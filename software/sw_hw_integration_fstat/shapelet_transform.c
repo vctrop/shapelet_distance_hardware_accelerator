@@ -154,6 +154,14 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
+        F2u f2u;
+        #ifdef HW_VECTOR
+        // Test vectors extraction. Refer to readme_vectors.txt for more information.
+        f2u.f = minimum_distance;
+        printf("%08x\n", f2u.u);
+        print_shapelet_elements(target_values, pivot_shapelet->length);
+        #endif
+        
         // Normalize target shapelet values
         #ifdef USE_ZSCORE
         zscore_normalization(target_values, pivot_shapelet->length);
@@ -163,6 +171,12 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         
         // Compute shapelet-shapelet distance
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance);
+        
+        // printed both when HW_VECTOR is defined and not
+        // Union to represent float as unsigned without type punning
+        
+        f2u.f = shapelet_distance;
+        printf("%08x\n", f2u.u);
         
         // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
         if (shapelet_distance < minimum_distance){
@@ -473,16 +487,23 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t mi
             //for (position = 0; position < num_shapelets; position++){
             position = 0;
                 shapelet_candidate = init_shapelet(&T[i], position, l);                                         // Assemble each shapelet on the fly, instead of keeping them in a matrix
+                
+                // Entry vector printing
+                #ifdef HW_VECTOR
+                numeric_type *pivot_values;
+                // Normalize pivot 
+                pivot_values = safe_alloc(shapelet_candidate.length * sizeof(*pivot_values));
+                memcpy(pivot_values, &shapelet_candidate.Ti->values[shapelet_candidate.start_position], shapelet_candidate.length * sizeof(*pivot_values));
+            
+                printf("%08x\n", shapelet_candidate.length);
+                print_shapelet_elements(pivot_values, shapelet_candidate.length);
+                printf("\n");
+                #endif
+
                 shapelet_distances = safe_alloc(num_ts * sizeof(*shapelet_distances));
                 // Calculate distances from current shapelet candidate to each time series in T, 
                 for (j = 0; j < num_ts; j++){
                     shapelet_distances[j] = shapelet_ts_distance(&shapelet_candidate, &T[j]);                     
-                    union {
-                        float f;
-                        uint32_t u;
-                    } f2u;
-                    f2u.f = shapelet_distances[j];
-                    printf("%08x\n",f2u.u);
                 }
 
                 // F-Statistic as shapelet quality measure
@@ -787,16 +808,13 @@ numeric_type **transform_dataset(Timeseries *T, uint16_t num_ts, Shapelet *shape
 // Print all positions of a certain shapelet as HEX
 void print_shapelet_elements(const numeric_type * shapelet_values, uint16_t shapelet_len){
     // Union to represent float as unsigned without type punning
-    union {
-            float f;
-            uint32_t u;
-    } f2u;
+    F2u f2u;
     
     for (uint16_t i = 0; i < shapelet_len; i++){
         f2u.f = shapelet_values[i];
         printf("%08x ", f2u.u);
     }    
-    printf("\n");
+    //printf("\n");
 }
 
 // Print all shapelets in a shapelet array
@@ -873,7 +891,7 @@ uint16_t read_train_dataset(char * filename, Timeseries **ts_array){
     FILE *file_descriptor;
     char *field;
     uint16_t num_ts, ts_len;
-    const uint16_t HEADER_BSIZE = 20;
+    const uint16_t HEADER_BSIZE = 15;
     char header_buffer[HEADER_BSIZE];
     uint16_t TS_BSIZE;
     char *time_series_buffer;

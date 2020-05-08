@@ -45,6 +45,12 @@ typedef struct
     //numeric_type *Ti;                   // Timeseries values window pointer
 } Shapelet;
 
+// Union to represent floats as hexadecimal safely (i.e. without type punning)
+typedef union {
+    float f;
+    uint32_t u;
+} F2u;
+
 // Allocates memory and checks for allocation error
 void *safe_alloc(size_t size);
 
