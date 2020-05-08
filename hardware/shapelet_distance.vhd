@@ -66,6 +66,7 @@ architecture behavioral of shapelet_distance is
     signal reg_invalid_length_s                                : std_logic;
     -- Registers to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
+    signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN;
     signal shapelet_length_float_s                      : std_logic_vector(31 downto 0);
     signal dec_shapelet_length_float_s                  : std_logic_vector(31 downto 0);
    
@@ -558,8 +559,9 @@ begin
     
     -- Divisor
     -- convert reg_shapelet_length_s and reg_shapelet_length_s - 1 to floating point representation
+    dec_shapelet_length_s <= 0  when reg_state_s = Sbegin   else reg_shapelet_length_s - 1;
     shapelet_length_float_s     <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s, shapelet_length_float_s'length)));
-    dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(reg_shapelet_length_s - 1, dec_shapelet_length_float_s'length)));
+    dec_shapelet_length_float_s <= uint_to_fp(std_logic_vector(to_unsigned(dec_shapelet_length_s, dec_shapelet_length_float_s'length)));
     
     div_start_s    <= '0'                               when reg_state_s = Savg_div or reg_state_s = Sstd_div  or reg_state_s = Szscore_div     else '1';
     -- To use only one of the divisors in Savg_div and Sstd_div, the division operands beside the first one must come from a for..generate
