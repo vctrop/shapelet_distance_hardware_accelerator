@@ -28,7 +28,7 @@ extract_shapelets_zscore_abs_exp: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -DUSE_ABS -DUSE_EXPECTED_VALUE  -o  $@  $^  $(CFLAGS)
 
 # arm cross compilation used for simulation. Requires arm gcc cross compiler. 
-arm: timing10 timing20 timing30 timing40 timing50 timing80 timing127 
+arm: timing10 timing20 timing30 timing40 timing50 timing80 timing100 timing127 
 
 timing10: $(TIMING_OBJS)
 	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=10 -o $@ $^   $(CFLAGS)
@@ -42,6 +42,8 @@ timing50: $(TIMING_OBJS)
 	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=50 -o $@ $^   $(CFLAGS)
 timing80: $(TIMING_OBJS)
 	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=80 -o $@ $^   $(CFLAGS)
+timing100: $(TIMING_OBJS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=100 -o $@ $^   $(CFLAGS)
 timing127: $(TIMING_OBJS)
 	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=127 -o $@ $^   $(CFLAGS)
 
