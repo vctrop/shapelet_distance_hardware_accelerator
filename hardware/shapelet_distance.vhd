@@ -480,7 +480,7 @@ begin
     target_buf_rst_s    <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '1' else '0';
     
     -- Increment reg_acc_counter_s out of process to create a single adder
-    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
+    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU + 2;
         
     -- MUX TO PRESENT SHAPELET POSITIONS TO THE RIGHT PROCESSING UNITS
     -- Selects which shapelet is presented to the MUX
