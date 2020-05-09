@@ -51,7 +51,7 @@ architecture behavioral of tb_shapelet_distance_timing is
         );
     end component;
     
-    constant half_clk_period : time := 8 ns;
+    constant half_clk_period : time := 5 ns;
     constant clK_period : time := 2*half_clk_period;
 
     -- generic constants
@@ -59,8 +59,8 @@ architecture behavioral of tb_shapelet_distance_timing is
     constant MAX_LEN : integer := 128;
 
     --file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-vicenzi201620381/shapelet_transform_hardware_accelerator/hardware/test/vetor.txt"; -- testFile containts:
-	--file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/debug_vector.txt";
-    file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelet_distance_hardware_accelerator\hardware\test\timing_vector.txt";
+	file testFile : TEXT open READ_MODE is "/home/elc1054/elc1054-costa2016520151/shapelet_distance_hardware_accelerator/hardware/test/timing_vector.txt";
+    --    file testFile : TEXT open READ_MODE is "V:\Academia\GMicro\shapelet_distance_hardware_accelerator\hardware\test\timing_vector.txt";
     -- 1 line for integer length 
 	-- 1 line for pivot shapelet 32-bit float values, separated by 1 character
 	-- 1 line for target shapelet 32-bit float values, separated by 1 character
