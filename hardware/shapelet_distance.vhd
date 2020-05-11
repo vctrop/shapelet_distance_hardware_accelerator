@@ -103,8 +103,8 @@ architecture behavioral of shapelet_distance is
     -- Buffer filling counter used to load the buffer. incremented by 1 each time.
     signal reg_buf_counter_s                            : natural range 0 to MAX_LEN;
     -- Operation counter used to select buffer elements to write back from the processing units. Incremented by NUM_PU. 
-    signal reg_acc_counter_s                            : natural range 0 to 2*(MAX_LEN+2);
-    signal inc_acc_counter_s                            : natural range 0 to 2*(MAX_LEN+2); -- The range is double so that we avoid overflow
+    signal reg_acc_counter_s                            : natural range 0 to 2*MAX_LEN;
+    signal inc_acc_counter_s                            : natural range 0 to 2*MAX_LEN; -- The range is double so that we avoid overflow
     
     ---- SHAPELET BUFFERING DEFINITIONS
     -- Define shapelet buffer 
@@ -480,7 +480,7 @@ begin
     target_buf_rst_s    <= '1' when reg_state_s = Sbegin and start_i = '1' and op_i = '1' else '0';
     
     -- Increment reg_acc_counter_s out of process to create a single adder
-    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU + 2;
+    inc_acc_counter_s <= reg_acc_counter_s + NUM_PU;
         
     -- MUX TO PRESENT SHAPELET POSITIONS TO THE RIGHT PROCESSING UNITS
     -- Selects which shapelet is presented to the MUX
