@@ -6,28 +6,59 @@ Here we propose a new hardware architecture to compute both Z-Score normalizatio
 <br /><br />
 
 <p align="center">
-Highly-abstracted hardware operation\
- 
+Highly-abstracted hardware operation
+<br />
+</p>
+
+<p align="center">
 <img src="images/readme/shapelet_samples.png" width=500>
 <br /><br />
+</p>
   
-Hardware speedups over software\
+<p align="center">
+Hardware speedups over software
+<br />
+</p>
+ 
+<p align="center">
 <img src="images/readme/table_1.png" width=500>
 <br /><br />
+</p>
 
-Entity Interface\
+<p align="center">
+Entity Interface
+<br />
+</p>
+
+<p align="center">
 <img src="images/readme/entity_interface.png" width=500>
 <br /><br />
+</p>
 
-Control Finite-State Machine (FSM) diagram\
+<p align="center">
+Control Finite-State Machine (FSM) diagram
+<br />
+</p>
+ 
+<p align="center">
 <img src="images/readme/shapelet_distance_fsm_diagram.png" width=500>
 <br /><br />
+</p>
 
-Software-hardware integration in the Shapelet Transform context\
+<p align="center">
+Software-hardware integration in the Shapelet Transform context
+<br />
+</p>
+ 
+<p align="center">
 <img src="images/readme/sw_hw_integration.png" width=500>
 <br /><br />
+</p>
 
-Power and area proportions among the accelerator's components for one configuration of parallelism and maximum length\
+<p align="center">
+Power and area proportions among the accelerator's components for one configuration of parallelism and maximum length
+<br />
+ 
 <img src="images/readme/synthesis_donnuts.png" width=500>
 <br /><br />
 </p>
