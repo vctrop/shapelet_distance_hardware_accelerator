@@ -1,7 +1,6 @@
 # SHAPELET DISTANCE HARDWARE ACCELERATOR
 
-## Implementation and verification of the accelerator proposed in "Hardware Accelerator for Shapelet Distance
-Computation in Time-Series Classification" paper from May 2020, by Victor O. Costa, Carlos G. A. Gewehr, Julio C. Vicenzi, Everton A. Carara and Leonardo L. de Oliveira.
+### Implementation and verification of the accelerator proposed in "Hardware Accelerator for Shapelet Distance Computation in Time-Series Classification" paper from May 2020, by Victor O. Costa, Carlos G. A. Gewehr, Julio C. Vicenzi, Everton A. Carara and Leonardo L. de Oliveira.
 
 Here we propose a new hardware architecture to compute both Z-Score normalization and Euclidean distance. We identify these tasks as hot spots in TSC using shapelets and propose scalable and parameterizable hardware that is suitable for integration as a dedicated engine on processing units. Results showed that the proposed hardware significantly reduces the running time of the shapelet distance computation by a factor that increases with shapelet length, reaching speedups of more than 500% for shapelets with length larger than 100.  
 <br /><br />
