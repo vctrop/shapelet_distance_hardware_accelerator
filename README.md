@@ -36,7 +36,7 @@ Entity Interface
 </p>
 
 <p align="center">
-Control Finite-State Machine (FSM) diagram
+Control Finite-State Machine diagram (a vectorized version of the full FSM is available in the "images" folder)
 <br />
 </p>
  
