@@ -1,4 +1,0 @@
-bird - z_pow > z_abs > alg_pow > alg_abs
-coffee - z_pow > alg_pow > z_abs > alg_abs
-ecg - z_pow > alg_pow > z_abs > alg_abs
-wafer - z_pow >> z_abs >> alg_abs > alg_pow
