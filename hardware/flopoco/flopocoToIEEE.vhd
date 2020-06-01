@@ -15,7 +15,7 @@ use std.textio.all;
 library work;
 
 entity OutputIEEE_8_23_to_8_23 is
-   port ( clk, rst : in std_logic;
+   port ( 
           X : in  std_logic_vector(8+23+2 downto 0);
           R : out  std_logic_vector(31 downto 0)   );
 end entity;
@@ -30,11 +30,6 @@ signal sfracX :  std_logic_vector(22 downto 0);
 signal fracR :  std_logic_vector(22 downto 0);
 signal expR :  std_logic_vector(7 downto 0);
 begin
-   process(clk)
-      begin
-         if clk'event and clk = '1' then
-         end if;
-      end process;
    expX  <= X(30 downto 23);
    fracX  <= X(22 downto 0);
    exnX  <= X(33 downto 32);
