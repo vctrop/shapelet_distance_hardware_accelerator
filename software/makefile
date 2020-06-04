@@ -1,12 +1,19 @@
 CC= gcc
 ARMCC = arm-linux-gnueabi-gcc
-CFLAGS= -lm -Wall -pthread -O2 -std=gnu99 #add -g for debugging
+CFLAGS= -lm -Wall -pthread -O3 -std=gnu99 #add -g for debugging
 ARMFLAGS= -static -march=armv7-a -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp 
 ARITH=  -DUSE_FLOAT			#remove this flag to use fixed point arithmetic instead
 OBJS= shapelet_transform.c extract_shapelets.c
 TIMING_OBJS= shapelet_transform.c timing_test.c
-#all: extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs
+
 all: extract_shapelets_zscore_pow
+
+# uses zscore normaliztion and power of two in distance computation
+extract_shapelets_zscore_pow: $(OBJS)
+	$(CC) $(ARITH) -DUSE_ZSCORE -o $@ $^   $(CFLAGS) -fopenmp
+
+#THESE OTHER COMPILATION COMMANDS WHERE USED DURING TESTING AND ARE DEPRECATED:
+#all: extract_shapelets_algebric_pow extract_shapelets_algebric_abs extract_shapelets_zscore_pow extract_shapelets_zscore_abs
 
 # uses algebric normalization and power of two in distance computation
 extract_shapelets_algebric_pow: $(OBJS)
@@ -16,9 +23,6 @@ extract_shapelets_algebric_pow: $(OBJS)
 extract_shapelets_algebric_abs: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ABS -o $@ $^   $(CFLAGS)
     
-# uses zscore normaliztion and power of two in distance computation
-extract_shapelets_zscore_pow: $(OBJS)
-	$(CC) $(ARITH) -DUSE_ZSCORE -o $@ $^   $(CFLAGS)
 
 # uses zscore normalization and abs in distance computation
 extract_shapelets_zscore_abs: $(OBJS)
@@ -28,8 +32,10 @@ extract_shapelets_zscore_abs_exp: $(OBJS)
 	$(CC) $(ARITH) -DUSE_ZSCORE -DUSE_ABS -DUSE_EXPECTED_VALUE  -o  $@  $^  $(CFLAGS)
 
 # arm cross compilation used for simulation. Requires arm gcc cross compiler. 
-arm: timing10 timing20 timing30 timing40 timing50 timing80 timing100 timing127 
+arm: timing3 timing10 timing20 timing30 timing40 timing50 timing80 timing100 timing127 
 
+timing3: $(TIMING_OBJS)
+	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=3 -o $@ $^   $(CFLAGS)
 timing10: $(TIMING_OBJS)
 	$(ARMCC) $(ARMFLAGS) $(ARITH) -DUSE_ZSCORE -DLENGTH=10 -o $@ $^   $(CFLAGS)
 timing20: $(TIMING_OBJS)

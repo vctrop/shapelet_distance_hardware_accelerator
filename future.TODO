@@ -1,9 +1,6 @@
 // TO*DO LIST OF THE PROJECT
 
 # HARDWARE
-* parameterizable adder tree to sum accumulators 
-* consider the case when length_i is inadequate (0, 1 or larger than MAX_LEN)
 
 # SOFTWARE
-* function that reads shapelet archive csv to an array of Shapelets (files_to_shapelets())
 * investigate class error in ItalyPowerDemand

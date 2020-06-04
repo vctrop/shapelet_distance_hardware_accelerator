@@ -95,6 +95,9 @@ Shapelet *shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, uint16_t
 // however, if min + max < num_threads, fewer threads than expected will be used
 Shapelet *multi_thread_shapelet_cached_selection(Timeseries * T, uint16_t num_of_ts, const uint16_t min, const uint16_t max, uint16_t k, const uint16_t num_threads);
 
+// Multithred and SIMD aceleration using openMP
+Shapelet *omp_shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_t min, uint16_t max, uint16_t k);
+
 // Remove self similar shapelets (shapelets with overlapping indices)
 Shapelet *remove_self_similars(Shapelet *ts_shapelets, uint32_t *num_shapelets);
    

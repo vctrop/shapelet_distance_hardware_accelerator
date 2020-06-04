@@ -48,23 +48,19 @@ int main(int argc, char *argv[]){
     Timeseries *T;
     char * infilename, *outfilename;
 
-    //set floating point rounding mode
-    if(fesetround(FE_TONEAREST)){
-        printf("Could not set rouding to FE_NEAREST!\n");
-    }
-    print_rounding_mode();
-
     // Get filenames and k from argv
     if(argc != 6){
         printf("Please use: %s {path_to_dataset} {output_basename} {min_len} {max_len} {k_best}\n", argv[0]);
         exit(-1);
     }
+
     infilename = argv[1];
     outfilename = argv[2];
     min_len = (uint16_t) atoi(argv[3]);
     max_len = (uint16_t) atoi(argv[4]);
     k = (uint16_t) atoi(argv[5]);
-    if(k < 0){
+    
+    if(k <= 0){
         printf("Error: k must be greater than zero\n");
         exit(-1);
     }
@@ -83,7 +79,7 @@ int main(int argc, char *argv[]){
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     //k_best = multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 2);
-    k_best = shapelet_cached_selection(T, num_ts, min_len, max_len, k);
+    k_best = omp_multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 4);
 
     shapelet_set_to_files(k_best, k, T, outfilename);
     
@@ -94,7 +90,5 @@ int main(int argc, char *argv[]){
     
     free(k_best);
    
-    //check to see if rounding mode changed
-    print_rounding_mode();
     return 0;
 }
