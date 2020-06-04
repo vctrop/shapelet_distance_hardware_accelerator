@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
     Shapelet *k_best = malloc(k * sizeof(*k_best));
 
     //k_best = multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 2);
-    k_best = omp_multi_thread_shapelet_cached_selection(T, num_ts, min_len, max_len, k, 4);
+    k_best = omp_shapelet_cached_selection(T, num_ts, min_len, max_len, k);
 
     shapelet_set_to_files(k_best, k, T, outfilename);
     
