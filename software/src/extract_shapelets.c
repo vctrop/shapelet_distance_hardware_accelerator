@@ -23,25 +23,6 @@ void print_float_array(float * vec, size_t size){
     printf("\n");
 }
 
-void print_rounding_mode(){
-    switch(fegetround()){
-        case FE_DOWNWARD:
-            printf("Current rounding mode is downward!\n");
-            break;
-        case FE_UPWARD:
-            printf("Current rounding mode is upward!\n");
-            break;
-        case FE_TOWARDZERO:
-            printf("Current rounding mode is toward zero!\n");
-            break;
-        case FE_TONEAREST:
-            printf("Current rounding mode is to nearest!\n");
-            break;
-        default:
-            printf("Could not find rounding mode!\n");
-    }
-}
-
 int main(int argc, char *argv[]){
     uint16_t k, num_ts, min_len, max_len;
     //Timeseries T[NUM_SERIES];
