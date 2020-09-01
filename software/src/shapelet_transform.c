@@ -207,7 +207,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     target_values = safe_alloc(pivot_shapelet->length * sizeof(*target_values));
 
     // Loops over shapelets in the time-series
-    for (uint32_t i=0; i<num_shapelets; i++){
+    for(uint32_t i=0; i<num_shapelets; i++){
         // initialize normalized values of time series shapelet starting at i
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
@@ -233,78 +233,6 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 
     return minimum_distance;
 }
-
-
-
-//// DEPRECATED
-// Normalization and distance from a shapelet to a time-series, using the dynamic algorithm from (Chang, 2012)
-// numeric_type dynamic_shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *time_series){
-    // #ifdef USE_FLOAT
-    // float shapelet_distance, minimum_distance;
-    // float S_pivot = 0, S_target = 0, S2_pivot = 0, S2_target = 0, omega = 0;
-    // float Mi_pivot, Mi_target, std_pivot, std_target;
-    // float *pivot_values, *target_values;                                              // we hold the shapelet values in a temporary vector so that we can manipulate and change this data without modifing the time series
-    // const uint32_t num_shapelets = time_series->length - pivot_shapelet->length + 1;         // number of shapelets of length "shapelet_len" in time_series    uint8_t print_flag;
-    // const uint32_t shapelet_length = pivot_shapelet -> length;
-    // uint32_t closer_shapelet = 0;
-    
-    // //printf("Time series %p\n", time_series);
-    // //minimum_distance = INFINITY;
-    
-    // // loop over pivot and first target shapelet values
-    // for (uint32_t i = 0; i < shapelet_length; i++){
-        // // accumulate S_pivot, S_target, S2_pivot, S2_target and Omega
-        // S_pivot += pivot_shapelet -> Ti -> values[(pivot_shapelet -> start_position) + i];
-        // S2_pivot += (float) pow(pivot_shapelet -> Ti -> values[(pivot_shapelet -> start_position) + i], 2);
-        // S_target += time_series -> values[i];
-        // S2_target += (float) pow(time_series -> values[i], 2);
-        // omega += (pivot_shapelet -> Ti -> values[(pivot_shapelet -> start_position) + i]) * (time_series -> values[i]);
-    // }
-    
-    // // compute Mi_pivot = S_pivot/l; Mi_target = S_target/l
-    // // compute std_pivot = sqrt(S2_pivot - Mi_pivot^2); std_target = sqrt(S2_target - Mi_target^2)
-    // // compute distance = sqrt(2 * (1 - (omega[0] - l * Mi_pivot[0] * Mi_target[0]) / (l * std_pivot[0] * std_target[0])))
-    // Mi_pivot = S_pivot / shapelet_length;
-    // Mi_target = S_target / shapelet_length;
-    // std_pivot = (float) sqrt((double) S2_pivot - pow(Mi_pivot, 2));
-    // std_target = (float) sqrt((double) S2_target - pow(Mi_target, 2));
-    // shapelet_distance = sqrt( 2 * (1 - ((omega - shapelet_length * Mi_pivot * Mi_target) / (shapelet_length * std_pivot * std_target) )));
-    
-    // // Initialize minimum distance
-    // minimum_distance = shapelet_distance;
-    
-    // // loop with i from l to m time-series values
-    // for (uint32_t i = shapelet_length; i < (time_series -> length); i++){    
-        // // include time_series[i] and exclude time_series[i-l]
-        // // update omega
-        // // update S_target, Mi_target
-        // // update S2_target, std_target
-        // omega = omega - () + ();
-        // S_target = S_target - () + ();
-        // Mi_target = S_target / ();
-        // S2_target = S2_target - () + ();
-        // std_target = ();
-        
-        // shapelet_distance = sqrt( 2 * (1 - ((omega - shapelet_length * Mi_pivot * Mi_target) / (shapelet_length * std_pivot * std_target) )));
-    // }
-        
-        
-        // // compute current distance and compare with lower til now
-        // // Keep the minimum distance between the pivot shapelet and all the time-series shapelets
-        // if (shapelet_distance < minimum_distance){
-            // minimum_distance = shapelet_distance;
-            // closer_shapelet = i;
-        // }
-    // }
-    
-    // return minimum_distance;
-    
-    // #else
-    // printf("Dynamic shapelet distance not defined for fixed point representation\n");
-    // exit(-1);
-    // #endif
-    
-// }
 
 
 // F-Statistic based on distance measures and associated binary classes
@@ -401,97 +329,6 @@ numeric_type bin_f_statistic(numeric_type *measured_distances, Timeseries *ts_se
     return f_stat;
 }
 
-// floating point F-Statistic based on distance measures and associated classes
-/*
-float f_statistic(float *measured_distances, uint8_t *ts_classes, uint16_t num_ts, uint8_t num_classes){
-    float f_stat;
-    float total_dists_sum, total_dists_average, *class_dist_sums, *class_dist_averages;
-    float final_averages_sum, final_individual_sum;
-    float **distances_by_class;
-    uint16_t *ts_per_class, *class_wise_counter;
-    uint16_t i, j;
-    uint8_t class;
-    
-    // Allocate memory for sums and averages
-    class_dist_sums =  safe_alloc(num_classes * sizeof(*class_dist_sums));
-    class_dist_averages =  safe_alloc(num_classes * sizeof(*class_dist_averages));
-    
-    // Allocate the number of members per class and class-wise counter
-    ts_per_class = safe_alloc(num_classes * sizeof(uint16_t));
-    class_wise_counter = safe_alloc(num_classes * sizeof(uint16_t));
-    
-    // Initialize class-dependent values
-    if(!memset(ts_per_class, 0, num_classes * sizeof(uint16_t)))
-    {
-        perror("Error, could not initiliaze ts_per_class: ");
-        exit(errno);
-    }
-    if(!memset(class_wise_counter, 0, num_classes * sizeof(uint16_t)))
-    {
-        perror("Error, could not initiliaze class_wise_counter: ");
-        exit(errno);
-    }
-    if(!memset(class_dist_sums, 0, num_classes * sizeof(*class_dist_sums)))
-    {
-        perror("Error, could not initiliaze class_dist_sums: ");
-        exit(errno);
-    }
-        
-    // Count number of members from each class
-    for (i = 0; i < num_ts; i++){
-        class = ts_classes[i];
-        ts_per_class[class]++;
-    }
-    
-    // Allocate the splitted distances by class
-    distances_by_class = safe_alloc(num_classes * sizeof(*distances_by_class));
-    for (i = 0; i < num_classes; i++)
-        distances_by_class[i] = safe_alloc(ts_per_class[i] * sizeof(**distances_by_class));
-    
-    total_dists_sum = 0.0;
-    // Split distances by class and calculate sums
-    for(i = 0; i < num_ts; i++){
-        class = ts_classes[i];
-        distances_by_class[class][class_wise_counter[class]] = measured_distances[i];
-        class_wise_counter[class]++;
-        
-        // Total and class-wise sums
-        class_dist_sums[class] += measured_distances[i];
-        total_dists_sum += measured_distances[i];
-    }
-    
-    // Calculate total and class-wise averages
-    total_dists_average = total_dists_sum/num_ts;
-    for(i = 0; i < num_classes; i++)
-        class_dist_averages[i] = class_dist_sums[i]/ts_per_class[i];
-    
-    // Calculate final averages sum
-    final_averages_sum = 0.0;
-    for(i = 0; i < num_classes; i++)
-        final_averages_sum += pow((class_dist_averages[i] - total_dists_average),2);
-    
-    // Calculate final individual sum
-    final_individual_sum = 0.0;
-    for(i = 0; i < num_classes; i++){
-        for(j = 0; j < ts_per_class[i]; j++)
-            final_individual_sum += pow((distances_by_class[i][j] - class_dist_averages[i]),2);
-    }
-    
-    // Free allocated memory
-    free(class_dist_averages);
-    free(class_dist_sums);
-    free(ts_per_class);
-    free(class_wise_counter);
-    for (i = 0; i < num_classes; i++)
-        free(distances_by_class[i]);
-    free(distances_by_class);
-    
-    // Calculate F-Statistic
-    f_stat = (final_averages_sum/(num_classes - 1))/(final_individual_sum/(num_ts - num_classes));
-    
-    return f_stat;
-}
-*/
 
 // Compare shapelets quality measures for sorting with qsort()
 static int compare_shapelets(const void *shapelet_1, const void *shapelet_2){
@@ -831,20 +668,10 @@ Shapelet *omp_shapelet_cached_selection(Timeseries * T, uint16_t num_ts, uint16_
 static inline int is_self_similar(const Shapelet s1, const Shapelet s2)
 {
     // Shapelets must be from the same time series to be self similar
-    if(s1.Ti != s2.Ti)
-    {
-        return 0;
-    }
     // Shapelets are self similar if their indices overlap
-    if( ( (s1.start_position >= s2.start_position) && (s1.start_position < s2.start_position + s2.length) ) ||
-        ( (s2.start_position >= s1.start_position) && (s2.start_position < s1.start_position + s1.length) ) ) 
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return ( s1.Ti == s2.Ti &&
+        ( ( (s1.start_position >= s2.start_position) && (s1.start_position < s2.start_position + s2.length) ) ||
+        ( (s2.start_position >= s1.start_position) && (s2.start_position < s1.start_position + s1.length) ) ) );
 }
 
 
@@ -1009,15 +836,13 @@ void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeser
     for (int i = 0; i < num_shapelets; i++){
         ts_i = (uint64_t)(shapelet_set[i].Ti - T);
         // Write shapelet description
-        fprintf(info_file_descriptor, "Shapelet %d is from TS %lu,\thas length: %d,\tstarting position: %d,\tquality: %g\n", i, ts_i, shapelet_set[i].length, shapelet_set[i].start_position ,shapelet_set[i].quality);
         // Write shapelet elements
         for(int j = 0; j < shapelet_set[i].length; j++){
             fprintf(data_file_descriptor, "%g", get_value(&shapelet_set[i], j));
             // Unless its the last element, write comma
-            if (j != shapelet_set[i].length - 1){
-                fprintf(data_file_descriptor, ",");
-            }
+            fprintf(data_file_descriptor, ",");
         }
+        fprintf(data_file_descriptor, "%g", shapelet_set[i].quality);
         fprintf(data_file_descriptor, "\n");
     }
     
