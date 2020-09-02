@@ -16,7 +16,7 @@ entity TestBench_FPAdd_8_23_F400_uid2_F400_uid28 is
 end entity;
 
 architecture behavorial of TestBench_FPAdd_8_23_F400_uid2_F400_uid28 is
-   component fp_adder_single_X is
+   component fp_adder_single2_X is
       port ( clk, rst : in std_logic;
              X : in  std_logic_vector(8+23+2 downto 0);
              Y : in  std_logic_vector(8+23+2 downto 0);
@@ -117,7 +117,7 @@ architecture behavorial of TestBench_FPAdd_8_23_F400_uid2_F400_uid28 is
    -- FP subtypes for casting
    subtype fp34 is std_logic_vector(33 downto 0);
 begin
-   test: fp_adder_single_X  -- pipelineDepth=7 maxInDelay=0
+   test: fp_adder_single2_X  -- pipelineDepth=7 maxInDelay=0
       port map ( clk  => clk,
                  rst  => rst,
                  R => R,
