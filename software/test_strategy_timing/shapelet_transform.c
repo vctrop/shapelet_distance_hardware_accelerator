@@ -71,7 +71,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
-    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
         // Union to represent float as unsigned without type punning
         F2u f2u_mean_sum, f2u_mean, f2u_sub_element, f2u_sub_squared;
         f2u_mean_sum.f = mean_sum;
@@ -103,7 +103,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
-    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
         // Union to represent float as unsigned without type punning
         F2u f2u_std_acc;
         f2u_std_acc.f = differrence_sum;
@@ -120,7 +120,7 @@ void zscore_normalization(numeric_type *values, uint16_t length){
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
-    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
         // Union to represent float as unsigned without type punning
         F2u f2u_std_div, f2u_std;
         f2u_std_div.f = differrence_sum;
@@ -148,7 +148,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information 
     #ifdef READABLE_VECTOR
-    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
         printf("Pointwise distance\n");
     } 
     #endif
@@ -161,7 +161,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
         
             // Test vectors extraction. Refer to readme_vectors.txt for more information    
             #ifdef READABLE_VECTOR
-            if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+            if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
                 // Union to represent float as unsigned without type punning
                 F2u f2u;
                 f2u.f = pointwise_sse;
@@ -209,7 +209,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
                     
                     // Test vectors extraction. Refer to readme_vectors.txt for more information
                     #ifdef READABLE_VECTOR
-                    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+                    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
                         // Union to represent float as unsigned without type punning
                         F2u f2u_point;
                         f2u_point.f = pointwise_sse;
@@ -241,7 +241,7 @@ numeric_type euclidean_distance(numeric_type *pivot_values, numeric_type *target
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
-    if (length % BASE_SSIZE == 0 || length == 3 || length == 127){
+    if (length % BASE_SSIZE == 0 || length == 3 || length == 128){
         printf("\n");
     }    
     #endif
@@ -264,7 +264,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
     memcpy(pivot_values, &pivot_shapelet->Ti->values[pivot_shapelet->start_position], pivot_shapelet->length * sizeof(*pivot_values));
     
     // Test vectors extraction. Refer to readme_vectors.txt for more information.
-    if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 127){
+    if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 128){
         #ifdef READABLE_VECTOR
         printf("Length\n");
         #endif
@@ -280,7 +280,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
 
     // Test vectors extraction. Refer to readme_vectors.txt for more information
     #ifdef READABLE_VECTOR
-    if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 127){
+    if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 128){
         printf("Normalized pivot shapelet\n");
         print_shapelet_elements(pivot_values, pivot_shapelet->length);
         printf("\n");
@@ -299,7 +299,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         memcpy(target_values, &time_series->values[i], pivot_shapelet->length * sizeof(*target_values));
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 127){
+        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 128){
             #ifdef READABLE_VECTOR
             printf("Current minimum distance\n");
             #endif
@@ -318,7 +318,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         
         // Test vectors extraction. Refer to readme_vectors.txt for more information
         #ifdef READABLE_VECTOR
-        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 127){
+        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 128){
             printf("Normalized target shapelet\n");
             print_shapelet_elements(target_values, pivot_shapelet->length);
         }
@@ -328,7 +328,7 @@ numeric_type shapelet_ts_distance(Shapelet *pivot_shapelet, const Timeseries *ti
         shapelet_distance = euclidean_distance(pivot_values, target_values, pivot_shapelet->length, minimum_distance, 1);
         
         // Test vector extraction. Refer to readme_vectors.txt for more information.
-        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 127){
+        if (pivot_shapelet->length % BASE_SSIZE == 0 || pivot_shapelet->length == 3 || pivot_shapelet->length == 128){
             #ifdef READABLE_VECTOR
             printf("Distance: ");
             #endif
