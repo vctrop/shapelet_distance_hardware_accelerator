@@ -15,7 +15,11 @@
 #include "shapelet_transform.h"
 
 #define SIZE 512
+
 //DEFINE CONSTANT LENGTH AT COMPILER BY USING -DLENGTH=[value]
+#ifndef LENGTH
+#define LENGTH 3
+#endif
 
 int main(){
     // time series from bird chicken data set (the two first ones)
@@ -28,5 +32,5 @@ int main(){
     zscore_normalization(ts2, LENGTH);
 
     float dist = euclidean_distance(ts1, ts2, LENGTH, INFINITY);
-    printf("Dist=%g", dist);
+    printf("Dist=%g\n", dist);
 }

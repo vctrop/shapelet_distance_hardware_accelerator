@@ -30,6 +30,7 @@
 -- TODO        : Break math_real dependence (ceil() and log2())
 --               Make sure waiting for start_i falling edge is compatible with shapelet_distance control block
 --               Make sure use of "mod 2" operations and integer types are synthesis safe
+--               Replace cycle counter with shift register
 --------------------------------------------------------------------------------
 
 
@@ -38,8 +39,10 @@ library ieee;
 	use ieee.numeric_std.all;
     use ieee.math_real.all;         -- Synthesizable, only used with generics 
 
-use work.array_pkg.all;
+library work;
+	use work.array_pkg.all;
     
+
 entity adder_tree is
 
 	generic (
@@ -48,14 +51,15 @@ entity adder_tree is
 	);
 
 	port(
-		clk         : in std_logic;
-		rst         : in std_logic;
+		clk            : in std_logic;
+		rst            : in std_logic;
 
-		operands_i  : in slv_array_t(0 to NUM_INPUTS - 1);
-		start_i     : in std_logic;
+		operands_i     : in slv_array_t(0 to NUM_INPUTS - 1);
+		num_operands_i : std_logic_vector(integer(ceil(log2(real(NUM_INPUTS)))) downto 0);
+		start_i        : in std_logic;
         
-		sum_o       : out std_logic_vector(31 downto 0);  -- IEEE 754 Single Precision
-		ready_o     : out std_logic
+		sum_o          : out std_logic_vector(31 downto 0);  -- IEEE 754 Single Precision
+		ready_o        : out std_logic
 	);
 	
 end entity adder_tree;
@@ -76,12 +80,12 @@ architecture RTL of adder_tree is
 	signal reg_cycle_counter_s        : integer range 0 to ADDER_NUM_CYCLES;
 
 	-- Amount of iterations (amount of times adder outputs will be fed back into inputs - 1 first iteration, where there is no feedback)
-	constant num_iterations_c           : integer := integer(ceil(log2(real(NUM_INPUTS))));
-	constant last_iteration_c            : integer := num_iterations_c - 1;
-	signal reg_iterations_counter_s   : integer range 0 to num_iterations_c - 1;
+	--constant num_iterations_c           : integer := integer(ceil(log2(real(NUM_INPUTS))));
+	--constant last_iteration_c            : integer := num_iterations_c - 1;
+	--signal reg_iterations_counter_s   : integer range 0 to num_iterations_c - 1;
 	
 	signal reg_num_writebacks_s : integer;
-	signal uneven_leftover_used_flag  : std_logic;
+	signal uneven_leftover_flag_s  : std_logic;
 
 	-- Simple increment and wrap around. Used to increment amount of cycles in iteration and total number of iterations
     function incr(value: integer ; maxValue: integer ; minValue: integer) return integer is
@@ -136,16 +140,37 @@ begin
 		if rising_edge(clk) then
 
 			if rst = '1' then
+
 				reg_initialized_s <= '0';
 				reg_cycle_counter_s <= 0;
-				reg_iterations_counter_s <= 0;
+				--reg_iterations_counter_s <= 0;
 				reg_inputs_s <= (others => (others => '0'));
-				reg_num_writebacks_s <= num_adders_c;
-				uneven_leftover_used_flag <= '0';
+				--reg_num_writebacks_s <= num_adders_c;
+				reg_num_writebacks_s <= 0;
+				uneven_leftover_flag_s <= '0';
+				ready_o <= '0';
 
 			elsif start_i = '1' and reg_initialized_s = '0' then
+
 				reg_initialized_s <= '1';
-				reg_inputs_s <= operands_i;
+				--reg_inputs_s <= operands_i;
+				--reg_inputs_s(0 to to_integer(unsigned(num_operands_i)) - 1 => operands_i(0 to to_integer(unsigned(num_operands_i)) - 1), others => (others => '0'));
+				
+				for i in 0 to NUM_INPUTS - 1 loop
+				    
+				    if i > to_integer(unsigned(num_operands_i)) then
+				        exit;
+				    end if;
+				    
+				    reg_inputs_s(i) <= operands_i(i);
+				    
+				end loop;
+				
+				reg_num_writebacks_s <= to_integer(unsigned(num_operands_i))/2 + (to_integer(unsigned(num_operands_i)) mod 2);
+
+				if to_integer(unsigned(num_operands_i)) = NUM_INPUTS and num_inputs_uneven_c = 1 then
+					uneven_leftover_flag_s <= '1';
+				end if;
 
 			-- Checks if adder tree is not idling. Only begins operation on next falling edge of start_i
 			-- TODO: Make sure this (waiting for start_i falling edge) is compatible with shapelet_distance control block
@@ -156,29 +181,51 @@ begin
 				-- Checks if this is the last cycle of an iteration (Amount of adder cycles + 1 cycle for writing to output register)
 				if reg_cycle_counter_s = ADDER_NUM_CYCLES then 
 
-					reg_iterations_counter_s <= incr(reg_iterations_counter_s, last_iteration_c, 0);  -- reg_iterations_counter_s++
+					--reg_iterations_counter_s <= incr(reg_iterations_counter_s, last_iteration_c, 0);  -- reg_iterations_counter_s++
 
 					-- Checks if this is the last cycle of the last iteration
-					if reg_iterations_counter_s = last_iteration_c then
+					--if reg_iterations_counter_s = last_iteration_c then
+					if reg_num_writebacks_s = 1 then
 
-						-- Signal final sum is ready. Will wait for next start_i = '1'
-						reg_initialized_s <= '0';
-						reg_num_writebacks_s <= num_adders_c;
+						if uneven_leftover_flag_s = '1' then
+
+							reg_inputs_s(1) <= reg_inputs_s(NUM_INPUTS - 1);
+							uneven_leftover_flag_s <= '0';
+
+						else
+
+							-- Signal final sum is ready. Will wait for next start_i = '1'
+							reg_initialized_s <= '0';
+							ready_o <= '1';
+							sum_o <= adder_outputs_s(0);
+							--reg_num_writebacks_s <= num_adders_c;
+
+						end if;
 
 					else  -- Not the last iteration
 
 						-- Feeds back result of previous iteration into adders
-						for i in 0 to num_adders_c - 1 loop
+						for i in 0 to num_adders_c - 1 loop  -- Loop max value should be static so that design is synthesizable
+
+							if i > reg_num_writebacks_s then
+								exit;  -- Breaks loop, only writes back to relevant registers for next iteration
+							end if;
+
 							reg_inputs_s(i) <= adder_outputs_s(i);
+
 						end loop;
 						
 						-- Handles leftover inputs, if there is an uneven number of inputs or operands in current iteration
-						if reg_num_writebacks_s mod 2 = 1 and num_inputs_uneven_c = 1 and uneven_leftover_used_flag = '0' then
-						    reg_inputs_s(reg_num_writebacks_s) <= reg_inputs_s(NUM_INPUTS - 1);
-						    uneven_leftover_used_flag <= '1';
-						elsif reg_num_writebacks_s mod 2 = 1 then
-						    reg_inputs_s(reg_num_writebacks_s) <= (others =>'0');
-						end if; 
+						--if reg_num_writebacks_s mod 2 = 1 and num_inputs_uneven_c = 1 and uneven_leftover_used_flag = '0' then
+						--    reg_inputs_s(reg_num_writebacks_s) <= reg_inputs_s(NUM_INPUTS - 1);
+						--    uneven_leftover_used_flag <= '1';
+						--elsif reg_num_writebacks_s mod 2 = 1 then
+						--    reg_inputs_s(reg_num_writebacks_s) <= (others =>'0');
+						--end if;
+
+						if reg_num_writebacks_s mod 2 = 1 then
+							reg_inputs_s(reg_num_writebacks_s) <= (others =>'0');
+						end if;
 						
 						-- Sets amount of writebacks to occur in next iteration. 
 						reg_num_writebacks_s <= reg_num_writebacks_s/2 + reg_num_writebacks_s mod 2;
@@ -193,8 +240,8 @@ begin
 
 	end process ControlProc;
 
-    sum_o <= adder_outputs_s(0);
-    ready_o <=  '1' when reg_cycle_counter_s = ADDER_NUM_CYCLES and reg_iterations_counter_s = last_iteration_c else
-                '0';
+    --sum_o <= adder_outputs_s(0);
+    --ready_o <=  '1' when reg_cycle_counter_s = ADDER_NUM_CYCLES and reg_iterations_counter_s = last_iteration_c else
+    --            '0';
     
 end architecture RTL;
