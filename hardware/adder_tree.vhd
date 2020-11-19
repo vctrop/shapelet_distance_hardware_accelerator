@@ -55,7 +55,7 @@ entity adder_tree is
 		rst            : in std_logic;
 
 		operands_i     : in slv_array_t(0 to NUM_INPUTS - 1);
-		num_operands_i : std_logic_vector(integer(ceil(log2(real(NUM_INPUTS)))) downto 0);
+		--num_operands_i : std_logic_vector(integer(ceil(log2(real(NUM_INPUTS)))) downto 0);
 		start_i        : in std_logic;
         
 		sum_o          : out std_logic_vector(31 downto 0);  -- IEEE 754 Single Precision
@@ -158,7 +158,7 @@ begin
 				
 				for i in 0 to NUM_INPUTS - 1 loop
 				    
-				    if i > to_integer(unsigned(num_operands_i)) then
+				    if i > NUM_INPUTS then
 				        exit;
 				    end if;
 				    
@@ -166,9 +166,10 @@ begin
 				    
 				end loop;
 				
-				reg_num_writebacks_s <= to_integer(unsigned(num_operands_i))/2 + (to_integer(unsigned(num_operands_i)) mod 2);
+				reg_num_writebacks_s <= NUM_INPUTS/2 + (NUM_INPUTS mod 2);
 
-				if to_integer(unsigned(num_operands_i)) = NUM_INPUTS and num_inputs_uneven_c = 1 then
+				--if to_integer(unsigned(num_operands_i)) = NUM_INPUTS and num_inputs_uneven_c = 1 then
+                if num_inputs_uneven_c = 1 then
 					uneven_leftover_flag_s <= '1';
 				end if;
 
