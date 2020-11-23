@@ -24,7 +24,7 @@ use work.fpu_pkg.all;          -- FPU functions package
 use work.array_pkg.all;
 
 -- Shapelet distance calculator hardware
--- NUM_PU: specificies the level of paralelism. Must be a power of 2. (WARNING: CURRENTLY ONLY THE DEFAULT VALUE OF 2 IS IN WORKING CONDITION)
+-- NUM_PU: specificies the level of paralelism.
 -- MAX_LEN: specifies the maximun shapelet length possible. Must be a multiple of NUM_PU.
 entity shapelet_distance is
     generic(
