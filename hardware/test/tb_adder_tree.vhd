@@ -1,3 +1,15 @@
+-- Copyright GMicro UFSM 2020.
+-- This source describes Open Hardware and is licensed under the CERN-OHLS v2
+-- You may redistribute and modify this documentation and make products
+-- using it under the terms of the CERN-OHL-S v2 (https:/cern.ch/cern-ohl).
+-- This documentation is distributed WITHOUT ANY EXPRESS OR IMPLIED
+-- WARRANTY, INCLUDING OF MERCHANTABILITY, SATISFACTORY QUALITY
+-- AND FITNESS FOR A PARTICULAR PURPOSE. Please see the CERN-OHL-S v2
+-- for applicable conditions.
+-- Source location: https://github.com/vctrop/shapelet_distance_hardware_accelerator
+-- As per CERN-OHL-S v2 section 4, should You produce hardware based on
+-- these sources, You must maintain the Source Location visible on any
+-- product you make using this documentation.
 
 library ieee;
 	use ieee.std_logic_1164.all;
@@ -14,14 +26,13 @@ end entity tb_adder_tree;
 architecture TB of tb_adder_tree is
 
 	constant num_inputs: integer := 10;
-	constant adder_num_cycles: integer := 7;
+	constant adder_num_cycles: integer := 6;
 
 	constant clockPeriod: time := 10 ns ;
     constant clockHalfPeriod: time := clockPeriod/2;
  
     signal Clock, Reset, Start, Ready : std_logic;
 	signal Inputs: slv_array_t(0 to num_inputs - 1);
-	signal num_operands: std_logic_vector(integer(ceil(log2(real(NUM_INPUTS)))) downto 0);
 	signal Output: std_logic_vector(31 downto 0);
 	
 	function uint_to_fp(int_i: std_logic_vector(31 downto 0)) return std_logic_vector is
@@ -90,7 +101,6 @@ begin
 			rst       => Reset,
                    
 			operands_i  => Inputs,
-			--num_operands_i => num_operands,
 			start_i     => Start,
 			
             sum_o       => Output,
@@ -129,8 +139,6 @@ begin
     		Inputs(i) <= uint_to_fp(std_logic_vector(to_unsigned(i, 32)));
 
     	end loop;
-    	
-    	--num_operands <= std_logic_vector(to_unsigned(NUM_INPUTS, num_operands'length));
 
     	-- Begin sum of inputs
     	Start <= '1';
