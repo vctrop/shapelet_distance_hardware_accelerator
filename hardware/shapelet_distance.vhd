@@ -28,8 +28,8 @@ use work.array_pkg.all;
 -- MAX_LEN: specifies the maximun shapelet length possible. Must be a multiple of NUM_PU.
 entity shapelet_distance is
     generic(
-        NUM_PU      : natural := 2;
-        MAX_LEN     : natural := 128
+        NUM_PU      : natural := 4;
+        MAX_LEN     : natural := 32
     );
     port (
         clk         : in std_logic;
@@ -63,7 +63,9 @@ architecture behavioral of shapelet_distance is
     -- length must be bigger than 3 and smaller than MAX_LEN
     -- this signal is cleared only if a valid range was input during operation '0' or
     -- if a operation '1' has been started
-    signal reg_invalid_length_s                                : std_logic;
+    signal reg_invalid_length_s                         : std_logic;
+    -- FF to store ready state
+    signal reg_ready_s                                  : std_logic;
     -- Registers to keep the shapelet length
     signal reg_shapelet_length_s                        : natural range 0 to MAX_LEN;
     signal dec_shapelet_length_s                        : natural range 0 to MAX_LEN;
@@ -203,6 +205,7 @@ begin
             reg_exp_minimum_s <= x"FE";
             reg_shapelet_length_s <= 0;
             reg_invalid_length_s <= '0';
+            reg_ready_s <= '0';
         else
             case reg_state_s is
                 -- INITIALIZATION STATES
@@ -412,13 +415,21 @@ begin
                     reg_state_s <= Sbegin;                  -- End operation 1
                 
             end case;
+            
+            -- Ready register
+            if reg_state_s = Sout_distance or reg_state_s = Spivot_norm_ready then
+                reg_ready_s <= '1';
+            else
+                reg_ready_s <= '0';
+            end if;
+
         end if;
     end if;    
     end process;
     
     -- Entity outputs
     distance_o  <= reg_distance_s;
-    ready_o     <= '1' when reg_state_s = Sout_distance or reg_state_s = Spivot_norm_ready else '0';
+    ready_o     <= reg_ready_s;
     invalid_length_o <= reg_invalid_length_s;
 
     -- PIVOT AND TARGET BUFFERS DEFINITION 
