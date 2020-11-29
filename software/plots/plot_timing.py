@@ -13,6 +13,7 @@
 # these sources, You must maintain the Source Location visible on any
 # product you make using this documentation.
 
+# 3rd party modules
 import numpy as np
 import matplotlib.pyplot as plt
 
