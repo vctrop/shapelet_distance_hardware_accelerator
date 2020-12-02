@@ -57,7 +57,8 @@ axes.set_xticks(fake_ticks)
 axes.set_xticklabels(parallelisms)
 axes.set_yticklabels(lengths)
 axes.view_init(elev=10., azim=255)
-plt.show()
+plt.savefig('synth_area.png', dpi=300)
+#plt.show()
 
 # POWER
 fig = plt.figure()
@@ -77,7 +78,8 @@ axes.set_xticks(fake_ticks)
 axes.set_xticklabels(parallelisms)
 axes.set_yticklabels(lengths)
 axes.view_init(elev=10., azim=255)
-plt.show()
+plt.savefig('synth_power.png', dpi=300)
+#plt.show()
 
 
 
