@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
     }
     
     // Load dataset and hold number of time-series loaded
-    num_ts = read_train_dataset(infilename, &T);
+    num_ts = read_dataset(infilename, &T);
     if (T[0].length < max_len){
         printf("Error, maximum shapelet length is greater than each time-series length");
         exit(-1);

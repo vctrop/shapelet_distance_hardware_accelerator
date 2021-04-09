@@ -118,6 +118,6 @@ void shapelet_set_to_files(Shapelet *shapelet_set, size_t num_shapelets, Timeser
 
 // Read datasets into ts_array, loading number of time-series and time-series length from file header
 // Free all float arrays from ts_array and the ts_array itself 
-uint16_t read_train_dataset(char * filename, Timeseries **ts_array);
+uint16_t read_dataset(char * filename, Timeseries **ts_array);
 
 #endif
