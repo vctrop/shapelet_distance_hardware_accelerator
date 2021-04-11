@@ -24,7 +24,7 @@
 #include <fenv.h>  // use -lm during compilaton to link this library
 
 #include "shapelet_transform.h"
-
+#include "decision_functions.h"
 // Shapelet structure similar to the time-series structure in shapelet_transform.h
 typedef struct{
     //uint8_t class;                      // The class of the time-series from which the shapelet was extracted
@@ -211,22 +211,7 @@ void print_float_array(float * vec, size_t size){
     printf("\n");
 }
 
-uint8_t *linear_decision_function(numeric_type **transformed_dataset, uint16_t num_ts, numeric_type *coefficient_vector, uint16_t num_shapelets){
-    uint8_t *classification_result;
-    float dot_product;
-    
-    classification_result = safe_alloc( num_ts * sizeof(*classification_result) );
-    
-    for (uint16_t i = 0; i < num_ts; i++){
-        dot_product = 0;
-        for (uint16_t j = 0; j < num_shapelets; j++){
-            dot_product += transformed_dataset[i][j] * coefficient_vector[j];
-        }
-        classification_result[i] = (uint8_t) dot_product > 0;
-    }
-    
-    return classification_result;
-}
+
 
 int main(int argc, char *argv[]){
     Shapelet_profiling *shapelet_array;
