@@ -23,21 +23,19 @@
 #include <assert.h>
 #include <fenv.h>
 
+//
+void matrix_vector_multiplication(uint16_t n_row, uint16_t n_col, float **in_matrix, float *in_vector, float *out_vector);
+
+// // 
+// void matrix_multiplication(uint16_t n_row_m1, uint16_t n_col_m1_row_m2, float **in_matrix_A, float **in_matrix_B, float **out_matrix);
 
 //
-float dot_product(float *vector_A, float *vector_B, uint16_t length);
+uint8_t *linear_decision(float **transformed_dataset, uint16_t num_ts, float *coefficient_vector, uint16_t num_shapelets);
 
-//
-uint8_t *linear_decision_function(float **transformed_dataset, uint16_t num_ts, float *coefficient_vector, uint16_t num_shapelets);
+// //
+// inline float sigmoid_activation(float x);
 
-//
-//float *sigmoid_activation();
-
-//
-//float *relu_activation();
-
-//
-//float matrix_vector_multiplication();
-
+// //
+// inline float relu_activation(float x);
 
 #endif

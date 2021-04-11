@@ -269,7 +269,7 @@ int main(int argc, char *argv[]){
         // printf("%g, ", coefficient_vector[i]);
     // }
     
-    inference_results = linear_decision_function(transformed_dataset, num_ts, coefficient_vector, num_shapelets);
+    inference_results = linear_decision(transformed_dataset, num_ts, coefficient_vector, num_shapelets);
     for (uint16_t i = 0; i < num_ts; i ++)
         printf("%u, ", inference_results[i]);
     
