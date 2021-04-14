@@ -88,11 +88,11 @@ uint8_t *three_layer_perceptron_decision(uint16_t n_row, uint16_t n_col, float *
     }
     
     if (hidden_layer_activation == 's'){
-        printf("Using Sigmoid activation in the hidden layer\n");
+        //printf("Using Sigmoid activation in the hidden layer\n");
         activation = &sigmoid_activation;
     }
     else{
-        printf("Using ReLU activation in the hidden layer\n");
+        //printf("Using ReLU activation in the hidden layer\n");
         activation = &relu_activation;
     }
     dataset_with_bias       = safe_alloc (n_row * sizeof(*dataset_with_bias));

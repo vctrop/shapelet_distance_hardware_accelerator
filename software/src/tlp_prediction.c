@@ -31,11 +31,13 @@ int main(int argc, char *argv[]){
     float **hidden_weights;
     float *out_weights; 
     
-    if(argc != 2){
-        fprintf(stderr, "Please specify the activation of the hidden layer ('s'igmoid or 'r'elu)\n");
+    if(argc != 3){
+        fprintf(stderr, "Please use: %s {'s'/'r'} {num_hidden_nodes} \n", argv[0]);
         exit(-1);
     }
+    
     hidden_activation = argv[1][0];
+    num_nodes = atof(argv[2]);
     
     // Load dataset
     num_ts = read_dataset(dataset_filename, &ts_dataset);
@@ -87,9 +89,10 @@ int main(int argc, char *argv[]){
     // }
     
     prediction_array = three_layer_perceptron_decision(num_ts, num_shapelets, transformed_dataset, num_nodes, hidden_weights, out_weights, hidden_activation);
-    for (uint16_t i = 0; i < num_ts; i ++){
-        printf("%u, ", prediction_array[i]);
-    }
+    
+    // for (uint16_t i = 0; i < num_ts; i ++){
+        // printf("%u, ", prediction_array[i]);
+    // }
     
     return 0;
 }
