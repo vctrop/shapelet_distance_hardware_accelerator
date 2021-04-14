@@ -28,9 +28,9 @@ void matrix_vector_multiplication(uint16_t n_row, uint16_t n_col, float **in_mat
 void matrix_multiplication(uint16_t n_row_matA, uint16_t n_col_matA_row_matB, uint16_t n_col_matB, float **in_mat_A, float **in_mat_B, float **out_mat){
     
     for (uint16_t i = 0; i < n_col_matA_row_matB; i++){
-        for (uint16_t j = 0; j < n_row_matA; j++){
-            for(uint16_t k = 0; k < n_col_matB; k++){
-                out_mat[n_row_matA][n_col_matB] = in_mat_A[j][i] * in_mat_B[i][k];
+        for (uint16_t k = 0; k < n_row_matA; k++){
+            for(uint16_t j = 0; j < n_col_matB; j++){
+                out_mat[k][j] += in_mat_A[k][i] * in_mat_B[i][j];
             }
         }
     }    
@@ -38,18 +38,17 @@ void matrix_multiplication(uint16_t n_row_matA, uint16_t n_col_matA_row_matB, ui
 
 
 // Decision function of a linear classifier such as linear SVM
-uint8_t *linear_decision(float **transformed_dataset, uint16_t num_ts, float *coefficient_vector, uint16_t num_shapelets){
+uint8_t *linear_decision(float **tabular_dataset, uint16_t n_row, float *coefficient_vector, uint16_t n_col){
     uint8_t *classification_result;
     float *mv_mult;                     // Keeps the matrix-vector multiplicationr result
     
-    classification_result   = safe_alloc (num_ts * sizeof(*classification_result));
-    mv_mult                 = safe_alloc (num_ts * sizeof(*mv_mult));
+    classification_result   = safe_alloc (n_row * sizeof(*classification_result));
+    mv_mult                 = safe_alloc (n_row * sizeof(*mv_mult));
     
-    matrix_vector_multiplication(num_ts, num_shapelets, transformed_dataset, coefficient_vector, mv_mult);
+    matrix_vector_multiplication(n_row, n_col, tabular_dataset, coefficient_vector, mv_mult);
     
-    for (uint16_t i = 0; i < num_ts; i++){
+    for (uint16_t i = 0; i < n_row; i++){
         classification_result[i] = (uint8_t) (mv_mult[i] > 0.0);
-        printf("%g\n", mv_mult[i]);
     }
     
     return classification_result;
@@ -62,8 +61,9 @@ extern inline float sigmoid_activation(float x){
 
 // Rectified Linear Unit (ReLU) activation function
 extern inline float relu_activation(float x){
-    return fmaxf(0, x);
+    return fmaxf(0.0, x);
 }
+
 
 
 //
@@ -95,7 +95,6 @@ uint8_t *three_layer_perceptron_decision(uint16_t n_row, uint16_t n_col, float *
         printf("Using ReLU activation in the hidden layer\n");
         activation = &relu_activation;
     }
-    
     dataset_with_bias       = safe_alloc (n_row * sizeof(*dataset_with_bias));
     hidden_layers_in        = safe_alloc (n_row * sizeof(*hidden_layers_in));
     hidden_layers_out       = safe_alloc (n_row * sizeof(*hidden_layers_out));
@@ -134,10 +133,8 @@ uint8_t *three_layer_perceptron_decision(uint16_t n_row, uint16_t n_col, float *
     // Compute the model's outputs
     for (uint16_t i = 0; i < n_row; i++){
         tlp_predictions[i] = (uint8_t) (sigmoid_activation(out_node_in[i]) > 0.0);
+        //printf("%g\n", sigmoid_activation(out_node_in[i]));
     }
     
     return tlp_predictions;
 }
-
-// //
-// //uint8_t multi_layer_perceptron_decision(){}

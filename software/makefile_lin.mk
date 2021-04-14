@@ -1,11 +1,11 @@
-EXEC 		= apply_prediction
+EXEC 		= linear_prediction
 CC			= gcc
 CFLAGS 		= -lm -Wall -pthread -O0 -std=gnu99 -fopenmp  #add -g for debugging
 DEFINES		= -DUSE_ZSCORE #add program related #define statements
 SRC_DIR 	= ./src
 BUILD_DIR 	= ./build
 BIN_DIR 	= ./bin
-SOURCES		= decision_functions.c apply_prediction.c shapelet_transform.c
+SOURCES		=  shapelet_transform.c decision_functions.c profiling_aux.c linear_prediction.c
 
 # create the obj variable by substituting the extension of the sources
 # and adding a path

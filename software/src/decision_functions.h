@@ -26,16 +26,13 @@
 //
 void matrix_vector_multiplication(uint16_t n_row, uint16_t n_col, float **in_matrix, float *in_vector, float *out_vector);
 
-// // 
-// void matrix_multiplication(uint16_t n_row_m1, uint16_t n_col_m1_row_m2, float **in_matrix_A, float **in_matrix_B, float **out_matrix);
+// 
+void matrix_multiplication(uint16_t n_row_matA, uint16_t n_col_matA_row_matB, uint16_t n_col_matB, float **in_mat_A, float **in_mat_B, float **out_mat);
 
 //
-uint8_t *linear_decision(float **transformed_dataset, uint16_t num_ts, float *coefficient_vector, uint16_t num_shapelets);
+uint8_t *linear_decision(float **tabular_dataset, uint16_t n_row, float *coefficient_vector, uint16_t n_col);
 
-// //
-// inline float sigmoid_activation(float x);
-
-// //
-// inline float relu_activation(float x);
+//
+uint8_t *three_layer_perceptron_decision(uint16_t n_row, uint16_t n_col, float **tabular_dataset, uint16_t n_hidden_nodes, float **weights_hidden, float *weights_out, char hidden_layer_activation);
 
 #endif
