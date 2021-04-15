@@ -64,7 +64,6 @@ int main(int argc, char *argv[]){
     
     // Randomize weights of hidden and output nodes
     srand((unsigned) time(NULL));
-    num_nodes = 50;
     
     out_weights     = safe_alloc(num_nodes * sizeof(*out_weights));
     for (uint16_t i = 0; i < num_nodes; i++){
